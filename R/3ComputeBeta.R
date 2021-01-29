@@ -7,16 +7,17 @@
 #' @param Lambda_k The state-specific loading matrices.
 #' @param Psi_k The state-specific unique variances.
 #' @param n_state Number of states. Has to be a scalar.
+#' @param n_fact Number of factors for each state. Has to be a vector of length n_state.
 #'
 #' @return Returns the Beta coefficients.
 #'
 #' @examples
 #' \dontrun{
-#' Beta_k <- comBetas(Lambda_k, Psi_k, n_state)
+#' Beta_k <- comBetas(Lambda_k, Psi_k, n_state,n_fact)
 #' }
-#' @export
+#' @noRd
 
-comBetas <- function(Lambda_k, Psi_k, n_state){
+comBetas <- function(Lambda_k, Psi_k, n_state,n_fact){
   Beta_k <-rep(list(NA),n_state)
   for(k in 1:n_state){
     # calculate inverse once and reuse it because this saves time

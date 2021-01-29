@@ -1,7 +1,7 @@
 	
 ## `lmfa` package
  
-*`lmfa` allows to explore within-person changes and between person differences in measurement models in (time-intensive) longitudinal data by means of three-step continuous-time latent Markov factor analysis.* 
+*`lmfa` allows to explore within-person changes and between person differences in measurement models in (intensive) longitudinal data by means of three-step continuous-time latent Markov factor analysis.* 
  
 ### Installation
  

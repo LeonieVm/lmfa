@@ -8,6 +8,7 @@
 #' @param n_state Number of states. Has to be a scalar.
 #' @param n_fact Number of factors for each state. Has to be a vector of length n_state.
 #' @param J Number of items.
+#' @param startval Indicating whether startvalues are based on random assignment or mclust.
 #'
 #'
 #' @return Returns list with all the state-specific initialized parameters.
@@ -29,7 +30,7 @@
 #' Lambda_k<- InitialValues$Lambda_k
 #' Psi_k<- InitialValues$Psi_k
 #' }
-#' @noRd
+
 
 
 initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random"){

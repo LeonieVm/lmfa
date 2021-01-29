@@ -19,7 +19,7 @@
 #' Lambda_k <- LambPsi$Lambda_k
 #' Psi_k <- LambPsi$Psi_k
 #' }
-#' @export
+#' @noRd
 
 
 updLambPsi <- function(n_state, C_k, n_fact, Beta_k, Theta_k,residualVariance,J){

@@ -17,7 +17,7 @@
 #' \dontrun{
 #' saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J)
 #' }
-#' @export
+#' @noRd
 
 DMV <- function(x, Lambda_k, Psi_k, n_state, J,n_sub,mu_k){
  

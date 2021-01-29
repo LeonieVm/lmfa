@@ -19,7 +19,7 @@
 #' \dontrun{
 #' z_ik <- updExpMem(Lambda_k, Psi_k, n_state, C_k, n_fact, DMV,n_sub,pi_k)
 #' }
-#' @export
+#' @noRd
 
 updExpMem <- function(Lambda_k, Psi_k, n_state, C_k, n_fact, DMV,n_sub,pi_k){
   max_z_ik <-rep(0,n_sub)

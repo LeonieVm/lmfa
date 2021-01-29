@@ -15,7 +15,7 @@
 #' \dontrun{
 #' Theta_k <- comTheta(Beta_k, n_state, C_k, Lambda_k, n_fact)
 #' }
-#' @export
+#' @noRd
 
 
 comTheta <- function(Beta_k, n_state, C_k, Lambda_k, n_fact){
