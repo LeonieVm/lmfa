@@ -24,7 +24,7 @@ Step1Step2(input_file, variable_columns, id_column, n_state, n_fact,
 \item{n_fact}{The number of factors per state that should be estimated
 (has to be a vector of length n_state).}
 
-\item{n_starts}{The number ofrandom starts that should be used
+\item{n_starts}{The number of random starts that should be used
 (in addition to the one mclust start).}
 
 \item{n_initial_ite}{The number of initial iterations for the best starts.}

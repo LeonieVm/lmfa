@@ -2,6 +2,7 @@
 
 export(Step1Step2)
 export(Step3)
+export(initializeStep1)
 import(doParallel)
 import(expm)
 import(foreach)
