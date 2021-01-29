@@ -26,17 +26,17 @@ Step3(input_file, interval_column, id_column, n_state, fitStep1Step2,
 
 \item{initialCovariates}{Vector with covariates for the initial state probabilities.}
 
-\item{i.method}{N}
+\item{i.method}{The type of optimization method that should be used.}
 
-\item{i.maxit}{N}
+\item{i.maxit}{The maximum number of iterations that should be used.}
 
-\item{i.reltol}{N}
+\item{i.reltol}{The tolerance to evaluate convergend that should be used.}
 
-\item{n_q}{N}
+\item{n_q}{The number of start values for the transition intensity parameters that should be used.}
 
-\item{n_initial_ite}{N}
+\item{n_initial_ite}{The number of initial iterations for the different start sets that should be used.}
 
-\item{previousCov}{N}
+\item{previousCov}{Indicates whether the covariate at t or t-1 should be used.}
 }
 \value{
 Returns .

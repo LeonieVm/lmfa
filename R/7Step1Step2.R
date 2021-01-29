@@ -14,7 +14,7 @@
 #' (has to be a scalar).
 #' @param n_fact The number of factors per state that should be estimated
 #' (has to be a vector of length n_state).
-#' @param n_starts The number ofrandom starts that should be used
+#' @param n_starts The number of random starts that should be used
 #' (in addition to the one mclust start).
 #' @param n_initial_ite The number of initial iterations for the best starts.
 #' @param n_m_step The number of M-step iterations that should be used

@@ -30,7 +30,7 @@
 #' Lambda_k<- InitialValues$Lambda_k
 #' Psi_k<- InitialValues$Psi_k
 #' }
-
+#' @noRd
 
 
 initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random"){
