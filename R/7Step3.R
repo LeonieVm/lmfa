@@ -42,8 +42,8 @@
 
 
 Step3 <- function(input_file,
-                  interval_column,
-                  id_column,
+                  interval_column = NULL,
+                  #id_column,
                   fitStep1Step2,
                   transitionCovariates = NULL,
                   initialCovariates = NULL,
@@ -60,8 +60,8 @@ Step3 <- function(input_file,
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   if(missing(input_file)) stop("argument input_file is missing, with no default")
-  if(missing(interval_column)) stop("argument interval_column is missing, with no default")
-  if(missing(id_column)) stop("argument id_column is missing, with no default")
+  #if(missing(interval_column)) stop("argument interval_column is missing, with no default")
+  #if(missing(id_column)) stop("argument id_column is missing, with no default")
   if(missing(fitStep1Step2)) stop("argument fitStep1Step2 is missing, with no default")
   if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("the data has not the same length as the data used in fitStep1Step2")
   ptm <- proc.time()
@@ -71,14 +71,15 @@ Step3 <- function(input_file,
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   
   # Obtain the time_column from interval_column
+  id_column <- fitStep1Step2$id_column
   n_cases <- length(unlist(unique(input_file[,id_column])))
   n_state <- dim(fitStep1Step2$classification_errors_prob)[1]
+ 
   
   newData <- c()
   if(!is.null(interval_column)){
     for(i in 1:n_cases){
-      datai <- subset(input_file,get(
-        noquote(id_column))==unlist(unique(input_file[,id_column]))[i])
+      datai <- subset(input_file,get(noquote(id_column))==unlist(unique(input_file[,id_column]))[i])
       int <- c(0)
       for(ti in 2:nrow(datai)){
         int[ti] <- int[ti-1]+unlist(datai[,interval_column])[ti]
@@ -88,8 +89,7 @@ Step3 <- function(input_file,
     }
   }else{
     for(i in 1:n_cases){
-      datai <- subset(input_file,get(
-        noquote(id_column))==unique(input_file[,id_column])[i])
+      datai <- subset(input_file,get(noquote(id_column))==unique(input_file[,id_column])[i])
       datai$time <- seq(1:nrow(datai))
       newData<-rbind(newData, datai)
     }
@@ -221,15 +221,15 @@ Step3 <- function(input_file,
   # Do n_initial_ite iterations and store the transition intensities
   # We briefly put-off the warnings because there will be one if the
   # model does not converge (and it won't with so few iterations).
-  
-  
+  INP <- matrix(NA)
+  colnames(INP) <-id_column
   bestloglik <- list()
   q_bestloglik <- list()
   for(i in 1:n_q){
     step3Results <-  suppressWarnings(
       msm(as.formula(
         paste("State", "~",time_column, sep="")), 
-        subject = get(noquote(id_column)), 
+        subject = get(noquote(paste(colnames(INP)))), 
         data = as.data.frame(newData),
         qmatrix = initialQm[[i]],
         ematrix = W_mod,
@@ -244,7 +244,6 @@ Step3 <- function(input_file,
     q_bestloglik[[i]] <-step3Results$Qmatrices$baseline
     bestloglik[[i]] <-step3Results$minus2loglik*-2
   } 
-  
 
   # Consider the transition intensities from the best start set.
   Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
@@ -256,7 +255,7 @@ Step3 <- function(input_file,
 
   step3Results <-msm(
     as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(id_column)), 
+    subject = get(noquote(paste(colnames(INP)))), 
     data = as.data.frame(newData),
     qmatrix = Qm,
     ematrix = W_mod,
