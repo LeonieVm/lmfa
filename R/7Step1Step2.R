@@ -6,9 +6,8 @@
 #'
 #'
 #' @param input_file The dataset. Should contain complete cases only
-#' (unequal intervals are automatically dealt with in the CT-LMM).
+#' (unequal intervals are automatically dealt with in the CT-LMM in step 3).
 #' @param variable_columns The column numbers with variables or variable names.
-#' (dates/hours; must be regognized as date by R).
 #' @param id_column The column number or name with subject-id.
 #' @param n_state The number of states that should be estimated
 #' (has to be a scalar).
@@ -779,8 +778,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   # Calculate probabilities based on counts.
 
   W_mod <-ModalClassificationTable/rowSums(ModalClassificationTable)
-  # internaldata <- input_file#make sure that this is defined in function
-  # internaldata$State <- Posteriors$Modal
+  
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------

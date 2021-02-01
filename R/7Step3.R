@@ -9,8 +9,6 @@
 #' (unequal intervals are automatically dealt with in the CT-LMM).
 #' @param interval_column The column number or name with intervals.
 #' @param id_column The column number or name with subject-id.
-#' @param n_state The number of states that should be estimated 
-#' (has to be a scalar).
 #' @param fitStep1Step2 The output file created with Step1Step2().
 #' @param transitionCovariates Vector with covariates for the transition intensities.
 #' @param initialCovariates Vector with covariates for the initial state probabilities.
@@ -29,7 +27,6 @@
 #' step3Results <- Step3(input_file,
 #' interval_column,
 #' id_column,
-#' n_state,
 #' fitStep1Step2,
 #' transitionCovariates = NULL,
 #' initialCovariates = NULL,
@@ -47,7 +44,6 @@
 Step3 <- function(input_file,
                   interval_column,
                   id_column,
-                  n_state,
                   fitStep1Step2,
                   transitionCovariates = NULL,
                   initialCovariates = NULL,
@@ -72,6 +68,8 @@ Step3 <- function(input_file,
   
   # Obtain the time_column from interval_column
   n_cases <- length(unlist(unique(input_file[,id_column])))
+  n_state <- dim(fitStep1Step2$classification_errors_prob)[1]
+  
   newData <- c()
   if(!is.null(interval_column)){
     for(i in 1:n_cases){
