@@ -53,6 +53,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   if(length(n_fact)!=n_state) stop("vector n_fact must be of length n_state")
 
   if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("dataset contains missing values on one or more of the variable columns")
+  if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
 
   ptm <- proc.time()
 
