@@ -253,7 +253,7 @@ Step3 <- function(input_file,
   # Final Analysis with best startset.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-  step3Results <-msm(
+  step3Results <-suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
     subject = get(noquote(paste(colnames(INP)))), 
     data = as.data.frame(newData),
@@ -265,10 +265,20 @@ Step3 <- function(input_file,
     method  = i.method,
     control=list(maxit = i.maxit,reltol = i.reltol),
     covariates = defineCovariates,
-    initcovariates = defineInitialCovariates)
+    initcovariates = defineInitialCovariates))
                     
   
   requiredTime <- as.numeric((proc.time() - ptm)[3])
+  eigenvalues <- eigen(step3Results$paramdata$opt$hessian, only.values = TRUE)$values
+  n_eig <- nrow(step3Results$paramdata$opt$hessian)
+  for(i in 1: n_eig){
+    if(abs(eigenvalues[i])<1e-8) {
+      eigenvalues[i]<-0
+    }
+  }    
+  if(any(eigenvalues<=0)){
+    warning("Optimisation has probably not converged to the maximum likelihood - Hessian is not positive definite.")
+  }
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Extracting the results
@@ -459,5 +469,6 @@ Step3 <- function(input_file,
               classification_posterior=viterbi.msm(step3Results),
               estimates=round(parameterEstimates,4), 
               WaldTests=round(waldMatrix,4),
-              seconds=requiredTime))
+              seconds=requiredTime,
+              hessian=step3Results$paramdata$opt$hessian))
 }
