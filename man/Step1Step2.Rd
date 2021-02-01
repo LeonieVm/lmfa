@@ -10,22 +10,19 @@ Step1Step2(input_file, variable_columns, id_column, n_state, n_fact,
   max_iterations = 500)
 }
 \arguments{
-\item{input_file}{The dataset. Should contain complete cases only
-(unequal intervals are automatically dealt with in the CT-LMM).}
+\item{input_file}{The dataset (must be a dataframe and contain complete cases only).}
 
-\item{variable_columns}{The column numbers with variables or variable names.
-(dates/hours; must be regognized as date by R).}
+\item{variable_columns}{The variable names of the indicators (must be a character).}
 
-\item{id_column}{The column number or name with subject-id.}
+\item{id_column}{The name with subject identifiers (must be a character).}
 
-\item{n_state}{The number of states that should be estimated
-(has to be a scalar).}
+\item{n_state}{The number of states that should be estimated (must be a single scalar).}
 
 \item{n_fact}{The number of factors per state that should be estimated
-(has to be a vector of length n_state).}
+(must be a numeric vector of length n_state).}
 
 \item{n_starts}{The number of random starts that should be used
-(in addition to the one mclust start).}
+(in addition to one mclust start).}
 
 \item{n_initial_ite}{The number of initial iterations for the best starts.}
 
@@ -36,7 +33,7 @@ when parameters still change more than defined by the m_step_tolerance.}
 
 \item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations.}
 
-\item{max_iterations}{The maximum number of iterations.}
+\item{max_iterations}{The maximum number of iterations (has to be larger than n_initial_ite).}
 }
 \value{
 Returns the measurement model parameters, the proportional and

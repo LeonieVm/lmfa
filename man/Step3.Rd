@@ -4,7 +4,7 @@
 \alias{Step3}
 \title{Conducts step 3 from the three-step estimation of CT-LMFA.}
 \usage{
-Step3(input_file, interval_column, id_column, n_state, fitStep1Step2,
+Step3(input_file, interval_column = NULL, fitStep1Step2,
   transitionCovariates = NULL, initialCovariates = NULL,
   i.method = "BFGS", i.maxit = 10000, i.reltol = 1e-08, n_q = 10,
   n_initial_ite = 10, previousCov = FALSE)
@@ -14,11 +14,6 @@ Step3(input_file, interval_column, id_column, n_state, fitStep1Step2,
 (unequal intervals are automatically dealt with in the CT-LMM).}
 
 \item{interval_column}{The column number or name with intervals.}
-
-\item{id_column}{The column number or name with subject-id.}
-
-\item{n_state}{The number of states that should be estimated 
-(has to be a scalar).}
 
 \item{fitStep1Step2}{The output file created with Step1Step2().}
 
@@ -49,7 +44,6 @@ Conducts step 3 from the three-step estimation of CT-LMFA.
 step3Results <- Step3(input_file,
 interval_column,
 id_column,
-n_state,
 fitStep1Step2,
 transitionCovariates = NULL,
 initialCovariates = NULL,

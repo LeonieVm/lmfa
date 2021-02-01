@@ -19,8 +19,10 @@
 "_PACKAGE"
 
 .onAttach <- function(libname, pkgname) {
-    # Print a welcome message when the package is attached.
-    cat(rep("-", 47), "\n")
-    cat("`lmfa`: The R-package for exploring within-person changes and between person differences in measurement models in (intensive) longitudinal data.", "\n")
-    cat(rep("-", 47), "\n")
+  # Print a welcome message when the package is attached.
+  packageStartupMessage(rep("-", 60), "\n")
+  packageStartupMessage("`lmfa`: The R-package for exploring within-person changes", "\n") 
+  packageStartupMessage("and between person differences in measurement models in", "\n")
+  packageStartupMessage("(intensive) longitudinal data.", "\n")
+  packageStartupMessage(rep("-", 60), "\n")
 }

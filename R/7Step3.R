@@ -8,7 +8,6 @@
 #' @param input_file The dataset. Should contain complete cases only 
 #' (unequal intervals are automatically dealt with in the CT-LMM).
 #' @param interval_column The column number or name with intervals.
-#' @param id_column The column number or name with subject-id.
 #' @param fitStep1Step2 The output file created with Step1Step2().
 #' @param transitionCovariates Vector with covariates for the transition intensities.
 #' @param initialCovariates Vector with covariates for the initial state probabilities.

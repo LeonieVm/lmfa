@@ -5,22 +5,20 @@
 #'
 #'
 #'
-#' @param input_file The dataset. Should contain complete cases only
-#' (unequal intervals are automatically dealt with in the CT-LMM in step 3).
-#' @param variable_columns The column numbers with variables or variable names.
-#' @param id_column The column number or name with subject-id.
-#' @param n_state The number of states that should be estimated
-#' (has to be a scalar).
+#' @param input_file The dataset (must be a dataframe and contain complete cases only).
+#' @param variable_columns The variable names of the indicators (must be a character).
+#' @param id_column The name with subject identifiers (must be a character).
+#' @param n_state The number of states that should be estimated (must be a single scalar).
 #' @param n_fact The number of factors per state that should be estimated
-#' (has to be a vector of length n_state).
+#' (must be a numeric vector of length n_state).
 #' @param n_starts The number of random starts that should be used
-#' (in addition to the one mclust start).
+#' (in addition to one mclust start).
 #' @param n_initial_ite The number of initial iterations for the best starts.
 #' @param n_m_step The number of M-step iterations that should be used
 #' when parameters still change more than defined by the m_step_tolerance.
 #' @param em_tolerance The convergence criterion for parameters and loglikelihood.
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations.
-#' @param max_iterations The maximum number of iterations.
+#' @param max_iterations The maximum number of iterations (has to be larger than n_initial_ite).
 #
 #'
 #' @return Returns the measurement model parameters, the proportional and
@@ -37,21 +35,22 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
                        n_fact,n_starts=5,n_initial_ite=15,n_m_step=15,
                        em_tolerance=1e-4,m_step_tolerance=1e-3,max_iterations=500){
 
-  # source("1InitializeEM.R",local = TRUE)
-  # source("2UpdatePosteriorProb.R",local = TRUE)
-  # source("3ComputeBeta.R",local = TRUE)
-  # source("4ComputeTheta.R",local = TRUE)
-  # source("5UpdateLoadingUnique.R",local = TRUE)
-  # source("6ComputeResponseprobSaveDMV.R",local = TRUE)
   if(missing(input_file)) stop("argument input_file is missing, with no default")
   if(missing(variable_columns)) stop("argument variable_columns is missing, with no default")
   if(missing(id_column)) stop("argument id_column is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
   if(missing(n_fact)) stop("argument n_fact is missing, with no default")
 
-  if(length(n_fact)!=n_state) stop("vector n_fact must be of length n_state")
+  if(!is.data.frame(input_file)) stop("input_file must be a dataframe")
+  if(!is.character(variable_columns)) stop("variable_columns must be a vector of characters")
+  if(!is.character(id_column)) stop("id_column must be a single character")
+  if(length(id_column)>1) stop("id_column must be a single character")
+  if(!is.numeric(n_state)) stop("n_state must be a single scalar")
+  if(length(n_state)>1) stop("n_state must be a single scalar")
+  if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
+  if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
 
-  if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("dataset contains missing values on one or more of the variable columns")
+  if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("dataset must contain complete cases with regard to the indicators only")
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
 
   ptm <- proc.time()
@@ -311,6 +310,8 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   cores=detectCores()
   cl <- makeCluster(cores[1]-1) #not to overload your computer
   registerDoParallel(cl)
+  multistart2 <- NA #just because the CRAN check would otherwise 
+  # say that there is no visible binding for global variable 'multistart2'.
   cat("\n")
   cat(paste("2.Iterating through the best 10 %",
             "of the startsets..."))
