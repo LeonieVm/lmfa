@@ -44,6 +44,13 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   # source("4ComputeTheta.R",local = TRUE)
   # source("5UpdateLoadingUnique.R",local = TRUE)
   # source("6ComputeResponseprobSaveDMV.R",local = TRUE)
+  if(missing(input_file)) stop("argument input_file is missing, with no default")
+  if(missing(variable_columns)) stop("argument variable_columns is missing, with no default")
+  if(missing(id_column)) stop("argument id_column is missing, with no default")
+  if(missing(n_state)) stop("argument n_state is missing, with no default")
+  if(missing(n_fact)) stop("argument n_fact is missing, with no default")
+
+  if(length(n_fact)!=n_state) stop("vector n_fact must be of length n_state")
 
   ptm <- proc.time()
 
