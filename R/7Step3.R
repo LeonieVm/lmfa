@@ -59,7 +59,11 @@ Step3 <- function(input_file,
   #                                   Step 3
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
+  if(missing(input_file)) stop("argument input_file is missing, with no default")
+  if(missing(interval_column)) stop("argument interval_column is missing, with no default")
+  if(missing(id_column)) stop("argument id_column is missing, with no default")
+  if(missing(fitStep1Step2)) stop("argument fitStep1Step2 is missing, with no default")
+  if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("the data has not the same length as the data used in fitStep1Step2")
   ptm <- proc.time()
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
