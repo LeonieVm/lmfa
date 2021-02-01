@@ -573,6 +573,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   while(sum(abs(differenceLL)>em_tolerance,SumParameterChange>em_tolerance)==2){
     iteration <- iteration+1
     resultNumber <-resultNumber+1
+    if(iteration==max_iterations) stop("maximum number of iterations reached without convergence")
 
     #*******************************************************************************#
     # NOTE: In the following, I numbered the main 'update' steps,
