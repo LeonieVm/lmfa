@@ -6,19 +6,16 @@
 #'
 #'
 #' @param input_file The dataset (must be a dataframe and contain complete cases only).
-#' @param variable_columns The variable names of the indicators (must be a character).
-#' @param id_column The name with subject identifiers (must be a character).
+#' @param variable_columns The variable names of the indicators (must be a vector of characters).
+#' @param id_column The name with subject identifiers (must be a single character).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
-#' @param n_fact The number of factors per state that should be estimated
-#' (must be a numeric vector of length n_state).
-#' @param n_starts The number of random starts that should be used
-#' (in addition to one mclust start).
-#' @param n_initial_ite The number of initial iterations for the best starts.
-#' @param n_m_step The number of M-step iterations that should be used
-#' when parameters still change more than defined by the m_step_tolerance.
-#' @param em_tolerance The convergence criterion for parameters and loglikelihood.
-#' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations.
-#' @param max_iterations The maximum number of iterations (has to be larger than n_initial_ite).
+#' @param n_fact The number of factors per state that should be estimated (must be a numeric vector of length n_state).
+#' @param n_starts The number of random starts that should be used (must be a single scalar).
+#' @param n_initial_ite The number of initial iterations for the best starts (must be a single scalar).
+#' @param n_m_step The number of M-step iterations that should be used when parameters still change more than defined by the m_step_tolerance (must be a single scalar).
+#' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and larger than m_step_tolerance).
+#' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
+#' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
 #
 #'
 #' @return Returns the measurement model parameters, the proportional and
@@ -50,8 +47,20 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
   if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
 
-  if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("dataset must contain complete cases with regard to the indicators only")
+  if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
+  if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
+  if(!is.numeric(n_m_step)) stop("n_m_step must be a single scalar")
+  if(length(n_m_step)>1) stop("n_m_step must be a single scalar")
+  if(!is.numeric(em_tolerance)) stop("em_tolerance must be a single scalar")
+  if(length(em_tolerance)>1) stop("em_tolerance must be a single scalar")
+  if(!is.numeric(m_step_tolerance)) stop("m_step_tolerance must be a single scalar")
+  if(length(m_step_tolerance)>1) stop("m_step_tolerance must be a single scalar")
+  if(!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
+  if(length(max_iterations)>1) stop("max_iterations must be a single scalar")
+
+  if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("input_file must contain complete cases with regard to the indicators only")
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
+  if(em_tolerance <= m_step_tolerance) stop("em_tolerance must be larger than m_step_tolerance")
 
   ptm <- proc.time()
 

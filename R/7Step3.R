@@ -5,18 +5,17 @@
 #'
 #'
 #'
-#' @param input_file The dataset. Should contain complete cases only 
-#' (unequal intervals are automatically dealt with in the CT-LMM).
-#' @param interval_column The column number or name with intervals.
+#' @param input_file The dataset (must be a dataframe and and of same length as the input_file used in fitStep1Step2).
+#' @param interval_column The column name with intervals (must be a single character).
 #' @param fitStep1Step2 The output file created with Step1Step2().
-#' @param transitionCovariates Vector with covariates for the transition intensities.
-#' @param initialCovariates Vector with covariates for the initial state probabilities.
-#' @param i.method The type of optimization method that should be used.
-#' @param i.maxit The maximum number of iterations that should be used.
-#' @param i.reltol The tolerance to evaluate convergend that should be used.
-#' @param n_q The number of start values for the transition intensity parameters that should be used.
-#' @param n_initial_ite The number of initial iterations for the different start sets that should be used.
-#' @param previousCov Indicates whether the covariate at t or t-1 should be used.
+#' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).
+#' @param initialCovariates The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).
+#' @param i.method The type of optimization method that should be used (must be "BFGS" or "CG")
+#' @param i.maxit The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
+#' @param i.reltol The tolerance to evaluate convergend that should be used (must be a single scalar).
+#' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
+#' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
+#' @param previousCov Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
 #
 #'
 #' @return Returns .
@@ -41,9 +40,8 @@
 
 
 Step3 <- function(input_file,
-                  interval_column = NULL,
-                  #id_column,
                   fitStep1Step2,
+                  interval_column = NULL,
                   transitionCovariates = NULL,
                   initialCovariates = NULL,
                   i.method = "BFGS",
@@ -59,10 +57,29 @@ Step3 <- function(input_file,
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   if(missing(input_file)) stop("argument input_file is missing, with no default")
-  #if(missing(interval_column)) stop("argument interval_column is missing, with no default")
-  #if(missing(id_column)) stop("argument id_column is missing, with no default")
   if(missing(fitStep1Step2)) stop("argument fitStep1Step2 is missing, with no default")
-  if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("the data has not the same length as the data used in fitStep1Step2")
+  if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("input_file must have the same length as the input_file used in fitStep1Step2")
+  if(!is.data.frame(input_file)) stop("input_file must be a dataframe")
+  if(!is.null(transitionCovariates)) if(!is.character(transitionCovariates)) stop("transitionCovariates must be a (vector of) character(s)")
+  if(!is.null(initialCovariates)) if(!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
+  if(sum(transitionCovariates %in% names(input_file)) != length(transitionCovariates)) stop("all covariates in transitionCovariates must exist in input_file")
+  if(sum(initialCovariates %in% names(input_file)) != length(initialCovariates)) stop("all covariates in initialCovariates must exist in input_file")
+  if(i.method != "BFGS") if(i.method != "CG") stop('i.method must be "BFGS" or "CG"')
+  if(!is.numeric(i.maxit)) stop("i.maxit must be a single scalar")
+  if(length(i.maxit)>1) stop("i.maxit must be a single scalar")
+  if(!is.numeric(i.reltol)) stop("i.reltol must be a single scalar")
+  if(length(i.reltol)>1) stop("i.reltol must be a single scalar")
+  if(!is.numeric(n_q)) stop("n_q must be a single scalar")
+  if(length(n_q)>1) stop("n_q must be a single scalar")
+  if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
+  if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
+  if(!is.logical(previousCov)) stop("previousCov must be a single logical statement")
+  if(length(previousCov)>1) stop("previousCov must be a single logical statement")
+
+
+  if(i.maxit <= n_initial_ite) stop("i.maxit must be larger than n_initial_ite")
+  # just a warning for non-specified interval column
+  if(is.null(interval_column)) warning("intervals are assumed to be equidistant because no interval_column has been specified")
   ptm <- proc.time()
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
