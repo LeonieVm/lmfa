@@ -13,6 +13,7 @@
 #' @import parallel
 #' @import msm
 #' @import expm
+#' @import NPflow 
 #' @docType package
 #'
 #' @name lmfa
