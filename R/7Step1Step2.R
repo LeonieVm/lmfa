@@ -757,6 +757,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   BIC_N <- -2*LL + R_T *log(n_cases)
   BIC_T <- -2*LL + R_T *log(n_sub)
 
+
   cat("\n")
   requiredTime <- as.numeric((proc.time() - ptm)[3])
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -789,7 +790,18 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
   W_mod <-ModalClassificationTable/rowSums(ModalClassificationTable)
   
-
+  #-------------------------------------------------------------------------------#
+  # Obtain R-squared entropy.
+  #-------------------------------------------------------------------------------#
+  entropy <- function(p) sum(-p * log(p))
+  for(i in 1:n_state){
+    probVector[i] <- pi_k[[i]]
+  }
+  error_prior <- entropy(probVector) # Class proportions
+  posteriors <-  Posteriors[,-1] #just for internal usage
+  posteriors[(posteriors==0)] <- 1e-21
+  error_post <- mean(apply(posteriors, 1, entropy))
+  R2_entropy <- (error_prior - error_post) / error_prior
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                    Return Step 1 and Step 2 Results
@@ -800,7 +812,8 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
              classification_posterior=Posteriors,
              classification_errors=ModalClassificationTable,
              classification_errors_prob=W_mod,
-             act.contraints=estimation[iteration,3]))
+             act.contraints=estimation[iteration,3]),
+             R2_entropy=R2_entropy)
   if(iteration<max_iterations){
     cat("\n")
     cat(paste("Estimation converged after",iteration,"iterations."))
@@ -830,5 +843,6 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
               classification_errors_prob=W_mod,
               iterations=iteration,
               act.contraints=estimation[iteration,3],
+              R2_entropy=R2_entropy,
               seconds=requiredTime))
 }
