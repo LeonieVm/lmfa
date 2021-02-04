@@ -4,34 +4,42 @@
 \alias{Step3}
 \title{Conducts step 3 from the three-step estimation of CT-LMFA.}
 \usage{
-Step3(input_file, interval_column = NULL, fitStep1Step2,
-  transitionCovariates = NULL, initialCovariates = NULL,
-  i.method = "BFGS", i.maxit = 10000, i.reltol = 1e-08, n_q = 10,
-  n_initial_ite = 10, previousCov = FALSE)
+Step3(
+  input_file,
+  fitStep1Step2,
+  interval_column = NULL,
+  transitionCovariates = NULL,
+  initialCovariates = NULL,
+  i.method = "BFGS",
+  i.maxit = 10000,
+  i.reltol = 1e-08,
+  n_q = 10,
+  n_initial_ite = 10,
+  previousCov = FALSE
+)
 }
 \arguments{
-\item{input_file}{The dataset. Should contain complete cases only 
-(unequal intervals are automatically dealt with in the CT-LMM).}
-
-\item{interval_column}{The column number or name with intervals.}
+\item{input_file}{The dataset (must be a dataframe and and of same length as the input_file used in fitStep1Step2).}
 
 \item{fitStep1Step2}{The output file created with Step1Step2().}
 
-\item{transitionCovariates}{Vector with covariates for the transition intensities.}
+\item{interval_column}{The column name with intervals (must be a single character).}
 
-\item{initialCovariates}{Vector with covariates for the initial state probabilities.}
+\item{transitionCovariates}{The covariate(s) for the transition intensities (must be a (vector of) character(s)).}
 
-\item{i.method}{The type of optimization method that should be used.}
+\item{initialCovariates}{The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).}
 
-\item{i.maxit}{The maximum number of iterations that should be used.}
+\item{i.method}{The type of optimization method that should be used (must be "BFGS" or "CG")}
 
-\item{i.reltol}{The tolerance to evaluate convergend that should be used.}
+\item{i.maxit}{The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).}
 
-\item{n_q}{The number of start values for the transition intensity parameters that should be used.}
+\item{i.reltol}{The tolerance to evaluate convergend that should be used (must be a single scalar).}
 
-\item{n_initial_ite}{The number of initial iterations for the different start sets that should be used.}
+\item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
-\item{previousCov}{Indicates whether the covariate at t or t-1 should be used.}
+\item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
+
+\item{previousCov}{Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).}
 }
 \value{
 Returns .

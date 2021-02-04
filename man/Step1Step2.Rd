@@ -4,36 +4,42 @@
 \alias{Step1Step2}
 \title{Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.}
 \usage{
-Step1Step2(input_file, variable_columns, id_column, n_state, n_fact,
-  n_starts = 5, n_initial_ite = 15, n_m_step = 15,
-  em_tolerance = 1e-04, m_step_tolerance = 0.001,
-  max_iterations = 500)
+Step1Step2(
+  input_file,
+  variable_columns,
+  id_column,
+  n_state,
+  n_fact,
+  n_starts = 5,
+  n_initial_ite = 15,
+  n_m_step = 15,
+  em_tolerance = 1e-04,
+  m_step_tolerance = 0.001,
+  max_iterations = 500
+)
 }
 \arguments{
 \item{input_file}{The dataset (must be a dataframe and contain complete cases only).}
 
-\item{variable_columns}{The variable names of the indicators (must be a character).}
+\item{variable_columns}{The variable names of the indicators (must be a vector of characters).}
 
-\item{id_column}{The name with subject identifiers (must be a character).}
+\item{id_column}{The name with subject identifiers (must be a single character).}
 
 \item{n_state}{The number of states that should be estimated (must be a single scalar).}
 
-\item{n_fact}{The number of factors per state that should be estimated
-(must be a numeric vector of length n_state).}
+\item{n_fact}{The number of factors per state that should be estimated (must be a numeric vector of length n_state).}
 
-\item{n_starts}{The number of random starts that should be used
-(in addition to one mclust start).}
+\item{n_starts}{The number of random starts that should be used (must be a single scalar).}
 
-\item{n_initial_ite}{The number of initial iterations for the best starts.}
+\item{n_initial_ite}{The number of initial iterations for the best starts (must be a single scalar).}
 
-\item{n_m_step}{The number of M-step iterations that should be used
-when parameters still change more than defined by the m_step_tolerance.}
+\item{n_m_step}{The number of M-step iterations that should be used when parameters still change more than defined by the m_step_tolerance (must be a single scalar).}
 
-\item{em_tolerance}{The convergence criterion for parameters and loglikelihood.}
+\item{em_tolerance}{The convergence criterion for parameters and loglikelihood (must be a single scalar and larger than m_step_tolerance).}
 
-\item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations.}
+\item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations (must be a single scalar).}
 
-\item{max_iterations}{The maximum number of iterations (has to be larger than n_initial_ite).}
+\item{max_iterations}{The maximum number of iterations (must be a single scalar and larger than n_initial_ite).}
 }
 \value{
 Returns the measurement model parameters, the proportional and

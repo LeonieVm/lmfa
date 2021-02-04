@@ -17,6 +17,6 @@ You can add multiple sections.
 }
 
 \author{
-\strong{Maintainer}: Leonie Vogelsmeier \email{l.v.d.e.vogelsmeier@uvt.nl} (YOUR-ORCID-ID)
+\strong{Maintainer}: Leonie Vogelsmeier \email{l.v.d.e.vogelsmeier@uvt.nl} (\href{https://orcid.org/YOUR-ORCID-ID}{ORCID})
 
 }

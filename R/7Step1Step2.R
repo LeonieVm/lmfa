@@ -13,7 +13,7 @@
 #' @param n_starts The number of random starts that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the best starts (must be a single scalar).
 #' @param n_m_step The number of M-step iterations that should be used when parameters still change more than defined by the m_step_tolerance (must be a single scalar).
-#' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and larger than m_step_tolerance).
+#' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
 #
@@ -60,7 +60,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
   if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("input_file must contain complete cases with regard to the indicators only")
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
-  if(em_tolerance <= m_step_tolerance) stop("em_tolerance must be larger than m_step_tolerance")
+  if(em_tolerance >= m_step_tolerance) stop("em_tolerance must be smaller than m_step_tolerance")
 
   ptm <- proc.time()
 
