@@ -265,12 +265,11 @@ Step3 <- function(input_file,
   
   bestloglik <- list()
   q_bestloglik <- list()
-  e <- environment()
+  id_column<<-id_column #is it problematic to add something to the global environment if I also remove it from inside the function again?
   for(i in 1:n_q){
     step3Results <-  suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
-    #subject = get(noquote(paste(colnames(e$INP)))), 
-    subject=get(noquote(id)),
+    subject = get(noquote(id_column)),
     data = as.data.frame(newData),
     qmatrix = initialQm[[i]],
     ematrix = W_mod,
@@ -296,7 +295,7 @@ Step3 <- function(input_file,
 
   step3Results <-suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(id)), 
+    subject = get(noquote(id_column)), 
     data = as.data.frame(newData),
     qmatrix = Qm,
     ematrix = W_mod,
@@ -308,7 +307,12 @@ Step3 <- function(input_file,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
                     
-  
+#Is the following problematic  
+CleanEnvir <- function(x) {rm(list=deparse(substitute(x)),envir=.GlobalEnv)}
+CleanEnvir(id_column)
+
+
+
   requiredTime <- as.numeric((proc.time() - ptm)[3])
   eigenvalues <- eigen(step3Results$paramdata$opt$hessian, only.values = TRUE)$values
   n_eig <- nrow(step3Results$paramdata$opt$hessian)
