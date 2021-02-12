@@ -795,6 +795,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   #-------------------------------------------------------------------------------#
   # Obtain R-squared entropy.
   #-------------------------------------------------------------------------------#
+  probVector <-c(NA)
   entropy <- function(p) sum(-p * log(p))
   for(i in 1:n_state){
     probVector[i] <- pi_k[[i]]

@@ -35,7 +35,7 @@ Step1Step2(
 
 \item{n_m_step}{The number of M-step iterations that should be used when parameters still change more than defined by the m_step_tolerance (must be a single scalar).}
 
-\item{em_tolerance}{The convergence criterion for parameters and loglikelihood (must be a single scalar and larger than m_step_tolerance).}
+\item{em_tolerance}{The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).}
 
 \item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations (must be a single scalar).}
 

@@ -6,7 +6,9 @@
 \usage{
 Step3(
   input_file,
-  fitStep1Step2,
+  id_column,
+  n_state,
+  post.probabilities,
   interval_column = NULL,
   transitionCovariates = NULL,
   initialCovariates = NULL,
@@ -19,9 +21,13 @@ Step3(
 )
 }
 \arguments{
-\item{input_file}{The dataset (must be a dataframe and and of same length as the input_file used in fitStep1Step2).}
+\item{input_file}{The dataset (must be a dataframe).}
 
-\item{fitStep1Step2}{The output file created with Step1Step2().}
+\item{id_column}{The name with subject identifiers (must be a single character).}
+
+\item{n_state}{The number of states that should be estimated (must be a single scalar).}
+
+\item{post.probabilities}{The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the input_file).}
 
 \item{interval_column}{The column name with intervals (must be a single character).}
 

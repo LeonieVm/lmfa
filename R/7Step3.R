@@ -5,9 +5,11 @@
 #'
 #'
 #'
-#' @param input_file The dataset (must be a dataframe and and of same length as the input_file used in fitStep1Step2).
+#' @param input_file The dataset (must be a dataframe).
 #' @param interval_column The column name with intervals (must be a single character).
-#' @param fitStep1Step2 The output file created with Step1Step2().
+#' @param id_column The name with subject identifiers (must be a single character).
+#' @param n_state The number of states that should be estimated (must be a single scalar).
+#' @param post.probabilities The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the input_file).
 #' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).
 #' @param initialCovariates The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).
 #' @param i.method The type of optimization method that should be used (must be "BFGS" or "CG")
@@ -40,7 +42,9 @@
 
 
 Step3 <- function(input_file,
-                  fitStep1Step2,
+                  id_column,
+                  n_state,
+                  post.probabilities,
                   interval_column = NULL,
                   transitionCovariates = NULL,
                   initialCovariates = NULL,
@@ -57,8 +61,12 @@ Step3 <- function(input_file,
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   if(missing(input_file)) stop("argument input_file is missing, with no default")
-  if(missing(fitStep1Step2)) stop("argument fitStep1Step2 is missing, with no default")
-  if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("input_file must have the same length as the input_file used in fitStep1Step2")
+  if(missing(id_column)) stop("argument id_column is missing, with no default")
+  if(missing(n_state)) stop("argument n_state is missing, with no default")
+  if(missing(post.probabilities)) stop("argument post.probabilities is missing, with no default")
+  #if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("input_file must have the same length as the input_file used in fitStep1Step2")
+  if(nrow(post.probabilities)!=nrow(input_file)) stop("post.probabilities must have the same length as input_file")
+  if(ncol(post.probabilities)!=n_state) stop("the number of columns of post.probabilities must be of length n_state")
   if(!is.data.frame(input_file)) stop("input_file must be a dataframe")
   if(!is.null(transitionCovariates)) if(!is.character(transitionCovariates)) stop("transitionCovariates must be a (vector of) character(s)")
   if(!is.null(initialCovariates)) if(!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
@@ -76,20 +84,20 @@ Step3 <- function(input_file,
   if(!is.logical(previousCov)) stop("previousCov must be a single logical statement")
   if(length(previousCov)>1) stop("previousCov must be a single logical statement")
 
-
+  
   if(i.maxit <= n_initial_ite) stop("i.maxit must be larger than n_initial_ite")
   # just a warning for non-specified interval column
   if(is.null(interval_column)) warning("intervals are assumed to be equidistant because no interval_column has been specified")
   ptm <- proc.time()
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  # Obtain all necessary elements (from user input orr from step 1 and 2).
+  # Obtain all necessary elements (from user input or from step 1 and 2).
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   
   # Obtain the time_column from interval_column
-  id_column <- fitStep1Step2$id_column
+  #id_column <- fitStep1Step2$id_column
   n_cases <- length(unlist(unique(input_file[,id_column])))
-  n_state <- dim(fitStep1Step2$classification_errors_prob)[1]
+  #n_state <- ncol(post.probabilities)
  
   
   newData <- c()
@@ -114,11 +122,28 @@ Step3 <- function(input_file,
   # Define the time_column.
   time_column <- "time"
 
+
+# Obtain the modal state assignments.
+  modal_data <- max.col(post.probabilities)
+
+  Posteriors <-cbind.data.frame(modal_data,post.probabilities)
+  colnames(Posteriors) <- c("Modal", paste("State",1:n_state,sep=""))
+
+  ModalClassificationTable <- matrix(NA,ncol=n_state,nrow=n_state)
+  for(i in 1:n_state){
+    for(j in 1:n_state){
+      ModalClassificationTable[j,i] <- sum((Posteriors[Posteriors$Modal==i,j+1]))
+    }
+  }
+
+  # Calculate probabilities based on counts.
+  W_mod <-ModalClassificationTable/rowSums(ModalClassificationTable)
+
   # Add the classification from step 1 and 2 to the internally-used dataset.
-  newData$State <- c(fitStep1Step2$classification_posterior[,"Modal"])
+  newData$State <- c(Posteriors[,"Modal"])
 
   # Get the classification from step 1 and 2.
-  W_mod <-  fitStep1Step2$classification_errors_prob
+  #W_mod <-  fitStep1Step2$classification_errors_prob
   
   if(sum(W_mod<1e-7)>0){
     W_mod[which(W_mod<1e-7)] <- 1e-7
@@ -128,7 +153,7 @@ Step3 <- function(input_file,
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Fixing the right parameters
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  
+
   # Define the positions that have to be fixed to equal the entries of the 
   # responseprobabilities in W_mod. Because we work with probabilities that
   # sum to 1, not all n_state*n_state probabilities are fixed but only
@@ -237,25 +262,25 @@ Step3 <- function(input_file,
   # Do n_initial_ite iterations and store the transition intensities
   # We briefly put-off the warnings because there will be one if the
   # model does not converge (and it won't with so few iterations).
-  INP <- matrix(NA)
-  colnames(INP) <-id_column
+  
   bestloglik <- list()
   q_bestloglik <- list()
+  e <- environment()
   for(i in 1:n_q){
-    step3Results <-  suppressWarnings(
-      msm(as.formula(
-        paste("State", "~",time_column, sep="")), 
-        subject = get(noquote(paste(colnames(INP)))), 
-        data = as.data.frame(newData),
-        qmatrix = initialQm[[i]],
-        ematrix = W_mod,
-        est.initprobs=TRUE,
-        hessian = TRUE,
-        fixedpars = c(fixed_responseprobabilities)+additionalCounts,
-        method  = i.method,
-        control=list(maxit = n_initial_ite,reltol = i.reltol),
-        covariates = defineCovariates,
-        initcovariates = defineInitialCovariates))
+    step3Results <-  suppressWarnings(msm(
+    as.formula(paste("State", "~",time_column, sep="")), 
+    #subject = get(noquote(paste(colnames(e$INP)))), 
+    subject=get(noquote(id)),
+    data = as.data.frame(newData),
+    qmatrix = initialQm[[i]],
+    ematrix = W_mod,
+    est.initprobs=TRUE,
+    hessian = TRUE,
+    fixedpars = c(fixed_responseprobabilities)+additionalCounts,
+    method  = i.method,
+    control=list(maxit = n_initial_ite,reltol = i.reltol),
+    covariates = defineCovariates,
+    initcovariates = defineInitialCovariates))
                                           
     q_bestloglik[[i]] <-step3Results$Qmatrices$baseline
     bestloglik[[i]] <-step3Results$minus2loglik*-2
@@ -264,14 +289,14 @@ Step3 <- function(input_file,
   # Consider the transition intensities from the best start set.
   Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
  
-  
+   print("test1")
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Final Analysis with best startset.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
   step3Results <-suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(paste(colnames(INP)))), 
+    subject = get(noquote(id)), 
     data = as.data.frame(newData),
     qmatrix = Qm,
     ematrix = W_mod,
@@ -295,7 +320,7 @@ Step3 <- function(input_file,
   if(any(eigenvalues<=0)){
     warning("Optimisation has probably not converged to the maximum likelihood - Hessian is not positive definite.")
   }
-
+ 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Extracting the results
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
