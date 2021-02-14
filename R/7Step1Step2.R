@@ -581,10 +581,11 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
   LLcorrect <- TRUE
 
-  while(sum(abs(differenceLL)>em_tolerance,SumParameterChange>em_tolerance)==2){
+  while((sum(abs(differenceLL)>em_tolerance,SumParameterChange>em_tolerance)==2)|
+  iteration < max_iterations){
     iteration <- iteration+1
     resultNumber <-resultNumber+1
-    if(iteration==max_iterations) stop("maximum number of iterations reached without convergence")
+    #if(iteration==max_iterations) stop("maximum number of iterations reached without convergence")
 
     #*******************************************************************************#
     # NOTE: In the following, I numbered the main 'update' steps,
@@ -739,6 +740,12 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
     AllResultsBestSet[[resultNumber]] <-AllParameters
 
   }
+
+  #
+  if(iteration == max_iterations){
+     warning("maximum number of iterations reached without convergence")
+  }
+  
   #-------------------------------------------------------------------------------#
   # Obtain the BIC values.
   #-------------------------------------------------------------------------------#
