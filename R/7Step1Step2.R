@@ -581,8 +581,8 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
   LLcorrect <- TRUE
 
-  while((sum(abs(differenceLL)>em_tolerance,SumParameterChange>em_tolerance)==2)|
-  iteration < max_iterations){
+  while((sum(abs(differenceLL)>em_tolerance,SumParameterChange>em_tolerance,
+  iteration < max_iterations)==3)){
     iteration <- iteration+1
     resultNumber <-resultNumber+1
     #if(iteration==max_iterations) stop("maximum number of iterations reached without convergence")
@@ -812,6 +812,62 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   posteriors[(posteriors==0)] <- 1e-21
   error_post <- mean(apply(posteriors, 1, entropy))
   R2_entropy <- (error_prior - error_post) / error_prior
+
+  #-------------------------------------------------------------------------------#
+  # Obtain standardized loadings.
+  #-------------------------------------------------------------------------------#
+  x$State <- Posteriors[,1]
+  #get items' standard deviation per state
+  SDList <- list()
+  for(i in 1:n_state){
+    SDMatrix <- matrix(NA,J)
+    rownames(SDMatrix) <- variable_columns
+    for(item in 1:J){
+      SDMatrix[item,]<- sd(unlist(input[x$State==i,variable_columns[item]]),na.rm = T)
+    }
+    SDList[[i]] <- SDMatrix
+  }
+
+  #get items' standard deviation across states
+  SDList2 <- list()
+  for(i in 1:n_state){
+    SDMatrix <- matrix(NA,J)
+    rownames(SDMatrix) <- variable_columns
+    for(item in 1:J){
+      SDMatrix[item,]<- sd(unlist(x[,variable_columns[item]]),na.rm = T)
+    }
+    SDList2[[i]] <- SDMatrix
+  }
+
+  #standardize loadings per state for better within-state comparison
+  standLambda <- Lambda_k
+  for(i in 1:n_state){
+    for(fact in 1:n_fact[i]){
+      if(diag(SDList[[i]])!=0){
+        standLambda[[i]][,fact] <- Lambda_k[[i]][,fact]%*%solve(diag(SDList[[i]])) 
+      }else{
+        standLambda[[i]][,fact] <- Lambda_k[[i]][,fact]
+      }
+    }
+  }
+
+  #standardize loadings across states for better between-state comparison
+  standLambda2 <- Lambda_k
+  for(i in 1:n_state){
+    for(fact in 1:n_fact[i]){
+      if(diag(SDList[[i]])!=0){
+        standLambda2[[i]][,fact] <- Lambda_k[[i]][,fact]%*%solve(diag(SDList2[[i]])) 
+      }else{
+        standLambda2[[i]][,fact] <- Lambda_k[[i]][,fact]
+      }
+    }
+  }
+
+
+  #-------------------------------------------------------------------------------#
+  # Obtain explained variance per state and in total.
+  #-------------------------------------------------------------------------------#
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                    Return Step 1 and Step 2 Results
@@ -846,7 +902,9 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
               number_of_parameters=R_T,
               pi_k=pi_k,
               mu_k=mu_k,
-              Lambda_k=Lambda_k,
+              Lambda_k=round(Lambda_k,12),
+              Lambda_k_st_w=round(standLambda,12),
+              Lambda_k_st_b=round(standLambda2,12),
               Psi_k=Psi_k,
               classification_posterior=Posteriors,
               classification_errors=ModalClassificationTable,
