@@ -843,17 +843,6 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   standLambda <- Lambda_k
   for(i in 1:n_state){
     for(fact in 1:n_fact[i]){
-      if(diag(SDList[[i]])!=0){
-        standLambda[[i]][,fact] <- Lambda_k[[i]][,fact]%*%solve(diag(SDList[[i]])) 
-      }else{
-        standLambda[[i]][,fact] <- Lambda_k[[i]][,fact]
-      }
-    }
-  }
-
-  standLambda <- Lambda_k
-  for(i in 1:n_state){
-    for(fact in 1:n_fact[i]){
       for(j in 1:J){
         if(SDList[[i]][j]!=0){
           standLambda[[i]][j,fact] <- Lambda_k[[i]][j,fact]/SDList[[i]][j] 
@@ -863,17 +852,6 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   }
 
   #standardize loadings across states for better between-state comparison
-  standLambda2 <- Lambda_k
-  for(i in 1:n_state){
-    for(fact in 1:n_fact[i]){
-      if(diag(SDList2[[i]])!=0){
-        standLambda2[[i]][,fact] <- Lambda_k[[i]][,fact]%*%solve(diag(SDList2[[i]])) 
-      }else{
-        standLambda2[[i]][,fact] <- Lambda_k[[i]][,fact]
-      }
-    }
-  }
-
   standLambda2 <- Lambda_k
   for(i in 1:n_state){
     for(fact in 1:n_fact[i]){
@@ -912,6 +890,18 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
   #-------------------------------------------------------------------------------#
+  #sum of squared loadings per state
+  SSL_l_k <- lapply(standLambda, function(x) sum(x^2))
+  Percent_expl_var_k <- lapply(SSL_l_k, function(x) x/J)
+  #weighted by state proportion
+  Percent_expl_var_k_w <- mapply('*',Percent_expl_var_k, pi_k)
+  #total explained variance
+  Percent_expl_var <- Reduce("+", Percent_expl_var_k_w)
+
+  #Number of variances that are equal to zero
+  NumberZeroVariance <- Reduce("+",lapply(SDList,function(x) sum(x^2==0)))
+
+  if(NumberZeroVariance>0) warning("one or more states contain zero item variences and therefore, the explained variance per state is not interpretable")
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
@@ -953,6 +943,9 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
               Psi_k=lapply(Psi_k,round,16),
               Psi_k_st_w=lapply(standPsi,round,16),
               Psi_k_st_b=lapply(standPsi2,round,16),
+              explained_var=Percent_expl_var,
+              standard_dev_k=SDList,
+              standard_dev=SDList2,
               classification_posterior=Posteriors,
               classification_errors=ModalClassificationTable,
               classification_errors_prob=W_mod,
