@@ -814,7 +814,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   R2_entropy <- (error_prior - error_post) / error_prior
 
   #-------------------------------------------------------------------------------#
-  # Obtain standardized loadings.
+  # Obtain standardized loadings and proportions of unique variances.
   #-------------------------------------------------------------------------------#
   x$State <- Posteriors[,1]
   #get items' standard deviation per state
@@ -851,16 +851,61 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
     }
   }
 
+  standLambda <- Lambda_k
+  for(i in 1:n_state){
+    for(fact in 1:n_fact[i]){
+      for(j in 1:J){
+        if(SDList[[i]][j]!=0){
+          standLambda[[i]][j,fact] <- Lambda_k[[i]][j,fact]/SDList[[i]][j] 
+        }
+      }
+    }
+  }
+
   #standardize loadings across states for better between-state comparison
   standLambda2 <- Lambda_k
   for(i in 1:n_state){
     for(fact in 1:n_fact[i]){
-      if(diag(SDList[[i]])!=0){
+      if(diag(SDList2[[i]])!=0){
         standLambda2[[i]][,fact] <- Lambda_k[[i]][,fact]%*%solve(diag(SDList2[[i]])) 
       }else{
         standLambda2[[i]][,fact] <- Lambda_k[[i]][,fact]
       }
     }
+  }
+
+  standLambda2 <- Lambda_k
+  for(i in 1:n_state){
+    for(fact in 1:n_fact[i]){
+      for(j in 1:J){
+        if(SDList2[[i]][j]!=0){
+          standLambda2[[i]][j,fact] <- Lambda_k[[i]][j,fact]/SDList2[[i]][j] 
+        }
+      }
+    }
+  }
+
+  uniqueVariances <- lapply(Psi_k,diag)
+  
+  #proportions of unique variance per state for better within-state comparison
+  standPsi <- uniqueVariances
+  for(i in 1:n_state){
+    for(j in 1:J){
+        if(SDList[[i]][j]!=0){
+          standPsi[[i]][j] <- uniqueVariances[[i]][j]/(SDList[[i]][j]^2) 
+        }
+      }
+  }
+
+  #proportions of unique variance across states for better between-state comparison
+  
+  standPsi2 <- uniqueVariances
+  for(i in 1:n_state){
+    for(j in 1:J){
+        if(SDList2[[i]][j]!=0){
+          standPsi2[[i]][j] <- uniqueVariances[[i]][j]/(SDList2[[i]][j]^2) 
+        }
+      }
   }
 
 
@@ -906,6 +951,8 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
               Lambda_k_st_w=lapply(standLambda,round,16),
               Lambda_k_st_b=lapply(standLambda2,round,16),
               Psi_k=lapply(Psi_k,round,16),
+              Psi_k_st_w=lapply(standPsi,round,16),
+              Psi_k_st_b=lapply(standPsi2,round,16),
               classification_posterior=Posteriors,
               classification_errors=ModalClassificationTable,
               classification_errors_prob=W_mod,
