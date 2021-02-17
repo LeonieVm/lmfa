@@ -51,6 +51,7 @@ Step3 <- function(input_file,
                   i.method = "BFGS",
                   i.maxit = 10000,
                   i.reltol = 1e-8,
+                  i.fnscale = 1,
                   n_q = 10,
                   n_initial_ite = 10,
                   previousCov = FALSE){
@@ -77,6 +78,7 @@ Step3 <- function(input_file,
   if(length(i.maxit)>1) stop("i.maxit must be a single scalar")
   if(!is.numeric(i.reltol)) stop("i.reltol must be a single scalar")
   if(length(i.reltol)>1) stop("i.reltol must be a single scalar")
+  if(!is.numeric(i.fnscale)) stop("i.fnscale must be a single scalar")
   if(!is.numeric(n_q)) stop("n_q must be a single scalar")
   if(length(n_q)>1) stop("n_q must be a single scalar")
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
@@ -277,7 +279,7 @@ Step3 <- function(input_file,
     hessian = TRUE,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
     method  = i.method,
-    control=list(maxit = n_initial_ite,reltol = i.reltol),
+    control=list(maxit = n_initial_ite,reltol = i.reltol,fnscale= i.fnscale),
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
                                           
@@ -303,7 +305,7 @@ Step3 <- function(input_file,
     hessian = TRUE,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
     method  = i.method,
-    control=list(maxit = i.maxit,reltol = i.reltol),
+    control=list(maxit = i.maxit,reltol = i.reltol,fnscale= i.fnscale),
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
                     
