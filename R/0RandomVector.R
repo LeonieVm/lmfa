@@ -1,5 +1,24 @@
-# This function was copied from the source files from the Surrogate Package
-# Wim Van der Elst, Ariel Alonso, & Geert Molenberghs.
+#' Uniform sampling of probabilities
+#'
+#' This function was copied from the source files from the Surrogate Package of Wim Van der Elst, Ariel Alonso, & Geert Molenberghs.
+#'
+#'
+#' @param a min.
+#' @param b max.
+#' @param s rows.
+#' @param m col
+#' @param Seed seed
+#'
+#'
+#' @return Returns vector of probabilities
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' }
+#' @noRd
+
+
 RandVec <- function(a=0, b=1, s=1, n=9, m=1,  Seed=sample(1:1000, size=1)) {    
   
   # This function is an R adaptation of a matlab program written by Roger Stafford 

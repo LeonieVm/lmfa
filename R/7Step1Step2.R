@@ -129,7 +129,8 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
                                   .packages=c("doParallel",
                                               "mclust",
                                               "NPflow"),
-                                  .export=c("initializeStep1",
+                                  .export=c("RandVec",
+                                            "initializeStep1",
                                             "updExpMem",
                                             "comBetas",
                                             "comTheta",
@@ -139,7 +140,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
     # Self-created function (see '1InitializeEM.R').
     InitialValues <- initializeStep1(x,n_sub,n_state,
-                                     n_fact,J,startval="random")#random;
+                                     n_fact,J,startval="random",RandVec=RandVec)#random;
 
     # Extract all parameters that are going to be updated in the EM algorithm.
     z_ik<- InitialValues$z_ik         #expected state-membership-probabilities

@@ -33,7 +33,7 @@
 #' @noRd
 
 
-initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random"){
+initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=RandVec){
   
   
  if(startval=="random"){
