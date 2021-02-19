@@ -38,8 +38,9 @@ initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random"){
   
  if(startval=="random"){
     #state-membership probabilities random
-    probVector<-runif(n_state,min = 0.1,max=1)
-    probVector<-probVector/sum(probVector)
+    #probVector<-runif(n_state,min = 0.1,max=1)
+    #probVector<-probVector/sum(probVector)
+    probVector <- t(RandVec(a=0.05, b=1, s=1, n=n_state, m=1)[[1]])
     ini_random <- sample(1:n_state,replace = T,
                          size = nrow(x),
                          prob = probVector)

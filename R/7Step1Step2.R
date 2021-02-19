@@ -29,8 +29,8 @@
 #' @export
 
 Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
-                       n_fact,n_starts=5,n_initial_ite=15,n_m_step=15,
-                       em_tolerance=1e-4,m_step_tolerance=1e-3,max_iterations=500){
+                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
+                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500){
 
   if(missing(input_file)) stop("argument input_file is missing, with no default")
   if(missing(variable_columns)) stop("argument variable_columns is missing, with no default")
