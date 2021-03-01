@@ -23,8 +23,9 @@
 #'
 #' @examples
 #' \dontrun{
-#' fitStep1Step2 <- Step1Step2(input_file,variable_columns,
-#' id_column,n_state,n_fact)
+#' fitStep1Step2 <- Step1Step2(input_file,variable_columns,id_column,n_state,
+#'                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
+#'                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
 #' }
 #' @export
 
