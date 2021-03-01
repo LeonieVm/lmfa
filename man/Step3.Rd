@@ -42,6 +42,8 @@ Step3(
 
 \item{i.reltol}{The tolerance to evaluate convergend that should be used (must be a single scalar).}
 
+\item{i.fnscale}{An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details).}
+
 \item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}

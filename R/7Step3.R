@@ -26,17 +26,19 @@
 #' @examples
 #' \dontrun{
 #' step3Results <- Step3(input_file,
-#' interval_column,
-#' id_column,
-#' fitStep1Step2,
-#' transitionCovariates = NULL,
-#' initialCovariates = NULL,
-#' i.method = "BFGS",
-#' i.maxit = 10000,
-#' i.reltol = 1e-8,
-#' n_q = 10,
-#' n_initial_ite = 10,
-#' previousCov = FALSE)
+#'                  id_column,
+#'                  n_state,
+#'                  post.probabilities,
+#'                  interval_column = NULL,
+#'                  transitionCovariates = NULL,
+#'                  initialCovariates = NULL,
+#'                  i.method = "BFGS",
+#'                  i.maxit = 10000,
+#'                  i.reltol = 1e-8,
+#'                  i.fnscale = 1,
+#'                  n_q = 10,
+#'                  n_initial_ite = 10,
+#'                  previousCov = FALSE)
 #' }
 #' @export
 
