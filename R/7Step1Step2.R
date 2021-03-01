@@ -124,12 +124,16 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   iteration <- 1
   SumParameterChange <- 100
 
+  ini_mclust <- Mclust(x, G =n_state,verbose=FALSE)
+  ini_mclust <- ini_mclust$classification
+
   if(n_starts>0){ #otherwise only mclust is used
     MultistartResults1 <- foreach(multistart=1: (n_starts*10),
                                   .packages=c("doParallel",
                                               "mclust",
                                               "NPflow"),
                                   .export=c("RandVec",
+                                            "ini_mclust",
                                             "initializeStep1",
                                             "updExpMem",
                                             "comBetas",
@@ -140,7 +144,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
     # Self-created function (see '1InitializeEM.R').
     InitialValues <- initializeStep1(x,n_sub,n_state,
-                                     n_fact,J,startval="random",RandVec=RandVec)#random;
+                                     n_fact,J,startval="MCrandom",RandVec=RandVec,ini_mclust=ini_mclust)#random;
 
     # Extract all parameters that are going to be updated in the EM algorithm.
     z_ik<- InitialValues$z_ik         #expected state-membership-probabilities
@@ -224,7 +228,9 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
   # Self-created function (see '1InitializeEM.R').
   InitialValues <- initializeStep1(x,n_sub,n_state,n_fact,
-                                   J,startval="mclust")#mclust;
+                                   J,startval="mclust",
+                                   RandVec=RandVec,
+                                   ini_mclust=ini_mclust)#mclust;
 
 
   # Extract all parameters that are going to be updated in the EM algorithm.

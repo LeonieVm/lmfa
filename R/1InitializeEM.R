@@ -9,7 +9,8 @@
 #' @param n_fact Number of factors for each state. Has to be a vector of length n_state.
 #' @param J Number of items.
 #' @param startval Indicating whether startvalues are based on random assignment or mclust.
-#'
+#' @param RandVec Function that needs to be passed to the foreach loop to obtain random uniform assignments.
+#' @param ini_mclust Initial mclust assignment that needs to be passed to the foreach loop to obtain start values.
 #'
 #' @return Returns list with all the state-specific initialized parameters.
 #'
@@ -33,7 +34,7 @@
 #' @noRd
 
 
-initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=RandVec){
+initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=RandVec,ini_mclust=ini_mclust){
   
   
  if(startval=="random"){
@@ -50,17 +51,22 @@ initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=R
     for(i in 1:n_state){ #fill list
       z_ik[[i]] <- ifelse(z_ik[[i]]==i,1,0) #give a probability of 1 to the assigned state
     }
-  }else{
+}else if(startval=="mclust"){ #mclust is done outside the loop and called here
     #state-membership probabilities with mclust; kxn_sub matrices; 
     #usually mclust is better! (see comment paper Jeroen 2011)
-    ini_mclust <- Mclust(x, G =n_state,verbose=FALSE)
-    
-    ini_mclust <-ini_mclust$classification
+    # ini_mclust <- Mclust(x, G =n_state,verbose=FALSE)
+    # ini_mclust <-ini_mclust$classification
     z_ik <- rep(list(ini_mclust),n_state) #empty list for posterior state probabilities (as start values)
     for(i in 1:n_state){ #fill list
       z_ik[[i]] <- ifelse(z_ik[[i]]==i,1,0) #give a probability of 1 to the assigned state
     }
+  }else{
+    ini_mclust[sample(1:n_sub,size = 0.10*n_sub)] <- sample(1:n_state,(0.1*n_sub),replace=TRUE)
     
+    z_ik <- rep(list(as.numeric(ini_mclust)),n_state) #empty list for posterior state probabilities (as start values)
+    for(i in 1:n_state){ #fill list
+      z_ik[[i]] <- ifelse(z_ik[[i]]==i,1,0) #give a probability of 1 to the assigned state
+    }
   }
   
 
