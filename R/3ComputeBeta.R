@@ -1,6 +1,5 @@
 #' Compute Regression coefficients Beta
 #'
-#' Regression coefficients needed to needed to compute the factor scores from the item scores.
 #'
 #'
 #'
@@ -11,10 +10,6 @@
 #'
 #' @return Returns the Beta coefficients.
 #'
-#' @examples
-#' \dontrun{
-#' Beta_k <- comBetas(Lambda_k, Psi_k, n_state,n_fact)
-#' }
 #' @noRd
 
 comBetas <- function(Lambda_k, Psi_k, n_state,n_fact){

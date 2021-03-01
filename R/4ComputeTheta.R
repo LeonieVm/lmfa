@@ -1,6 +1,5 @@
 #' Compute coefficients Theta
 #'
-#' Expectation of crossproduct of factor scores given the data.
 #'
 #'
 #' @param Beta_k Regression coefficients needed to needed to compute the factor scores from the item scores.
@@ -11,10 +10,6 @@
 #'
 #' @return Returns the Theta coefficients.
 #'
-#' @examples
-#' \dontrun{
-#' Theta_k <- comTheta(Beta_k, n_state, C_k, Lambda_k, n_fact)
-#' }
 #' @noRd
 
 

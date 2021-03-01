@@ -9,16 +9,11 @@
 #' @param n_fact Number of factors (vector of length n_state).
 #' @param Beta_k Regression coefficients needed to needed to compute the factor scores from the item scores.
 #' @param Theta_k Expectation of squared factor scores given the data.
+#' @param residualVariance The item-specific threshold values for variances determined by multiplying the observed variance of an item with 1e-06.
 #' @param J Number of items.
 #'
-#' @return Returns the loading and unique variance parameter.
+#' @return Returns the Lambda and Psi coefficients.
 #'
-#' @examples
-#' \dontrun{
-#' LambPsi<-updLambPsi(n_state, C_k, n_fact, Beta_k, Theta_k)
-#' Lambda_k <- LambPsi$Lambda_k
-#' Psi_k <- LambPsi$Psi_k
-#' }
 #' @noRd
 
 

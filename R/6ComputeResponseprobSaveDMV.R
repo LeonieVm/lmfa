@@ -1,7 +1,7 @@
 #' Compute Multivariate Normal Densities
 #'
 #' Needed to calculate the posterio-state membership probabilities and the loglikelihood
-#' The function is based on code in dMvn() that is used internally by the mixture of normals model in bayesm
+#' The function is based on code in dMvn() that is used internally by the mixture of normals model in bayesm.
 #'
 #' @param x The dataset.
 #' @param n_sub Number of observations. #subject or #total observations.
@@ -11,12 +11,8 @@
 #' @param J Number of items.
 #' @param mu_k The state-specific intercepts.
 #'
-#' @return Returns the saveDMV coefficients that are used as response probabilities in the loglik and posterior-state membership probability computations
+#' @return Returns the DMV coefficients.
 #'
-#' @examples
-#' \dontrun{
-#' saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J)
-#' }
 #' @noRd
 
 DMV <- function(x, Lambda_k, Psi_k, n_state, J,n_sub,mu_k){

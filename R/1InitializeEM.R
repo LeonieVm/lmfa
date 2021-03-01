@@ -14,23 +14,6 @@
 #'
 #' @return Returns list with all the state-specific initialized parameters.
 #'
-#' @examples
-#' \dontrun{
-#' InitialValues <-initializeStep1(
-#' x = x, 
-#' n_sub = 500, 
-#' n_state = 2, 
-#' n_fact = c(2,2), 
-#' J = 20,
-#' startval = "random")
-#' z_ik<- InitialValues$z_ik
-#' N_k<- InitialValues$N_k
-#' pi_k<- InitialValues$pi_k
-#' mu_k<- InitialValues$mu_k
-#' C_k<- InitialValues$C_k
-#' Lambda_k<- InitialValues$Lambda_k
-#' Psi_k<- InitialValues$Psi_k
-#' }
 #' @noRd
 
 

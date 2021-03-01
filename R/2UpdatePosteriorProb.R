@@ -1,6 +1,5 @@
 #' Update the state-membership probabilities z_ik
 #'
-#' Reuses the DMV calculated in the loglikelihoodfunction to save time.
 #'
 #'
 #'
@@ -13,12 +12,8 @@
 #' @param C_k The sample covariance matrix.
 #' @param pi_k The state proportions.
 #'
-#' @return Returns the expected state-memberships.
+#' @return Returns the expected state-membership probabilities.
 #'
-#' @examples
-#' \dontrun{
-#' z_ik <- updExpMem(Lambda_k, Psi_k, n_state, C_k, n_fact, DMV,n_sub,pi_k)
-#' }
 #' @noRd
 
 updExpMem <- function(Lambda_k, Psi_k, n_state, C_k, n_fact, DMV,n_sub,pi_k){
