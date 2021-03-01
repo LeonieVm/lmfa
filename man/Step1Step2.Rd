@@ -10,10 +10,10 @@ Step1Step2(
   id_column,
   n_state,
   n_fact,
-  n_starts = 5,
+  n_starts = 25,
   n_initial_ite = 15,
-  n_m_step = 15,
-  em_tolerance = 1e-04,
+  n_m_step = 10,
+  em_tolerance = 1e-06,
   m_step_tolerance = 0.001,
   max_iterations = 500
 )

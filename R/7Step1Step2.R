@@ -830,7 +830,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
     SDMatrix <- matrix(NA,J)
     rownames(SDMatrix) <- variable_columns
     for(item in 1:J){
-      SDMatrix[item,]<- sd(unlist(input[x$State==i,variable_columns[item]]),na.rm = T)
+      SDMatrix[item,]<- sd(unlist(x[x$State==i,variable_columns[item]]),na.rm = T)
     }
     SDList[[i]] <- SDMatrix
   }

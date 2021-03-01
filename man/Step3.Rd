@@ -15,6 +15,7 @@ Step3(
   i.method = "BFGS",
   i.maxit = 10000,
   i.reltol = 1e-08,
+  i.fnscale = 1,
   n_q = 10,
   n_initial_ite = 10,
   previousCov = FALSE
