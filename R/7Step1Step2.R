@@ -134,7 +134,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
                                               "mclust",
                                               "NPflow"),
                                   .export=c("RandVec",
-                                            "ini_mclust",
+                                            #"ini_mclust",
                                             "initializeStep1",
                                             "updExpMem",
                                             "comBetas",
@@ -917,12 +917,12 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
-  print(list(pi_k=pi_k,mu_k=mu_k,Lambda_k=Lambda_k,Psi_k=Psi_k,
-             classification_posterior=Posteriors,
-             classification_errors=ModalClassificationTable,
-             classification_errors_prob=W_mod,
-             act.contraints=estimation[iteration,3]),
-             R2_entropy=R2_entropy)
+  #print(list(pi_k=pi_k,mu_k=mu_k,Lambda_k=Lambda_k,Psi_k=lapply(Psi_k,diag),
+             #classification_posterior=Posteriors,
+             #classification_errors=ModalClassificationTable,
+             #classification_errors_prob=W_mod,
+             #act.contraints=estimation[iteration,3]),
+             #R2_entropy=R2_entropy)
   if(iteration<max_iterations){
     cat("\n")
     cat(paste("Estimation converged after",iteration,"iterations."))
@@ -948,7 +948,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
               Lambda_k=lapply(Lambda_k,round,16),
               Lambda_k_st_w=lapply(standLambda,round,16),
               Lambda_k_st_b=lapply(standLambda2,round,16),
-              Psi_k=lapply(Psi_k,round,16),
+              Psi_k=lapply(lapply(Psi_k,diag),round,16),
               Psi_k_st_w=lapply(standPsi,round,16),
               Psi_k_st_b=lapply(standPsi2,round,16),
               explained_var=Percent_expl_var,

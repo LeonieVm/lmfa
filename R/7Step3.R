@@ -234,7 +234,8 @@ Step3 <- function(input_file,
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Multistartprocedure
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  
+  cat("\n")
+  cat("1.Initializing...")
   # Obtain a list of initial values (considering the average time-interval)
   # Caclulate average time-interval.
   myid.uni <- unlist(unique(newData[,id_column]))
@@ -294,11 +295,12 @@ Step3 <- function(input_file,
   # Consider the transition intensities from the best start set.
   Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
  
-   print("test1")
+   #print("test1")
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Final Analysis with best startset.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
+  cat("\n")
+  cat(paste("2.Analyzing data with the best startset..."))
   step3Results <-suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
     subject = get(noquote(id_column)), 
