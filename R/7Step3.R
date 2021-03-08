@@ -515,6 +515,33 @@ CleanEnvir(id_column)
                              "transition intercepts",
                              transitionCovariates),]
 
+hessianAndCovNames<-
+    #initial state probabilities
+    c(
+      #intensities
+      paste("transition intercepts",
+            1:length(fixed_responseprobabilities)),
+      #cov on intensities
+      paste(rep(transitionCovariates,
+                each=length(fixed_responseprobabilities)),
+            rep(1:length(fixed_responseprobabilities),
+                length(transitionCovariates))),
+      #initial state          
+      paste("initial state",
+            1:(n_state-1)),
+      #cov on initial state probabilities
+      paste(rep(iniName,
+                each=n_state-1),
+            rep(1:(n_state-1),
+                length(iniName))))
+
+    printHessian <- step3Results$paramdata$opt$hessian
+
+    rownames(estimatedCovmatrix) <- hessianAndCovNames
+    rownames(printHessian) <- hessianAndCovNames
+    colnames(estimatedCovmatrix) <- hessianAndCovNames
+    colnames(printHessian) <- hessianAndCovNames
+    
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                         Return Step 3 Results
@@ -531,5 +558,6 @@ CleanEnvir(id_column)
               estimates=round(parameterEstimates,4), 
               WaldTests=round(waldMatrix,4),
               seconds=requiredTime,
-              hessian=step3Results$paramdata$opt$hessian))
+              hessian=printHessian,
+              cov.matrix = estimatedCovmatrix))
 }
