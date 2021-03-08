@@ -36,6 +36,7 @@
 #'                  i.maxit = 10000,
 #'                  i.reltol = 1e-8,
 #'                  i.fnscale = 1,
+#'                  i.center = TRUE,
 #'                  n_q = 10,
 #'                  n_initial_ite = 10,
 #'                  previousCov = FALSE)
@@ -55,6 +56,7 @@ Step3 <- function(input_file,
                   i.maxit = 10000,
                   i.reltol = 1e-8,
                   i.fnscale = 1,
+                  i.center = TRUE,
                   n_q = 10,
                   n_initial_ite = 10,
                   previousCov = FALSE){
@@ -284,7 +286,8 @@ Step3 <- function(input_file,
     hessian = TRUE,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
     method  = i.method,
-    control=list(maxit = n_initial_ite,reltol = i.reltol,fnscale= i.fnscale),
+    control = list(maxit = n_initial_ite,reltol = i.reltol,fnscale= i.fnscale),
+    center = i.center,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
                                           
@@ -312,6 +315,7 @@ Step3 <- function(input_file,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
     method  = i.method,
     control=list(maxit = i.maxit,reltol = i.reltol,fnscale= i.fnscale),
+    center = i.center,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
                     
