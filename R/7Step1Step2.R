@@ -7,7 +7,6 @@
 #'
 #' @param input_file The dataset (must be a dataframe and contain complete cases only).
 #' @param variable_columns The variable names of the indicators (must be a vector of characters).
-#' @param id_column The name with subject identifiers (must be a single character).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
 #' @param n_fact The number of factors per state that should be estimated (must be a numeric vector of length n_state).
 #' @param n_starts The number of random starts that should be used (must be a single scalar).
@@ -23,26 +22,26 @@
 #'
 #' @examples
 #' \dontrun{
-#' fitStep1Step2 <- Step1Step2(input_file,variable_columns,id_column,n_state,
+#' fitStep1Step2 <- Step1Step2(input_file,variable_columns,n_state,
 #'                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
 #'                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
 #' }
 #' @export
 
-Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
+Step1Step2 <- function(input_file,variable_columns,n_state,
                        n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
                        em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500){
 
   if(missing(input_file)) stop("argument input_file is missing, with no default")
   if(missing(variable_columns)) stop("argument variable_columns is missing, with no default")
-  if(missing(id_column)) stop("argument id_column is missing, with no default")
+  #if(missing(id_column)) stop("argument id_column is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
   if(missing(n_fact)) stop("argument n_fact is missing, with no default")
 
   if(!is.data.frame(input_file)) stop("input_file must be a dataframe")
   if(!is.character(variable_columns)) stop("variable_columns must be a vector of characters")
-  if(!is.character(id_column)) stop("id_column must be a single character")
-  if(length(id_column)>1) stop("id_column must be a single character")
+  #if(!is.character(id_column)) stop("id_column must be a single character")
+  #if(length(id_column)>1) stop("id_column must be a single character")
   if(!is.numeric(n_state)) stop("n_state must be a single scalar")
   if(length(n_state)>1) stop("n_state must be a single scalar")
   if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
@@ -88,7 +87,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   J <- ncol(x)
 
   # Number of cases.
-  n_cases <- length(unique(input_file[,id_column]))
+  #n_cases <- length(unique(input_file[,id_column]))
 
   # List of multistart procedure results.
   MultistartResults1 <- rep(list(list(NA)),n_starts*10)
@@ -771,7 +770,7 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
   R_T <- sum(R_k)-c(estimation[iteration,3])+n_state-1
   R_T <- as.numeric(R_T)
 
-  BIC_N <- -2*LL + R_T *log(n_cases)
+  #BIC_N <- -2*LL + R_T *log(n_cases)
   BIC_T <- -2*LL + R_T *log(n_sub)
 
 
@@ -938,9 +937,9 @@ Step1Step2 <- function(input_file,variable_columns,id_column,n_state,
 
   return(list(LL=LL,
               BIC_timepoints=BIC_T,
-              BIC_cases=BIC_N,
-              number_of_cases=n_cases,
-              id_column=id_column,
+              #BIC_cases=BIC_N,
+              #number_of_cases=n_cases,
+              #id_column=id_column,
               number_of_timepoints=n_sub,
               number_of_parameters=R_T,
               pi_k=pi_k,
