@@ -15,7 +15,8 @@
 #' @param i.method The type of optimization method that should be used (must be "BFGS" or "CG")
 #' @param i.maxit The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
 #' @param i.reltol The tolerance to evaluate convergend that should be used (must be a single scalar).
-#' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details).
+#' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
+#' @param i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
 #' @param previousCov Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
@@ -85,6 +86,9 @@ Step3 <- function(input_file,
   if(length(i.reltol)>1) stop("i.reltol must be a single scalar")
   if(!is.numeric(i.fnscale)) stop("i.fnscale must be a single scalar")
   if(length(i.fnscale)>1) stop("i.fnscale must be a single scalar")
+  if(i.fnscale<1) stop("i.fnscale must be a positive scalar equal to or larger than 1")
+  if(!is.logical(i.center)) stop("i.center must be a single logical statement")
+  if(length(i.center)>1) stop("i.center must be a single logical statement")
   if(!is.numeric(n_q)) stop("n_q must be a single scalar")
   if(length(n_q)>1) stop("n_q must be a single scalar")
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
