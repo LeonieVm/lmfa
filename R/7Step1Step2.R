@@ -74,7 +74,8 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   # Obtain the columns with the variables
   x <- input_file[,variable_columns]
   x <- as.data.frame(x)
-
+  if(sum(is.na(x)>0)) stop("input_file contains missing values on indicator variables that must be removed")
+  
   # Number of observations.
   #*******************************************************************************#
   # NOTE: Usualy, in mixture factor analysis, this would be the number
@@ -85,7 +86,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
   # Number of items.
   J <- ncol(x)
-
+  if(sum(apply(x, 2, is.numeric))!=J) stop("indicator variables must be numeric")
   # Number of cases.
   #n_cases <- length(unique(input_file[,id_column]))
 
