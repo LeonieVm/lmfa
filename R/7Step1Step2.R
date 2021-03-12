@@ -807,6 +807,14 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
   W_mod <-ModalClassificationTable/rowSums(ModalClassificationTable)
   
+  #add a proxi for the LL in step 3 (for better fnscale start)
+  
+  ll_proxi <- 0
+  for(i in 1:n_state){
+    ll_proxi <- ll_proxi+rowSums(ModalClassificationTable)[i]*
+      log(rowSums(ModalClassificationTable)[i]/sum(ModalClassificationTable))
+  }
+  ll_proxi <-ll_proxi*-2
   #-------------------------------------------------------------------------------#
   # Obtain R-squared entropy.
   #-------------------------------------------------------------------------------#
@@ -917,48 +925,49 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
-  #print(list(pi_k=pi_k,mu_k=mu_k,Lambda_k=Lambda_k,Psi_k=lapply(Psi_k,diag),
-             #classification_posterior=Posteriors,
-             #classification_errors=ModalClassificationTable,
-             #classification_errors_prob=W_mod,
-             #act.contraints=estimation[iteration,3]),
-             #R2_entropy=R2_entropy)
+  
   if(iteration<max_iterations){
+    convergence <- 1
     cat("\n")
     cat(paste("Estimation converged after",iteration,"iterations."))
   }else{
+    convergence <- 0
     cat("\n")
     cat("Maximum number of iterations reached without convergence.")
   }
   cat("\n")
-  cat(paste("LL",round(LL,4),sep="="),"\n")
+  cat(paste("LL",round(LL,4),sep=" = "),"\n")
   cat("\n")
 
-
-
-  return(list(LL=LL,
-              BIC_timepoints=BIC_T,
-              #BIC_cases=BIC_N,
-              #number_of_cases=n_cases,
-              #id_column=id_column,
-              number_of_timepoints=n_sub,
-              number_of_parameters=R_T,
-              pi_k=pi_k,
-              mu_k=mu_k,
-              Lambda_k=lapply(Lambda_k,round,16),
-              Lambda_k_st_w=lapply(standLambda,round,16),
-              Lambda_k_st_b=lapply(standLambda2,round,16),
-              Psi_k=lapply(lapply(Psi_k,diag),round,16),
-              Psi_k_st_w=lapply(standPsi,round,16),
-              Psi_k_st_b=lapply(standPsi2,round,16),
-              explained_var=Percent_expl_var,
-              standard_dev_k=SDList,
-              standard_dev=SDList2,
-              classification_posterior=Posteriors,
-              classification_errors=ModalClassificationTable,
-              classification_errors_prob=W_mod,
-              iterations=iteration,
-              act.contraints=estimation[iteration,3],
-              R2_entropy=R2_entropy,
-              seconds=requiredTime))
+    
+    output <- list(n_it = iteration,
+              seconds = requiredTime,
+              convergence = convergence,
+              LL = LL,
+              BIC = BIC_T,
+              n_obs = n_sub,
+              n_par = R_T,
+              n_state = n_state,
+              n_fact = n_fact,
+              pi_k = pi_k,
+              mu_k = mu_k,
+              Lambda_k = lapply(Lambda_k,round,16),
+              Lambda_k_st_w = lapply(standLambda,round,16),
+              Lambda_k_st_b = lapply(standLambda2,round,16),
+              Psi_k = lapply(lapply(Psi_k,diag),round,16),
+              Psi_k_st_w = lapply(standPsi,round,16),
+              Psi_k_st_b = lapply(standPsi2,round,16),
+              act.contraints = estimation[iteration,3],
+              explained_var = Percent_expl_var,
+              standard_dev_k = SDList,
+              standard_dev = SDList2,
+              classification_posterior = Posteriors,
+              classification_errors = ModalClassificationTable,
+              classification_errors_prob = W_mod,
+              R2_entropy = R2_entropy,
+              LL_proxi_step3 = ll_proxi
+              )
+  class(output) = "lmfa"
+  output
+  
 }

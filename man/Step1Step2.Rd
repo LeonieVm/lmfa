@@ -7,7 +7,6 @@
 Step1Step2(
   input_file,
   variable_columns,
-  id_column,
   n_state,
   n_fact,
   n_starts = 25,
@@ -22,8 +21,6 @@ Step1Step2(
 \item{input_file}{The dataset (must be a dataframe and contain complete cases only).}
 
 \item{variable_columns}{The variable names of the indicators (must be a vector of characters).}
-
-\item{id_column}{The name with subject identifiers (must be a single character).}
 
 \item{n_state}{The number of states that should be estimated (must be a single scalar).}
 
@@ -50,7 +47,8 @@ Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.
 }
 \examples{
 \dontrun{
-fitStep1Step2 <- Step1Step2(input_file,variable_columns,
-id_column,n_state,n_fact)
+fitStep1Step2 <- Step1Step2(input_file,variable_columns,n_state,
+                      n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
+                      em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
 }
 }

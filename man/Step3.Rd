@@ -16,6 +16,7 @@ Step3(
   i.maxit = 10000,
   i.reltol = 1e-08,
   i.fnscale = 1,
+  i.center = TRUE,
   n_q = 10,
   n_initial_ite = 10,
   previousCov = FALSE
@@ -42,7 +43,9 @@ Step3(
 
 \item{i.reltol}{The tolerance to evaluate convergend that should be used (must be a single scalar).}
 
-\item{i.fnscale}{An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details).}
+\item{i.fnscale}{An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.}
+
+\item{i.center}{Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.}
 
 \item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
@@ -59,16 +62,19 @@ Conducts step 3 from the three-step estimation of CT-LMFA.
 \examples{
 \dontrun{
 step3Results <- Step3(input_file,
-interval_column,
-id_column,
-fitStep1Step2,
-transitionCovariates = NULL,
-initialCovariates = NULL,
-i.method = "BFGS",
-i.maxit = 10000,
-i.reltol = 1e-8,
-n_q = 10,
-n_initial_ite = 10,
-previousCov = FALSE)
+                 id_column,
+                 n_state,
+                 post.probabilities,
+                 interval_column = NULL,
+                 transitionCovariates = NULL,
+                 initialCovariates = NULL,
+                 i.method = "BFGS",
+                 i.maxit = 10000,
+                 i.reltol = 1e-8,
+                 i.fnscale = 1,
+                 i.center = TRUE,
+                 n_q = 10,
+                 n_initial_ite = 10,
+                 previousCov = FALSE)
 }
 }
