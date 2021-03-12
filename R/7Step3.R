@@ -39,8 +39,8 @@
 #'                  i.fnscale = 1,
 #'                  i.center = TRUE,
 #'                  n_q = 10,
-#'                  n_initial_ite = 10,
-#'                  previousCov = FALSE)
+#'                  n_initial_ite = 10
+#'                  )
 #' }
 #' @export
 
@@ -56,17 +56,18 @@ Step3 <- function(input_file,
                   i.method = "BFGS",
                   i.maxit = 10000,
                   i.reltol = 1e-8,
-                  i.fnscale = 1,
+                  i.fnscale = "proxi",
                   i.center = TRUE,
                   n_q = 10,
-                  n_initial_ite = 10,
-                  previousCov = FALSE){
+                  n_initial_ite = 10
+                 ){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                                   Step 3
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+   previousCov = FALSE #option that might be added in the future
   if(missing(input_file)) stop("argument input_file is missing, with no default")
   if(missing(id_column)) stop("argument id_column is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
@@ -84,8 +85,8 @@ Step3 <- function(input_file,
   if(length(i.maxit)>1) stop("i.maxit must be a single scalar")
   if(!is.numeric(i.reltol)) stop("i.reltol must be a single scalar")
   if(length(i.reltol)>1) stop("i.reltol must be a single scalar")
-  if(!is.numeric(i.fnscale)) stop("i.fnscale must be a single scalar")
-  if(length(i.fnscale)>1) stop("i.fnscale must be a single scalar")
+  if(length(i.fnscale)>1) stop("i.fnscale must be a single statement")
+  if(!is.numeric(i.fnscale) & i.fnscale!="proxi") stop("i.fnscale must be a single scalar")
   if(i.fnscale<1) stop("i.fnscale must be a positive scalar equal to or larger than 1")
   if(!is.logical(i.center)) stop("i.center must be a single logical statement")
   if(length(i.center)>1) stop("i.center must be a single logical statement")
@@ -162,6 +163,17 @@ Step3 <- function(input_file,
   }
   
   W_mod <- W_mod/rowSums(W_mod)
+  
+  #add a proxi for the LL in step 3 (for better fnscale start)
+  if(i.fnscale == "proxi"){
+  ll_proxi <- 0
+  for(i in 1:n_state){
+    ll_proxi <- ll_proxi+rowSums(ModalClassificationTable)[i]*
+      log(rowSums(ModalClassificationTable)[i]/sum(ModalClassificationTable))
+  }
+  ll_proxi <-ll_proxi*-2
+  i.fnscale <- ll_proxi
+  }
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Fixing the right parameters
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

@@ -807,14 +807,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
   W_mod <-ModalClassificationTable/rowSums(ModalClassificationTable)
   
-  #add a proxi for the LL in step 3 (for better fnscale start)
   
-  ll_proxi <- 0
-  for(i in 1:n_state){
-    ll_proxi <- ll_proxi+rowSums(ModalClassificationTable)[i]*
-      log(rowSums(ModalClassificationTable)[i]/sum(ModalClassificationTable))
-  }
-  ll_proxi <-ll_proxi*-2
   #-------------------------------------------------------------------------------#
   # Obtain R-squared entropy.
   #-------------------------------------------------------------------------------#
@@ -964,8 +957,8 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
               classification_posterior = Posteriors,
               classification_errors = ModalClassificationTable,
               classification_errors_prob = W_mod,
-              R2_entropy = R2_entropy,
-              LL_proxi_step3 = ll_proxi
+              R2_entropy = R2_entropy
+              
               )
   class(output) = "lmfa"
   output
