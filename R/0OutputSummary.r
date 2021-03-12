@@ -26,6 +26,6 @@ summary.lmfa <- function(object, ...){
   cat("\n")
   cat(paste("Number of states",object$n_state,sep=": "),"\n")
   cat("\n")
-  cat(paste("Number of factors: [", paste(results1a$n_fact, collapse = " "), "]", sep = ""),"\n")
+  cat(paste("Number of factors: [", paste(object$n_fact, collapse = " "), "]", sep = ""),"\n")
   cat("\n")
 }

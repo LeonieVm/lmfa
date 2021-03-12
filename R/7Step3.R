@@ -332,7 +332,7 @@ Step3 <- function(input_file,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
                     
-#Is the following problematic  
+#Is the following problematic ? 
 CleanEnvir <- function(x) {rm(list=deparse(substitute(x)),envir=.GlobalEnv)}
 CleanEnvir(id_column)
 
