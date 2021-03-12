@@ -1,20 +1,15 @@
-#' Summary
+#' Summary statistics for Step1Step2 analysis
 #'
 #'
 #'
 #'
 #'
 #'
-#' @param object The dataset (must be a dataframe and contain complete cases only).
-#' @param ... The dataset (must be a dataframe and contain complete cases only).
-#' @return Returns the measurement model parameters, the proportional and
-#' modal state assignments, and the classification errors.
-#'
+#' @param object An object storing output from the main function Step1Step2()
+#' @param ... Further arguments for the default S3 summary method
 #' @examples
 #' \dontrun{
-#' fitStep1Step2 <- Step1Step2(input_file,variable_columns,n_state,
-#'                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
-#'                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
+#' summary(results1)
 #' }
 #' @export
 summary.lmfa <- function(object, ...){

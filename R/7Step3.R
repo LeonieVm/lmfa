@@ -16,7 +16,6 @@
 #' @param i.maxit The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
 #' @param i.reltol The tolerance to evaluate convergend that should be used (must be a single scalar).
 #' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
-#' @param i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
 #' @param previousCov Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
@@ -37,7 +36,6 @@
 #'                  i.maxit = 10000,
 #'                  i.reltol = 1e-8,
 #'                  i.fnscale = 1,
-#'                  i.center = TRUE,
 #'                  n_q = 10,
 #'                  n_initial_ite = 10
 #'                  )
@@ -57,7 +55,6 @@ Step3 <- function(input_file,
                   i.maxit = 10000,
                   i.reltol = 1e-8,
                   i.fnscale = "proxi",
-                  i.center = TRUE,
                   n_q = 10,
                   n_initial_ite = 10
                  ){
@@ -68,6 +65,8 @@ Step3 <- function(input_file,
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
    previousCov = FALSE #option that might be added in the future
+   i.center = TRUE #option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
+   ##' @param i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
   if(missing(input_file)) stop("argument input_file is missing, with no default")
   if(missing(id_column)) stop("argument id_column is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
