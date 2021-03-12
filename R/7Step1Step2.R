@@ -204,7 +204,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
     #*******************************************************************************#
     # NOTE: Get all relevant parameters in one list to continue with the ones that
-    # belong to the best startsets according to the loglikelihood.
+    # belong to the best start sets according to the loglikelihood.
     #*******************************************************************************#
 
     # Make DMV a list for convenient storage.
@@ -292,7 +292,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
   #*******************************************************************************#
   # NOTE: Get all relevant parameters in one list to continue with the ones that
-  # belong to the best startsets according to the loglikelihood.
+  # belong to the best start sets according to the loglikelihood.
   #*******************************************************************************#
 
   # Make DMV a list for convenient storage.
@@ -320,7 +320,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   stopCluster(cl)
   stopImplicitCluster()
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  # Do n_initial_ite iterations for the best 10 percent of the startsets
+  # Do n_initial_ite iterations for the best 10 percent of the start sets
   # (in parallel).
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Start parallelization.
@@ -332,7 +332,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   # say that there is no visible binding for global variable 'multistart2'.
   cat("\n")
   cat(paste("2.Iterating through the best 10 %",
-            "of the startsets..."))
+            "of the start sets..."))
   MultistartResults2 <- foreach(multistart2=1:(n_starts+1),
                      .packages=c("doParallel",
                                  "NPflow"),
@@ -375,7 +375,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
                              lapply(Psi_k,diag))#state-specific unique variances
 
    #*******************************************************************************#
-   # NOTE: Set the loglikelihood equal to the one from the startset, the number of
+   # NOTE: Set the loglikelihood equal to the one from the start set, the number of
    # iterations equal to zero, and the difference between loglikelihood values to 1.
    # The values will be updated in the loop.
    #*******************************************************************************#
@@ -532,7 +532,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  # Continue looping through the startset with the best loglikelihood value
+  # Continue looping through the start set with the best loglikelihood value
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
   # Extract parameter values belonging to the best loglikelihood values
@@ -571,7 +571,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
                             lapply(Psi_k,diag))#state-specific unique variances
 
   #*******************************************************************************#
-  # NOTE: Set the loglikelihood equal to the one from the startset, the number of
+  # NOTE: Set the loglikelihood equal to the one from the start set, the number of
   # iterations equal to n_initial_ite, and the difference between loglikelihood
   # values to 1. The values will be updated in the loop.
   #*******************************************************************************#
@@ -585,7 +585,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   #*******************************************************************************#
   SumParameterChange <- 100
   cat("\n")
-  cat(paste("3.Analyzing data with the best startset..."))
+  cat(paste("3.Analyzing data with the best start set..."))
 
   LLcorrect <- TRUE
 

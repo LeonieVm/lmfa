@@ -155,8 +155,6 @@ Step3 <- function(input_file,
   # Add the classification from step 1 and 2 to the internally-used dataset.
   newData$State <- c(Posteriors[,"Modal"])
 
-  # Get the classification from step 1 and 2.
-  #W_mod <-  fitStep1Step2$classification_errors_prob
   
   if(sum(W_mod<1e-7)>0){
     W_mod[which(W_mod<1e-7)] <- 1e-7
@@ -319,7 +317,7 @@ Step3 <- function(input_file,
   # Final Analysis with best startset.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
-  cat(paste("2.Analyzing data with the best startset..."))
+  cat(paste("2.Analyzing data with the best start set..."))
   step3Results <-suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
     subject = get(noquote(id_column)), 
