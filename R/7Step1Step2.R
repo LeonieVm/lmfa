@@ -151,7 +151,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
     z_ik<- InitialValues$z_ik         #expected state-membership-probabilities
     N_k<- InitialValues$N_k           #sample size per state
     pi_k<- InitialValues$pi_k         #state proportions
-    mu_k<- InitialValues$mu_k         #state-specific intercepts
+    nu_k<- InitialValues$nu_k         #state-specific intercepts
     C_k<- InitialValues$C_k           #sample covariance matrix
     Lambda_k<- InitialValues$Lambda_k #state-specific loading matrices
     Psi_k<- InitialValues$Psi_k       #state-specific unique variances
@@ -191,7 +191,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
     #*******************************************************************************#
 
     # Self-created function (see '6ComputeResponseprobSaveDMV.R').
-    saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,mu_k)
+    saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,nu_k)
 
     # Obtain the observed-data loglikelihood.
     logli <- c(rep(0,n_sub))
@@ -212,7 +212,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
     for(k in 1:n_state){ DMV_list[[k]] <- saveDMV[k,]}
 
     AllParameters <-list(pi_k,              #state proportions
-                         mu_k,              #state-specific intercepts
+                         nu_k,              #state-specific intercepts
                          Lambda_k,          #state-specific loading matrices
                          lapply(Psi_k,diag),#state-specific unique variances
                          total_logl,        #loglikelihood value
@@ -238,7 +238,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   z_ik<- InitialValues$z_ik         #expected state-membership-probabilities
   N_k<- InitialValues$N_k           #sample size per state
   pi_k<- InitialValues$pi_k         #state proportions
-  mu_k<- InitialValues$mu_k         #state-specific intercepts
+  nu_k<- InitialValues$nu_k         #state-specific intercepts
   C_k<- InitialValues$C_k           #sample covariance matrix
   Lambda_k<- InitialValues$Lambda_k #state-specific loading matrices
   Psi_k<- InitialValues$Psi_k       #state-specific unique variances
@@ -278,7 +278,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   #*******************************************************************************#
 
   # Self-created function (see '6ComputeResponseprobSaveDMV.R').
-  saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,mu_k)
+  saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,nu_k)
 
   # Obtain the observed-data loglikelihood.
   logli <- c(rep(0,n_sub))
@@ -300,7 +300,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   for(k in 1:n_state){ DMV_list[[k]] <- saveDMV[k,]}
 
   AllParameters <-list(pi_k,              #state proportions
-                       mu_k,              #state-specific intercepts
+                       nu_k,              #state-specific intercepts
                        Lambda_k,          #state-specific loading matrices
                        lapply(Psi_k,diag),#state-specific unique variances
                        total_logl,        #loglikelihood value
@@ -346,7 +346,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
    # Extract parameter values belonging to the best loglikelihood values.
    TakeOverResults <- MultistartResults1[[c(best)[multistart2]]]
    pi_k <- TakeOverResults[[1]]
-   mu_k<- TakeOverResults[[2]]
+   nu_k<- TakeOverResults[[2]]
    Lambda_k <- TakeOverResults[[3]]
    Psi_k<- TakeOverResults[[4]]
 
@@ -363,7 +363,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
    C_k <- TakeOverResults[[7]]
 
    AllParameters <-list(pi_k,              #state proportions
-                        mu_k,              #state-specific intercepts
+                        nu_k,              #state-specific intercepts
                         Lambda_k,          #state-specific loading matrices
                         lapply(Psi_k,diag),#state-specific unique variances
                         total_logl,        #loglikelihood value
@@ -401,7 +401,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
      #===============================================================================#
      # 2: Update: state-sp. samplesize N_k, state proportions pi_k,
-     # and intercepts mu_k
+     # and intercepts nu_k
      #===============================================================================#
 
      # Number of observations per state; kx1 vector.
@@ -419,7 +419,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
        #this is an existing function to obtain the weighted cov matrix
        SaveCov <- cov.wt(x,z_ik[[sc]],method = 'ML',center = T )
        C_k[[sc]] <- SaveCov$cov
-       mu_k[[sc]] <- SaveCov$center #Here we also obtain mu_k
+       nu_k[[sc]] <- SaveCov$center #Here we also obtain nu_k
      }
 
      m_step <- 0
@@ -485,7 +485,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
      #*******************************************************************************#
 
      # Self-created function (see '6ComputeResponseprobSaveDMV.R').
-     saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,mu_k)
+     saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,nu_k)
 
      # Obtain the observed-data loglikelihood.
      logli <- c(rep(0,n_sub))
@@ -507,7 +507,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
      LL <- total_logl
      estimation[iteration,] <- c(iteration,LL,LambPsi$act_constraints)
      AllParametersN <-list(pi_k,              #state proportions
-                           mu_k,              #state-specific intercepts
+                           nu_k,              #state-specific intercepts
                            Lambda_k,          #state-specific loading matrices
                            lapply(Psi_k,diag),#state-specific unique variances
                            total_logl,        #loglikelihood value
@@ -538,7 +538,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   # Extract parameter values belonging to the best loglikelihood values
   TakeOverResults <- MultistartResults2[[c(best)]]
   pi_k <- TakeOverResults[[1]]
-  mu_k<- TakeOverResults[[2]]
+  nu_k<- TakeOverResults[[2]]
   Lambda_k <- TakeOverResults[[3]]
   Psi_k<- TakeOverResults[[4]]
   total_logl <- TakeOverResults[[5]]
@@ -560,7 +560,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   AllResultsBestSet <- list()
   resultNumber <- 0
   AllParameters <-list(pi_k,              #state proportions
-                       mu_k,              #state-specific intercepts
+                       nu_k,              #state-specific intercepts
                        Lambda_k,          #state-specific loading matrices
                        lapply(Psi_k,diag),#state-specific unique variances
                        total_logl,        #loglikelihood value
@@ -610,7 +610,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
 
     #===============================================================================#
     # 2: Update: state-sp. samplesize N_k, state proportions pi_k,
-    # and intercepts mu_k
+    # and intercepts nu_k
     #===============================================================================#
 
     # Number of observations per state; kx1 vector.
@@ -628,7 +628,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
       #this is an existing function to obtain the weighted cov matrix
       SaveCov <- cov.wt(x,z_ik[[sc]],method = 'ML',center = T )
       C_k[[sc]] <- SaveCov$cov
-      mu_k[[sc]] <- SaveCov$center #Here we also obtain mu_k
+      nu_k[[sc]] <- SaveCov$center #Here we also obtain nu_k
     }
 
     m_step <- 0
@@ -694,7 +694,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
     #*******************************************************************************#
 
     # Self-created function (see '6ComputeResponseprobSaveDMV.R').
-    saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,mu_k)
+    saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,nu_k)
 
     # Obtain the observed-data loglikelihood.
     logli <- c(rep(0,n_sub))
@@ -717,7 +717,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
     LL <- total_logl
 
     AllParametersN <- list(pi_k,              #state proportions
-                           mu_k,              #state-specific intercepts
+                           nu_k,              #state-specific intercepts
                            Lambda_k,          #state-specific loading matrices
                            lapply(Psi_k,diag),#state-specific unique variances
                            total_logl,        #loglikelihood value
@@ -943,7 +943,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
               n_state = n_state,
               n_fact = n_fact,
               pi_k = pi_k,
-              mu_k = mu_k,
+              nu_k = nu_k,
               Lambda_k = lapply(Lambda_k,round,16),
               Lambda_k_st_w = lapply(standLambda,round,16),
               Lambda_k_st_b = lapply(standLambda2,round,16),

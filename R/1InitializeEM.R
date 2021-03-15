@@ -62,9 +62,9 @@ initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=R
   #Reduce("+", pi_k) #just a test to see if the number is correct
 
   #state-specific intercepts KxJ matrix
-  mu_k <-lapply(z_ik, FUN = function(yy) yy * x) #product of state-membership probabilities and data
-  mu_k <-lapply(mu_k, colSums) #sum over all observations but not items
-  mu_k <-mapply("/",mu_k,N_k,SIMPLIFY = FALSE) #divide by number of observations per state
+  nu_k <-lapply(z_ik, FUN = function(yy) yy * x) #product of state-membership probabilities and data
+  nu_k <-lapply(nu_k, colSums) #sum over all observations but not items
+  nu_k <-mapply("/",nu_k,N_k,SIMPLIFY = FALSE) #divide by number of observations per state
 
   #state-specific sample covariance matrix; JxJ matrix
   C_k <- rep(list(NA),n_state) #empty list
@@ -109,7 +109,7 @@ initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=R
   return(list(z_ik=z_ik,
               N_k=N_k,
               pi_k=pi_k,
-              mu_k=mu_k,
+              nu_k=nu_k,
               C_k=C_k,
               Lambda_k=Lambda_k,
               Psi_k=Psi_k))
