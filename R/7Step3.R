@@ -36,7 +36,7 @@
 #'                  i.maxit = 10000,
 #'                  i.reltol = 1e-8,
 #'                  i.fnscale = 1,
-#'                  n_q = 10,
+#'                  n_q = 5,
 #'                  n_initial_ite = 10
 #'                  )
 #' }
@@ -55,7 +55,7 @@ Step3 <- function(input_file,
                   i.maxit = 10000,
                   i.reltol = 1e-8,
                   i.fnscale = "proxi",
-                  n_q = 10,
+                  n_q = 5,
                   n_initial_ite = 10
                  ){
   
