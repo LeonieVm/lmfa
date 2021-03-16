@@ -5,11 +5,11 @@
 #'
 #'
 #'
-#' @param input_file The dataset (must be a dataframe).
-#' @param interval_column The column name with intervals (must be a single character).
-#' @param id_column The name with subject identifiers (must be a single character).
+#' @param data The dataset (must be a dataframe).
+#' @param timeintervals The column name with intervals (must be a single character).
+#' @param identifier The name with subject identifiers (must be a single character).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
-#' @param post.probabilities The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the input_file).
+#' @param post.probabilities The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).
 #' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).
 #' @param initialCovariates The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).
 #' @param i.method The type of optimization method that should be used (must be "BFGS" or "CG")
@@ -25,11 +25,11 @@
 #'
 #' @examples
 #' \dontrun{
-#' step3Results <- Step3(input_file,
-#'                  id_column,
+#' step3Results <- Step3(data,
+#'                  identifier,
 #'                  n_state,
 #'                  post.probabilities,
-#'                  interval_column = NULL,
+#'                  timeintervals = NULL,
 #'                  transitionCovariates = NULL,
 #'                  initialCovariates = NULL,
 #'                  i.method = "BFGS",
@@ -44,11 +44,11 @@
 
 
 
-Step3 <- function(input_file,
-                  id_column,
+Step3 <- function(data,
+                  identifier,
                   n_state,
                   post.probabilities,
-                  interval_column = NULL,
+                  timeintervals = NULL,
                   transitionCovariates = NULL,
                   initialCovariates = NULL,
                   i.method = "BFGS",
@@ -67,18 +67,18 @@ Step3 <- function(input_file,
    previousCov = FALSE #option that might be added in the future
    i.center = TRUE #option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
    ##' @param i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
-  if(missing(input_file)) stop("argument input_file is missing, with no default")
-  if(missing(id_column)) stop("argument id_column is missing, with no default")
+  if(missing(data)) stop("argument data is missing, with no default")
+  if(missing(identifier)) stop("argument identifier is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
   if(missing(post.probabilities)) stop("argument post.probabilities is missing, with no default")
-  #if(nrow(input_file)!=fitStep1Step2$number_of_timepoints) stop("input_file must have the same length as the input_file used in fitStep1Step2")
-  if(nrow(post.probabilities)!=nrow(input_file)) stop("post.probabilities must have the same length as input_file")
+  #if(nrow(data)!=fitStep1Step2$number_of_timepoints) stop("data must have the same length as the data used in fitStep1Step2")
+  if(nrow(post.probabilities)!=nrow(data)) stop("post.probabilities must have the same length as data")
   if(ncol(post.probabilities)!=n_state) stop("the number of columns of post.probabilities must be of length n_state")
-  if(!is.data.frame(input_file)) stop("input_file must be a dataframe")
+  if(!is.data.frame(data)) stop("data must be a dataframe")
   if(!is.null(transitionCovariates)) if(!is.character(transitionCovariates)) stop("transitionCovariates must be a (vector of) character(s)")
   if(!is.null(initialCovariates)) if(!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
-  if(sum(transitionCovariates %in% names(input_file)) != length(transitionCovariates)) stop("all covariates in transitionCovariates must exist in input_file")
-  if(sum(initialCovariates %in% names(input_file)) != length(initialCovariates)) stop("all covariates in initialCovariates must exist in input_file")
+  if(sum(transitionCovariates %in% names(data)) != length(transitionCovariates)) stop("all covariates in transitionCovariates must exist in data")
+  if(sum(initialCovariates %in% names(data)) != length(initialCovariates)) stop("all covariates in initialCovariates must exist in data")
   if(i.method != "BFGS") if(i.method != "CG") stop('i.method must be "BFGS" or "CG"')
   if(!is.numeric(i.maxit)) stop("i.maxit must be a single scalar")
   if(length(i.maxit)>1) stop("i.maxit must be a single scalar")
@@ -99,33 +99,33 @@ Step3 <- function(input_file,
   
   if(i.maxit <= n_initial_ite) stop("i.maxit must be larger than n_initial_ite")
   # just a warning for non-specified interval column
-  if(is.null(interval_column)) warning("intervals are assumed to be equidistant because no interval_column has been specified")
+  if(is.null(timeintervals)) warning("intervals are assumed to be equidistant because no timeintervals has been specified")
   ptm <- proc.time()
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Obtain all necessary elements (from user input or from step 1 and 2).
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   
-  # Obtain the time_column from interval_column
-  #id_column <- fitStep1Step2$id_column
-  n_cases <- length(unlist(unique(input_file[,id_column])))
+  # Obtain the time_column from timeintervals
+  #identifier <- fitStep1Step2$identifier
+  n_cases <- length(unlist(unique(data[,identifier])))
   #n_state <- ncol(post.probabilities)
  
   
   newData <- c()
-  if(!is.null(interval_column)){
+  if(!is.null(timeintervals)){
     for(i in 1:n_cases){
-      datai <- subset(input_file,get(noquote(id_column))==unlist(unique(input_file[,id_column]))[i])
+      datai <- subset(data,get(noquote(identifier))==unlist(unique(data[,identifier]))[i])
       int <- c(0)
       for(ti in 2:nrow(datai)){
-        int[ti] <- int[ti-1]+unlist(datai[,interval_column])[ti]
+        int[ti] <- int[ti-1]+unlist(datai[,timeintervals])[ti]
       }
       datai$time <- int
       newData<-rbind(newData, datai)
     }
   }else{
     for(i in 1:n_cases){
-      datai <- subset(input_file,get(noquote(id_column))==unique(input_file[,id_column])[i])
+      datai <- subset(data,get(noquote(identifier))==unique(data[,identifier])[i])
       datai$time <- seq(1:nrow(datai))
       newData<-rbind(newData, datai)
     }
@@ -253,11 +253,11 @@ Step3 <- function(input_file,
   cat("1.Initializing...")
   # Obtain a list of initial values (considering the average time-interval)
   # Caclulate average time-interval.
-  myid.uni <- unlist(unique(newData[,id_column]))
+  myid.uni <- unlist(unique(newData[,identifier]))
   myid.uni_length <-length(unlist(myid.uni))
   newData2 <- c()
   for (i in 1:myid.uni_length) {
-    temp<-subset(newData, get(noquote(id_column))==myid.uni[i])
+    temp<-subset(newData, get(noquote(identifier))==myid.uni[i])
     timeDiff <- unlist(temp[-1,time_column]-temp[-nrow(temp),time_column])
     temp$deltaT <- c(NA,as.numeric(timeDiff))
     newData2<-rbind(newData2, temp)
@@ -287,11 +287,11 @@ Step3 <- function(input_file,
   
   bestloglik <- list()
   q_bestloglik <- list()
-  id_column<<-id_column #is it problematic to add something to the global environment if I also remove it from inside the function again?
+  identifier<<-identifier #is it problematic to add something to the global environment if I also remove it from inside the function again?
   for(i in 1:n_q){
     step3Results <-  suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(id_column)),
+    subject = get(noquote(identifier)),
     data = as.data.frame(newData),
     qmatrix = initialQm[[i]],
     ematrix = W_mod,
@@ -319,7 +319,7 @@ Step3 <- function(input_file,
   cat(paste("2.Analyzing data with the best start set..."))
   step3Results <-suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(id_column)), 
+    subject = get(noquote(identifier)), 
     data = as.data.frame(newData),
     qmatrix = Qm,
     ematrix = W_mod,
@@ -334,7 +334,7 @@ Step3 <- function(input_file,
                     
 #Is the following problematic ? 
 CleanEnvir <- function(x) {rm(list=deparse(substitute(x)),envir=.GlobalEnv)}
-CleanEnvir(id_column)
+CleanEnvir(identifier)
 
 
 
@@ -431,16 +431,17 @@ CleanEnvir(id_column)
 #Recalculating parameter estimates & SEs (based on delta method)
 #---------------------------------------------------------------#
 
-newSEsIni <- NULL
-newSEs <- NULL
+
+
 #.........................
 #initial state probability
 #.........................
 if(!is.null(initialCovariates)){
+  newSEsIni <- NULL
   if(length(initialCovariates)==1){
-    meanvectorInitial <- mean(input_file[,initialCovariates])
+    meanvectorInitial <- mean(data[,initialCovariates])
   }else{
-    meanvectorInitial <- colMeans(input_file[,initialCovariates])
+    meanvectorInitial <- colMeans(data[,initialCovariates])
   }
   #``````````
   #Parameters
@@ -497,7 +498,7 @@ if(!is.null(initialCovariates)){
     whichPar <-whichPar+1
   }
 
-
+parameterEstimates[1:(n_state-1),1:2] <- cbind(newInterceptInitial,newSEsIni)
 
 }
 #.........................
@@ -505,22 +506,23 @@ if(!is.null(initialCovariates)){
 #.........................
 
 if(!is.null(transitionCovariates)){
+  newSEs <- NULL
   if(length(transitionCovariates)==1){
-    meanvectorTransition <- mean(input_file[,transitionCovariates])
+    meanvectorTransition <- mean(data[,transitionCovariates])
   }else{
-    meanvectorTransition <- colMeans(input_file[,transitionCovariates])
+    meanvectorTransition <- colMeans(data[,transitionCovariates])
   }
   #``````````
   #Parameters
   #``````````
   startTran <- ((n_state-1+
                    length(initialCovariates)
-                 +(n_state-1)))
+                 *(n_state-1)))
   endTran <- startTran+(n_state*n_state-n_state+(
     (n_state*n_state-n_state)*
       length(transitionCovariates)))
 
-  ParTransition <- parameterEstimates[startTran:(endTran-1),1]
+  ParTransition <- parameterEstimates[(startTran+1):(endTran),1]
 
   ParTransition <- cbind(ParTransition,
                            c(rep(0,n_state*n_state-n_state),
@@ -566,13 +568,13 @@ if(!is.null(transitionCovariates)){
     newSEs <- c(newSEs,sqrt(vG))
     whichPar <-whichPar+1
   }
-
+parameterEstimates[(startTran+1):(startTran+ 
+                                (n_state*n_state-n_state)),1:2] <-cbind(newTransition,newSEs)
 
 }
 
-parameterEstimates[1:(n_state-1),1:2] <- cbind(newInterceptInitial,newSEsIni)
-parameterEstimates[startTran:(startTran+
-                                (n_state*n_state-n_state)-1),1:2] <-cbind(newTransition,newSEs)
+
+
 
 
 
@@ -707,12 +709,12 @@ hessianAndCovNames<-
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
-  print(list(loglikelihood=step3Results$minus2loglik/-2,
+  print(list(LL=step3Results$minus2loglik/-2,
              estimates=round(parameterEstimates,4), WaldTests=round(waldMatrix,4)))
 
 
 
-  return(list(loglikelihood=step3Results$minus2loglik/-2,
+  return(list(LL=step3Results$minus2loglik/-2,
               classification_posterior=viterbi.msm(step3Results),
               estimates=round(parameterEstimates,4), 
               WaldTests=round(waldMatrix,4),

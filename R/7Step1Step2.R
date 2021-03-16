@@ -5,8 +5,8 @@
 #'
 #'
 #'
-#' @param input_file The dataset (must be a dataframe and contain complete cases only).
-#' @param variable_columns The variable names of the indicators (must be a vector of characters).
+#' @param data The dataset (must be a dataframe and contain complete cases only).
+#' @param indicators The variable names of the indicators (must be a vector of characters).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
 #' @param n_fact The number of factors per state that should be estimated (must be a numeric vector of length n_state).
 #' @param n_starts The number of random starts that should be used (must be a single scalar).
@@ -22,26 +22,26 @@
 #'
 #' @examples
 #' \dontrun{
-#' fitStep1Step2 <- Step1Step2(input_file,variable_columns,n_state,
+#' fitStep1Step2 <- Step1Step2(data,indicators,n_state,
 #'                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
 #'                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
 #' }
 #' @export
 
-Step1Step2 <- function(input_file,variable_columns,n_state,
+Step1Step2 <- function(data,indicators,n_state,
                        n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
                        em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500){
 
-  if(missing(input_file)) stop("argument input_file is missing, with no default")
-  if(missing(variable_columns)) stop("argument variable_columns is missing, with no default")
-  #if(missing(id_column)) stop("argument id_column is missing, with no default")
+  if(missing(data)) stop("argument data is missing, with no default")
+  if(missing(indicators)) stop("argument indicators is missing, with no default")
+  #if(missing(identifier)) stop("argument identifier is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
   if(missing(n_fact)) stop("argument n_fact is missing, with no default")
 
-  if(!is.data.frame(input_file)) stop("input_file must be a dataframe")
-  if(!is.character(variable_columns)) stop("variable_columns must be a vector of characters")
-  #if(!is.character(id_column)) stop("id_column must be a single character")
-  #if(length(id_column)>1) stop("id_column must be a single character")
+  if(!is.data.frame(data)) stop("data must be a dataframe")
+  if(!is.character(indicators)) stop("indicators must be a vector of characters")
+  #if(!is.character(identifier)) stop("identifier must be a single character")
+  #if(length(identifier)>1) stop("identifier must be a single character")
   if(!is.numeric(n_state)) stop("n_state must be a single scalar")
   if(length(n_state)>1) stop("n_state must be a single scalar")
   if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
@@ -58,7 +58,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   if(!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
   if(length(max_iterations)>1) stop("max_iterations must be a single scalar")
 
-  if(sum(complete.cases(input_file[,variable_columns])==FALSE)>0) stop("input_file must contain complete cases with regard to the indicators only")
+  if(sum(complete.cases(data[,indicators])==FALSE)>0) stop("data must contain complete cases with regard to the indicators only")
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
   if(em_tolerance >= m_step_tolerance) stop("em_tolerance must be smaller than m_step_tolerance")
 
@@ -72,9 +72,9 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   #set.seed(16)
 
   # Obtain the columns with the variables
-  x <- input_file[,variable_columns]
+  x <- data[,indicators]
   x <- as.data.frame(x)
-  if(sum(is.na(x)>0)) stop("input_file contains missing values on indicator variables that must be removed")
+  if(sum(is.na(x)>0)) stop("data contains missing values on indicator variables that must be removed")
   
   # Number of observations.
   #*******************************************************************************#
@@ -88,7 +88,7 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   J <- ncol(x)
   if(sum(apply(x, 2, is.numeric))!=J) stop("indicator variables must be numeric")
   # Number of cases.
-  #n_cases <- length(unique(input_file[,id_column]))
+  #n_cases <- length(unique(data[,identifier]))
 
   # List of multistart procedure results.
   MultistartResults1 <- rep(list(list(NA)),n_starts*10)
@@ -830,9 +830,9 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   SDList <- list()
   for(i in 1:n_state){
     SDMatrix <- matrix(NA,J)
-    rownames(SDMatrix) <- variable_columns
+    rownames(SDMatrix) <- indicators
     for(item in 1:J){
-      SDMatrix[item,]<- sd(unlist(x[x$State==i,variable_columns[item]]),na.rm = T)
+      SDMatrix[item,]<- sd(unlist(x[x$State==i,indicators[item]]),na.rm = T)
     }
     SDList[[i]] <- SDMatrix
   }
@@ -841,9 +841,9 @@ Step1Step2 <- function(input_file,variable_columns,n_state,
   SDList2 <- list()
   for(i in 1:n_state){
     SDMatrix <- matrix(NA,J)
-    rownames(SDMatrix) <- variable_columns
+    rownames(SDMatrix) <- indicators
     for(item in 1:J){
-      SDMatrix[item,]<- sd(unlist(x[,variable_columns[item]]),na.rm = T)
+      SDMatrix[item,]<- sd(unlist(x[,indicators[item]]),na.rm = T)
     }
     SDList2[[i]] <- SDMatrix
   }
