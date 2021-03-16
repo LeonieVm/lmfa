@@ -426,6 +426,156 @@ CleanEnvir(id_column)
   parameterEstimates[(numberParIni+1):(numberParIni+numberParInt),2] <- 
     suppressWarnings(sqrt(diag(estimatedCovmatrix)))[1:numberParInt]
   
+
+#---------------------------------------------------------------#
+#Recalculating parameter estimates & SEs (based on delta method)
+#---------------------------------------------------------------#
+
+newSEsIni <- NULL
+newSEs <- NULL
+#.........................
+#initial state probability
+#.........................
+if(!is.null(initialCovariates)){
+  if(length(initialCovariates)==1){
+    meanvectorInitial <- mean(input_file[,initialCovariates])
+  }else{
+    meanvectorInitial <- colMeans(input_file[,initialCovariates])
+  }
+  #``````````
+  #Parameters
+  #``````````
+  ParInitialState <- parameterEstimates[1:((n_state-1+
+                                              length(initialCovariates)
+                                            +(n_state-1)-1)),1]
+
+  ParInitialState <- cbind(ParInitialState,
+                           c(rep(0,n_state-1),
+                             rep(1:length(initialCovariates),
+                                 each=n_state-1)))
+
+  newInterceptInitial <- ParInitialState[ParInitialState[,2]==0,1]
+
+  for(i in 1:length(initialCovariates)){
+    newInterceptInitial <- newInterceptInitial-
+      meanvectorInitial[i]*ParInitialState[ParInitialState[,2]==i,1]
+  }
+
+  #``````````
+  #SEs
+  #``````````
+  #make a matrix with parameters for SE recalculation
+  B_matrix <- NULL
+  for(i in 1:(n_state-1)){
+    B <- ParInitialState[(1:n_state-1),1][i] #take the old intercepts
+    for(j in 1:length(initialCovariates)){
+      B <-c(B,ParInitialState[ParInitialState[,2]==j,1][i])
+    }
+    B_matrix <-rbind(B_matrix,B)
+  }
+  #get the gradients
+  grad <- c(1,meanvectorInitial)
+  #get correct values of estimated cov matrix
+
+  #note that SEs are at the end; thus, order is different than in parameters
+  beginInitial <- (n_state*n_state-n_state+
+                     (n_state*n_state-n_state)*
+                     length(transitionCovariates))+1
+  ParCov <- estimatedCovmatrix[beginInitial:(beginInitial+n_state-1+
+                                               (n_state-1)*
+                                               length(initialCovariates)-1),
+                               beginInitial:(beginInitial+n_state-1+
+                                               (n_state-1)*
+                                               length(initialCovariates)-1)]
+  whichPar <- seq(1, ncol(ParCov), (n_state-1))
+  for(i in 1:(n_state-1)){
+
+    vb <- ParCov[whichPar,whichPar]
+    B <- B_matrix[i,]
+    vG <- grad %*% vb %*% grad
+    newSEsIni <- c(newSEsIni,sqrt(vG))
+    whichPar <-whichPar+1
+  }
+
+
+
+}
+#.........................
+#transition intensities
+#.........................
+
+if(!is.null(transitionCovariates)){
+  if(length(transitionCovariates)==1){
+    meanvectorTransition <- mean(input_file[,transitionCovariates])
+  }else{
+    meanvectorTransition <- colMeans(input_file[,transitionCovariates])
+  }
+  #``````````
+  #Parameters
+  #``````````
+  startTran <- ((n_state-1+
+                   length(initialCovariates)
+                 +(n_state-1)))
+  endTran <- startTran+(n_state*n_state-n_state+(
+    (n_state*n_state-n_state)*
+      length(transitionCovariates)))
+
+  ParTransition <- parameterEstimates[startTran:(endTran-1),1]
+
+  ParTransition <- cbind(ParTransition,
+                           c(rep(0,n_state*n_state-n_state),
+                             rep(1:length(transitionCovariates),
+                                 each=n_state*n_state-n_state)))
+
+  newTransition <- ParTransition[ParTransition[,2]==0,1]
+
+  for(i in 1:length(transitionCovariates)){
+    newTransition <- newTransition-
+      meanvectorTransition[i]*ParTransition[ParTransition[,2]==i,1]
+  }
+
+  #``````````
+  #SEs
+  #``````````
+  #make a matrix with parameters for SE recalculation
+  B_matrix <- NULL
+  for(i in 1:(n_state*n_state-n_state)){
+    B <- ParTransition[1:(n_state*n_state-n_state),1][i] #take the old intercepts
+    for(j in 1:length(transitionCovariates)){
+      B <-c(B,ParTransition[ParTransition[,2]==j,1][i])
+    }
+    B_matrix <-rbind(B_matrix,B)
+  }
+  #get the gradients
+  grad <- c(1,meanvectorTransition)
+  #get correct values of estimated cov matrix
+
+
+  ParCov <- estimatedCovmatrix[1:(n_state*n_state-n_state+
+                                    (n_state*n_state-n_state)*
+                                    length(transitionCovariates)),
+                               1:(n_state*n_state-n_state+
+                                    (n_state*n_state-n_state)*
+                                    length(transitionCovariates))]
+  whichPar <- seq(1, ncol(ParCov), (n_state*n_state-n_state))
+  for(i in 1:(n_state*n_state-n_state)){
+
+    vb <- ParCov[whichPar,whichPar]
+    B <- B_matrix[i,]
+    vG <- grad %*% vb %*% grad
+    newSEs <- c(newSEs,sqrt(vG))
+    whichPar <-whichPar+1
+  }
+
+
+}
+
+parameterEstimates[1:(n_state-1),1:2] <- cbind(newInterceptInitial,newSEsIni)
+parameterEstimates[startTran:(startTran+
+                                (n_state*n_state-n_state)-1),1:2] <-cbind(newTransition,newSEs)
+
+
+
   parameterEstimates[which(is.nan(parameterEstimates))] <- 1000
   
   #--------------------------------------#
