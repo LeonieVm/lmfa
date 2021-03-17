@@ -5,33 +5,31 @@
 \title{Conducts step 3 from the three-step estimation of CT-LMFA.}
 \usage{
 Step3(
-  input_file,
-  id_column,
+  data,
+  identifier,
   n_state,
   post.probabilities,
-  interval_column = NULL,
+  timeintervals = NULL,
   transitionCovariates = NULL,
   initialCovariates = NULL,
   i.method = "BFGS",
   i.maxit = 10000,
   i.reltol = 1e-08,
-  i.fnscale = 1,
-  i.center = TRUE,
-  n_q = 10,
-  n_initial_ite = 10,
-  previousCov = FALSE
+  i.fnscale = "proxi",
+  n_q = 5,
+  n_initial_ite = 10
 )
 }
 \arguments{
-\item{input_file}{The dataset (must be a dataframe).}
+\item{data}{The dataset (must be a dataframe).}
 
-\item{id_column}{The name with subject identifiers (must be a single character).}
+\item{identifier}{The name with subject identifiers (must be a single character).}
 
 \item{n_state}{The number of states that should be estimated (must be a single scalar).}
 
-\item{post.probabilities}{The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the input_file).}
+\item{post.probabilities}{The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).}
 
-\item{interval_column}{The column name with intervals (must be a single character).}
+\item{timeintervals}{The column name with intervals (must be a single character).}
 
 \item{transitionCovariates}{The covariate(s) for the transition intensities (must be a (vector of) character(s)).}
 
@@ -45,13 +43,11 @@ Step3(
 
 \item{i.fnscale}{An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.}
 
-\item{i.center}{Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.}
-
 \item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
 
-\item{previousCov}{Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).}
+\item{i.center}{Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.}
 }
 \value{
 Returns .
@@ -61,20 +57,19 @@ Conducts step 3 from the three-step estimation of CT-LMFA.
 }
 \examples{
 \dontrun{
-step3Results <- Step3(input_file,
-                 id_column,
+step3Results <- Step3(data,
+                 identifier,
                  n_state,
                  post.probabilities,
-                 interval_column = NULL,
+                 timeintervals = NULL,
                  transitionCovariates = NULL,
                  initialCovariates = NULL,
                  i.method = "BFGS",
                  i.maxit = 10000,
                  i.reltol = 1e-8,
                  i.fnscale = 1,
-                 i.center = TRUE,
-                 n_q = 10,
-                 n_initial_ite = 10,
-                 previousCov = FALSE)
+                 n_q = 5,
+                 n_initial_ite = 10
+                 )
 }
 }

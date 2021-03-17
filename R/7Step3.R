@@ -18,7 +18,6 @@
 #' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
-#' @param previousCov Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
 #
 #'
 #' @return Returns .
@@ -87,8 +86,8 @@ Step3 <- function(data,
   if(length(i.fnscale)>1) stop("i.fnscale must be a single statement")
   if(!is.numeric(i.fnscale) & i.fnscale!="proxi") stop("i.fnscale must be a single scalar")
   if(i.fnscale<1) stop("i.fnscale must be a positive scalar equal to or larger than 1")
-  if(!is.logical(i.center)) stop("i.center must be a single logical statement")
-  if(length(i.center)>1) stop("i.center must be a single logical statement")
+  #if(!is.logical(i.center)) stop("i.center must be a single logical statement")
+  #if(length(i.center)>1) stop("i.center must be a single logical statement")
   if(!is.numeric(n_q)) stop("n_q must be a single scalar")
   if(length(n_q)>1) stop("n_q must be a single scalar")
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
@@ -350,6 +349,13 @@ CleanEnvir(identifier)
     warning("Optimisation has probably not converged to the maximum likelihood - Hessian is not positive definite.")
   }
  
+  #Has the model reached convergence? (we use 1 as convergence and 0 as non-convergence; thus, we turn the number around)
+  if(step3Results$opt$convergence==1){
+    convergence <- 0
+  }else{
+    convergence <- 1
+  }
+  
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Extracting the results
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -714,11 +720,15 @@ hessianAndCovNames<-
 
 
 
-  return(list(LL=step3Results$minus2loglik/-2,
+  object <-list(LL=step3Results$minus2loglik/-2,
+              convergence = convergence,
+              seconds=requiredTime,
               classification_posterior=viterbi.msm(step3Results),
               estimates=round(parameterEstimates,4), 
               WaldTests=round(waldMatrix,4),
-              seconds=requiredTime,
               hessian=printHessian,
-              cov.matrix = estimatedCovmatrix))
+              cov.matrix = estimatedCovmatrix)
+
+  class(output) = "lmfa_step3"
+  output
 }

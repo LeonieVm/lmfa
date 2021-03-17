@@ -811,7 +811,8 @@ Step1Step2 <- function(data,indicators,n_state,
   #-------------------------------------------------------------------------------#
   # Obtain R-squared entropy.
   #-------------------------------------------------------------------------------#
-  probVector <-c(NA)
+  if(n_state>1){
+probVector <-c(NA)
   entropy <- function(p) sum(-p * log(p))
   for(i in 1:n_state){
     probVector[i] <- pi_k[[i]]
@@ -821,6 +822,10 @@ Step1Step2 <- function(data,indicators,n_state,
   posteriors[(posteriors==0)] <- 1e-21
   error_post <- mean(apply(posteriors, 1, entropy))
   R2_entropy <- (error_prior - error_post) / error_prior
+  }else{
+    R2_entropy <-1
+  }
+  
 
   #-------------------------------------------------------------------------------#
   # Obtain standardized loadings and proportions of unique variances.
@@ -960,7 +965,7 @@ Step1Step2 <- function(data,indicators,n_state,
               R2_entropy = R2_entropy
               
               )
-  class(output) = "lmfa"
+  class(output) = "lmfa_step1step2"
   output
   
 }
