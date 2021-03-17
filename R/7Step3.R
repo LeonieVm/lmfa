@@ -63,9 +63,10 @@ Step3 <- function(data,
   #                                   Step 3
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+   #Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
    previousCov = FALSE #option that might be added in the future
-   i.center = TRUE #option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
-   ##' @param i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
+  
+  
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(identifier)) stop("argument identifier is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
@@ -100,7 +101,8 @@ Step3 <- function(data,
   # just a warning for non-specified interval column
   if(is.null(timeintervals)) warning("intervals are assumed to be equidistant because no timeintervals has been specified")
   ptm <- proc.time()
-  
+  # i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
+   i.center <- TRUE #option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Obtain all necessary elements (from user input or from step 1 and 2).
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -720,7 +722,7 @@ hessianAndCovNames<-
 
 
 
-  object <-list(LL=step3Results$minus2loglik/-2,
+  output <-list(LL=step3Results$minus2loglik/-2,
               convergence = convergence,
               seconds=requiredTime,
               classification_posterior=viterbi.msm(step3Results),
