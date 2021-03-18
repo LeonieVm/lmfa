@@ -26,15 +26,15 @@ summary.lmfa_step3 <- function(object, ...){
   cat("\n")
 
   cat("\n")
-  cat(paste("State 1 is the reference category for the initial state probabilities"),"\n")
-  cat("\n")
-  cat("\n")
-  cat(paste("Transition intensities are sorted by rows of the transition matrix."),"\n")
-  cat(paste("The staying rates serve as baseline"),"\n")
+  cat(paste("Information about the results:"),"\n")
+  cat(paste("For the initial state probabilities, state 1 is the reference category."),"\n")
+  cat(paste("The transition intensities are sorted by rows of the transition matrix "),"\n")
+  cat(paste("and the staying rates serve as reference, respectively."),"\n")
   cat("\n")
   
   cat("\n")
   print(object$estimates)
+  cat("\n")
   print(object$WaldTests)
   cat("\n")
 }

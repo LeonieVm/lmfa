@@ -876,7 +876,7 @@ probVector <-c(NA)
       }
     }
   }
-
+  
   uniqueVariances <- lapply(Psi_k,diag)
   
   #proportions of unique variance per state for better within-state comparison
@@ -916,7 +916,15 @@ probVector <-c(NA)
   NumberZeroVariance <- Reduce("+",lapply(SDList,function(x) sum(x^2==0)))
 
   if(NumberZeroVariance>0) warning("one or more states contain zero item variences and therefore, the explained variance per state is not interpretable")
-
+ 
+  Psi_k = lapply(lapply(Psi_k,diag),round,16)
+  Psi_k_st_w = lapply(standPsi,round,16)
+  Psi_k_st_b = lapply(standPsi2,round,16)
+  for(i in 1:n_state){
+    names(Psi_k[[i]])<- indicators
+    names(Psi_k_st_w[[i]])<- indicators
+    names(Psi_k_st_b[[i]])<- indicators
+  }
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                    Return Step 1 and Step 2 Results
@@ -952,9 +960,9 @@ probVector <-c(NA)
               Lambda_k = lapply(Lambda_k,round,16),
               Lambda_k_st_w = lapply(standLambda,round,16),
               Lambda_k_st_b = lapply(standLambda2,round,16),
-              Psi_k = lapply(lapply(Psi_k,diag),round,16),
-              Psi_k_st_w = lapply(standPsi,round,16),
-              Psi_k_st_b = lapply(standPsi2,round,16),
+              Psi_k = Psi_k,
+              Psi_k_st_w = Psi_k_st_w,
+              Psi_k_st_b = Psi_k_st_b,
               act.contraints = estimation[iteration,3],
               explained_var = Percent_expl_var,
               standard_dev_k = SDList,

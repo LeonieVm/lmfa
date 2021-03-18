@@ -46,8 +46,6 @@ Step3(
 \item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
-
-\item{i.center}{Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.}
 }
 \value{
 Returns .

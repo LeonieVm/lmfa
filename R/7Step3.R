@@ -716,9 +716,7 @@ hessianAndCovNames<-
   #                         Return Step 3 Results
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  cat("\n")
-  print(list(LL=step3Results$minus2loglik/-2,
-             estimates=round(parameterEstimates,4), WaldTests=round(waldMatrix,4)))
+  
 
 
 
@@ -732,5 +730,19 @@ hessianAndCovNames<-
               cov.matrix = estimatedCovmatrix)
 
   class(output) = "lmfa_step3"
+
+
+  if(output$convergence==1){
+    cat("\n")
+    cat(paste("Estimation converged.","\n"))
+  }else{
+    cat("\n")
+    cat(paste("Maximum number of iterations reached without convergence.","\n"))
+    cat("\n")
+  }
+  cat("\n")
+  cat(paste("LL",round(output$LL,4),sep=" = "),"\n")
+  cat("\n")
+
   output
 }
