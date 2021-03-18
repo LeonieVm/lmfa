@@ -8,7 +8,7 @@ Authors@R:
            email = "l.v.d.e.vogelsmeier@uvt.nl",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Imports:
     mclust,    
     foreach, 
