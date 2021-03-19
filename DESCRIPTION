@@ -6,8 +6,11 @@ Authors@R:
            family = "Vogelsmeier",
            role = c("aut", "cre"),
            email = "l.v.d.e.vogelsmeier@uvt.nl",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           comment = c(ORCID = "0000-0002-1666-7112"))
+Description: `lmfa` allows to explore within-person changes 
+    and between person differences in measurement models in 
+    (intensive) longitudinal data by means of three-step 
+    continuous-time latent Markov factor analysis.
 License: GPL (>= 3) + file LICENSE
 Imports:
     mclust,    

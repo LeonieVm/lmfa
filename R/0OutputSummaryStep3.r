@@ -15,7 +15,7 @@
 summary.lmfa_step3 <- function(object, ...){
   if(object$convergence==1){
     cat("\n")
-    cat(paste("Estimation converged.","\n"))
+    cat(paste("Estimation converged after",round(object$seconds,2),"seconds.","\n"))
   }else{
     cat("\n")
     cat(paste("Maximum number of iterations reached without convergence.","\n"))

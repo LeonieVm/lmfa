@@ -9,7 +9,7 @@
 #' @param timeintervals The column name with intervals (must be a single character).
 #' @param identifier The name with subject identifiers (must be a single character).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
-#' @param post.probabilities The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).
+#' @param postprobs The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).
 #' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).
 #' @param initialCovariates The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).
 #' @param i.method The type of optimization method that should be used (must be "BFGS" or "CG")
@@ -27,7 +27,7 @@
 #' step3Results <- Step3(data,
 #'                  identifier,
 #'                  n_state,
-#'                  post.probabilities,
+#'                  postprobs,
 #'                  timeintervals = NULL,
 #'                  transitionCovariates = NULL,
 #'                  initialCovariates = NULL,
@@ -46,7 +46,7 @@
 Step3 <- function(data,
                   identifier,
                   n_state,
-                  post.probabilities,
+                  postprobs,
                   timeintervals = NULL,
                   transitionCovariates = NULL,
                   initialCovariates = NULL,
@@ -70,10 +70,10 @@ Step3 <- function(data,
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(identifier)) stop("argument identifier is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
-  if(missing(post.probabilities)) stop("argument post.probabilities is missing, with no default")
+  if(missing(postprobs)) stop("argument postprobs is missing, with no default")
   #if(nrow(data)!=fitStep1Step2$number_of_timepoints) stop("data must have the same length as the data used in fitStep1Step2")
-  if(nrow(post.probabilities)!=nrow(data)) stop("post.probabilities must have the same length as data")
-  if(ncol(post.probabilities)!=n_state) stop("the number of columns of post.probabilities must be of length n_state")
+  if(nrow(postprobs)!=nrow(data)) stop("postprobs must have the same length as data")
+  if(ncol(postprobs)!=n_state) stop("the number of columns of postprobs must be of length n_state")
   if(!is.data.frame(data)) stop("data must be a dataframe")
   if(!is.null(transitionCovariates)) if(!is.character(transitionCovariates)) stop("transitionCovariates must be a (vector of) character(s)")
   if(!is.null(initialCovariates)) if(!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
@@ -110,7 +110,7 @@ Step3 <- function(data,
   # Obtain the time_column from timeintervals
   #identifier <- fitStep1Step2$identifier
   n_cases <- length(unlist(unique(data[,identifier])))
-  #n_state <- ncol(post.probabilities)
+  #n_state <- ncol(postprobs)
  
   
   newData <- c()
@@ -137,9 +137,9 @@ Step3 <- function(data,
 
 
 # Obtain the modal state assignments.
-  modal_data <- max.col(post.probabilities)
+  modal_data <- max.col(postprobs)
 
-  Posteriors <-cbind.data.frame(modal_data,post.probabilities)
+  Posteriors <-cbind.data.frame(modal_data,postprobs)
   colnames(Posteriors) <- c("Modal", paste("State",1:n_state,sep=""))
 
   ModalClassificationTable <- matrix(NA,ncol=n_state,nrow=n_state)
@@ -270,8 +270,8 @@ Step3 <- function(data,
   
   initialQm <- list()
   initialPm <- list()
-  probabilityVector <- runif(n_initial_ite,min = 0.5,max=1)
-  for(i in 1:n_initial_ite){
+  probabilityVector <- runif(n_q,min = 0.5,max=1)
+  for(i in 1:n_q){
     Pm <-diag(n_state)
     Pm[Pm==1] <-probabilityVector[i] 
     Pm[Pm==0] <-(1-probabilityVector[i])/(n_state-1 )
@@ -335,7 +335,7 @@ Step3 <- function(data,
                     
 #Is the following problematic ? 
 CleanEnvir <- function(x) {rm(list=deparse(substitute(x)),envir=.GlobalEnv)}
-CleanEnvir(identifier)
+on.exit(CleanEnvir(identifier))
 
 
 
@@ -711,6 +711,9 @@ hessianAndCovNames<-
     colnames(estimatedCovmatrix) <- hessianAndCovNames
     colnames(printHessian) <- hessianAndCovNames
     
+    classification_posterior <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
+    colnames(classification_posterior) <- c("ModalStep2","ModalStep3",colnames(postprobs))
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                         Return Step 3 Results
@@ -718,16 +721,15 @@ hessianAndCovNames<-
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   
 
-
-
   output <-list(LL=step3Results$minus2loglik/-2,
               convergence = convergence,
               seconds=requiredTime,
-              classification_posterior=viterbi.msm(step3Results),
+              classification_posterior=as.data.frame(classification_posterior),
               estimates=round(parameterEstimates,4), 
-              WaldTests=round(waldMatrix,4),
-              hessian=printHessian,
-              cov.matrix = estimatedCovmatrix)
+              WaldTests=round(waldMatrix,4)
+              #hessian=printHessian,
+              #cov.matrix = estimatedCovmatrix
+              )
 
   class(output) = "lmfa_step3"
 

@@ -927,6 +927,14 @@ probVector <-c(NA)
   }
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
+  #                    On exit
+  #                  --------------------------------------
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+  on.exit(stopImplicitCluster(), add=TRUE)
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  #                  --------------------------------------
   #                    Return Step 1 and Step 2 Results
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -953,6 +961,7 @@ probVector <-c(NA)
               BIC = BIC_T,
               n_obs = n_sub,
               n_par = R_T,
+              explained_var = Percent_expl_var,
               n_state = n_state,
               n_fact = n_fact,
               pi_k = pi_k,
@@ -962,11 +971,10 @@ probVector <-c(NA)
               Lambda_k_st_b = lapply(standLambda2,round,16),
               Psi_k = Psi_k,
               Psi_k_st_w = Psi_k_st_w,
-              Psi_k_st_b = Psi_k_st_b,
+              #Psi_k_st_b = Psi_k_st_b,
               act.contraints = estimation[iteration,3],
-              explained_var = Percent_expl_var,
-              standard_dev_k = SDList,
-              standard_dev = SDList2,
+              #standard_dev_k = SDList,
+              #standard_dev = SDList2,
               classification_posterior = Posteriors,
               classification_errors = ModalClassificationTable,
               classification_errors_prob = W_mod,
