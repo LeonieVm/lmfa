@@ -713,7 +713,9 @@ hessianAndCovNames<-
     
     classification_posterior <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
     colnames(classification_posterior) <- c("ModalStep2","ModalStep3",colnames(postprobs))
-
+    
+    WaldMatrixNoIntercepts <-waldMatrix[-c(which(rownames(waldMatrix)=="initial state"),
+                      which(rownames(waldMatrix)=="transition intercepts")),]
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                         Return Step 3 Results
@@ -726,7 +728,7 @@ hessianAndCovNames<-
               seconds=requiredTime,
               classification_posterior=as.data.frame(classification_posterior),
               estimates=round(parameterEstimates,4), 
-              WaldTests=round(waldMatrix,4)
+              WaldTests=round(WaldMatrixNoIntercepts,4)
               #hessian=printHessian,
               #cov.matrix = estimatedCovmatrix
               )
