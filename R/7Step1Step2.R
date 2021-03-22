@@ -970,7 +970,7 @@ probVector <-c(NA)
               Lambda_k_st_w = lapply(standLambda,round,16),
               Lambda_k_st_b = lapply(standLambda2,round,16),
               Psi_k = Psi_k,
-              Psi_k_st_w = Psi_k_st_w,
+              #Psi_k_st_w = Psi_k_st_w,
               #Psi_k_st_b = Psi_k_st_b,
               act.contraints = estimation[iteration,3],
               #standard_dev_k = SDList,
