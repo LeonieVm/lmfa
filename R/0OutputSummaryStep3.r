@@ -9,7 +9,7 @@
 #' @param ... Further arguments for the default S3 summary method
 #' @examples
 #' \dontrun{
-#' summary(results1)
+#' summary(results3)
 #' }
 #' @export
 summary.lmfa_step3 <- function(object, ...){
@@ -26,15 +26,15 @@ summary.lmfa_step3 <- function(object, ...){
   cat("\n")
 
   cat("\n")
-  cat(paste("Information about the results:"),"\n")
-  cat(paste("For the initial state probabilities, state 1 is the reference category."),"\n")
-  cat(paste("The transition intensities are sorted by rows of the transition matrix "),"\n")
-  cat(paste("and the staying rates serve as reference, respectively."),"\n")
+  print(object$WaldTests)
+
   cat("\n")
-  
+  cat(paste("Information about the regression parameter estimates:"),"\n")
+  cat(paste("For the initial state probabilities, state 1 is the "),"\n")
+  cat(paste("reference category. The transition intensities are "),"\n")
+  cat(paste("sorted by rows of the transition matrix and the staying "),"\n")
+  cat(paste("rates serve as references, respectively."),"\n")
   cat("\n")
   print(object$estimates)
-  cat("\n")
-  print(object$WaldTests)
   cat("\n")
 }

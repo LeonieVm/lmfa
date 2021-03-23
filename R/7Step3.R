@@ -35,8 +35,8 @@
 #'                  i.maxit = 10000,
 #'                  i.reltol = 1e-8,
 #'                  i.fnscale = 1,
-#'                  n_q = 10,
-#'                  n_initial_ite = 10
+#'                  n_q = 25,
+#'                  n_initial_ite = 15
 #'                  )
 #' }
 #' @export
@@ -683,8 +683,14 @@ parameterEstimates[(startTran+1):(startTran+
                              iniName,
                              "transition intercepts",
                              transitionCovariates),]
+  #we do not show the Wald tests for the intercepts because these are based on the wrong SE values/worng covariance matrix entries
+    WaldMatrixNoIntercepts <-waldMatrix[-c(which(rownames(waldMatrix)=="initial state"),
+                      which(rownames(waldMatrix)=="transition intercepts")),]
 
-hessianAndCovNames<-
+  #--------------------------------------#
+  #          hessian/covmatrix names
+  #--------------------------------------#
+  hessianAndCovNames<-
     #initial state probabilities
     c(
       #intensities
@@ -711,13 +717,13 @@ hessianAndCovNames<-
     colnames(estimatedCovmatrix) <- hessianAndCovNames
     colnames(printHessian) <- hessianAndCovNames
     
+  #--------------------------------------#
+  #           Vitberi
+  #--------------------------------------#
     classification_posterior <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
     colnames(classification_posterior) <- c("ModalStep2","Modal",colnames(postprobs))
-    classification_posterior[,-1] #we do not need the previous assignment anymore
-    #we do not show the Wald tests for the intercepts because these are based on the wrong SE values
-    
-    WaldMatrixNoIntercepts <-waldMatrix[-c(which(rownames(waldMatrix)=="initial state"),
-                      which(rownames(waldMatrix)=="transition intercepts")),]
+    classification_posterior <- classification_posterior[,-1] #we do not need the previous assignment anymore
+   
 
     #add updated state proportions
     pi_k <-list()
@@ -735,8 +741,8 @@ hessianAndCovNames<-
               seconds=requiredTime,
               convergence = convergence,
               LL=step3Results$minus2loglik/-2,
-              estimates=round(parameterEstimates,4), 
               WaldTests=round(WaldMatrixNoIntercepts,4),
+              estimates=round(parameterEstimates,4), 
               classification_posterior=as.data.frame(classification_posterior),
               pi_k = pi_k
               #hessian=printHessian,
