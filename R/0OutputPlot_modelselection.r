@@ -5,7 +5,7 @@
 #'
 #'
 #'
-#' @param object An object storing output from the main function Step3()
+#' @param x An x storing output from the main function Step3()
 #' @param ... Further arguments for the default S3 summary method
 #' @examples
 #' \dontrun{
@@ -14,16 +14,16 @@
 #' @export
 
 
-plot.lmfa_modelselection <- function(object, ...){
-        modelcomparison <-matrix(NA,nrow=length(object),ncol=4)
+plot.lmfa_modelselection <- function(x, ...){
+        modelcomparison <-matrix(NA,nrow=length(x),ncol=4)
         colnames(modelcomparison) <- c("LL","BIC","convergence","n_par")
         modelnames <- NULL
-        for(i in 1:length(object)){
-                modelcomparison[i,1] <-object[[i]]$LL
-                modelcomparison[i,2] <-object[[i]]$BIC
-                modelcomparison[i,3] <-object[[i]]$convergence
-                modelcomparison[i,4] <-object[[i]]$n_par
-                modelnames <- c(modelnames,paste("[",paste(object[[i]]$n_fact,collapse = ""),"]",sep=""))
+        for(i in 1:length(x)){
+                modelcomparison[i,1] <-x[[i]]$LL
+                modelcomparison[i,2] <-x[[i]]$BIC
+                modelcomparison[i,3] <-x[[i]]$convergence
+                modelcomparison[i,4] <-x[[i]]$n_par
+                modelnames <- c(modelnames,paste("[",paste(x[[i]]$n_fact,collapse = ""),"]",sep=""))
         }
         rownames(modelcomparison) <- modelnames
         modelcomparison <-modelcomparison[order(modelcomparison[,"BIC"]),]

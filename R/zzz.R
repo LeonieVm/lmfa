@@ -15,6 +15,7 @@
 #' @import expm
 #' @import NPflow 
 #' @import GPArotation 
+#' @importFrom graphics par text
 #' @docType package
 #'
 #' @name lmfa

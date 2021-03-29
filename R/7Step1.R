@@ -55,8 +55,8 @@ step1 <- function(data,indicators,n_state = NULL,
   }else{
   if(is.null(n_state_range)) stop("argument n_state_range is missing, with no default")
   if(is.null(n_fact_range)) stop("argument n_fact_range is missing, with no default")
-  if(!is.null(n_state)) print("argument n_state will be overwritten by n_state_range")
-  if(!is.null(n_fact)) print("argument n_fact will be overwritten by n_fact_range")
+  if(!is.null(n_state)) cat("argument n_state will be overwritten by n_state_range")
+  if(!is.null(n_fact)) cat("argument n_fact will be overwritten by n_fact_range")
 
   }
 
@@ -1065,6 +1065,7 @@ probVector <-c(NA)
 
   if(modelselection==TRUE){
     all_estimated_models[[comparingmodels]] <-output
+    names(all_estimated_models)[[comparingmodels]] <-paste("[",paste(n_fact,collapse = ""),"]",sep="")
   }
   } #closes comparing loop models
   
