@@ -19,7 +19,8 @@ Imports:
     msm,    
     readr,     
     expm,
-    NPflow      
+    NPflow,
+    GPArotation     
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1

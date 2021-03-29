@@ -7,8 +7,11 @@
 step1(
   data,
   indicators,
-  n_state,
-  n_fact,
+  n_state = NULL,
+  n_fact = NULL,
+  modelselection = FALSE,
+  n_state_range = NULL,
+  n_fact_range = NULL,
   n_starts = 25,
   n_initial_ite = 15,
   n_m_step = 10,
@@ -25,6 +28,12 @@ step1(
 \item{n_state}{The number of states that should be estimated (must be a single scalar).}
 
 \item{n_fact}{The number of factors per state that should be estimated (must be a numeric vector of length n_state).}
+
+\item{modelselection}{Indicates whether model selection should be performed or not. If TRUE, the arguments n_state_range and n_fact_range are required.}
+
+\item{n_state_range}{A vector indicating the number of states that should be considered in the model selection.}
+
+\item{n_fact_range}{A vector indicating the number of factors that should be considered in the model selection.}
 
 \item{n_starts}{The number of random starts that should be used (must be a single scalar).}
 

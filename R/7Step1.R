@@ -9,6 +9,9 @@
 #' @param indicators The variable names of the indicators (must be a vector of characters).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
 #' @param n_fact The number of factors per state that should be estimated (must be a numeric vector of length n_state).
+#' @param modelselection Indicates whether model selection should be performed or not. If TRUE, the arguments n_state_range and n_fact_range are required.
+#' @param n_state_range A vector indicating the number of states that should be considered in the model selection.
+#' @param n_fact_range A vector indicating the number of factors that should be considered in the model selection.
 #' @param n_starts The number of random starts that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the best starts (must be a single scalar).
 #' @param n_m_step The number of M-step iterations that should be used when parameters still change more than defined by the m_step_tolerance (must be a single scalar).
