@@ -1,4 +1,4 @@
-#' Summary statistics for Step3 analysis
+#' Summary statistics for step3()
 #'
 #'
 #'

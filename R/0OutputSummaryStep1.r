@@ -1,4 +1,4 @@
-#' Summary statistics for step1() analysis
+#' Summary statistics for step1()
 #'
 #'
 #'

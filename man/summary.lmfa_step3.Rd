@@ -2,7 +2,7 @@
 % Please edit documentation in R/0OutputSummaryStep3.r
 \name{summary.lmfa_step3}
 \alias{summary.lmfa_step3}
-\title{Summary statistics for Step3 analysis}
+\title{Summary statistics for step3()}
 \usage{
 \method{summary}{lmfa_step3}(object, ...)
 }
@@ -12,7 +12,7 @@
 \item{...}{Further arguments for the default S3 summary method}
 }
 \description{
-Summary statistics for Step3 analysis
+Summary statistics for step3()
 }
 \examples{
 \dontrun{

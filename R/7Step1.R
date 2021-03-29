@@ -49,8 +49,8 @@ step1 <- function(data,indicators,n_state = NULL,
   if(length(n_state)>1) stop("n_state must be a single scalar")
   if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
   if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
-  if(!is.null(n_state_range)) print("argument n_state_range will be overwritten by n_state")
-  if(!is.null(n_fact_range)) print("argument n_fact_range will be overwritten by n_fact")
+  if(!is.null(n_state_range)) cat("argument n_state_range will be overwritten by n_state because modelselection = TRUE")
+  if(!is.null(n_fact_range)) cat("argument n_fact_range will be overwritten by n_fact because modelselection = TRUE")
   #modelselection
   }else{
   if(is.null(n_state_range)) stop("argument n_state_range is missing, with no default")
@@ -137,9 +137,12 @@ if(modelselection == TRUE){
         n_models <- 1
 }
   
-  
+  cat("\n")
+  cat("-------------------------------------------------------------")
+  cat("\n")
   # for all models in the model selection (if modelselection == FALSE, only one model is estimated)
   for(comparingmodels in 1:n_models){
+
   cat("\n")
   cat(paste("Model",comparingmodels,"out of", n_models,sep=" "),"\n")
   if(modelselection==TRUE){
@@ -970,10 +973,10 @@ probVector <-c(NA)
   #-------------------------------------------------------------------------------#
   # Obtain rotated solutions
   #-------------------------------------------------------------------------------#
-  Lambda_k_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
-  standLambda_obli <- lapply(standLambda_obli, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
-  standLambda2_obli <- lapply(standLambda2_obli, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
-  correlations_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$Phi[])
+  #Lambda_k_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  standLambda_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  standLambda2_obli <- lapply(standLambda2, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  correlations_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$Phi[])
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
   #-------------------------------------------------------------------------------#
@@ -1025,8 +1028,8 @@ probVector <-c(NA)
   cat("\n")
   cat(paste("LL",round(LL,4),sep=" = "),"\n")
   cat("\n")
-
-    
+  cat("-------------------------------------------------------------")
+  cat("\n")  
     output <- list(n_it = iteration,
               seconds = requiredTime,
               convergence = convergence,
@@ -1042,7 +1045,7 @@ probVector <-c(NA)
               Lambda_k = lapply(Lambda_k,round,16),
               Lambda_k_st_w = lapply(standLambda,round,16),
               Lambda_k_st_b = lapply(standLambda2,round,16),
-              Lambda_k_obli = lapply(Lambda_k_obli,round,16),
+              #Lambda_k_obli = lapply(Lambda_k_obli,round,16),
               Lambda_k_st_w_obli = lapply(standLambda_obli,round,16),
               Lambda_k_st_b_obli = lapply(standLambda2_obli,round,16), 
               factor_correlations_obli = lapply(correlations_obli,round,16), 
