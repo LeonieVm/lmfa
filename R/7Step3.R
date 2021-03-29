@@ -24,7 +24,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' step3Results <- Step3(data,
+#' step3_results <- step3(data,
 #'                  identifier,
 #'                  n_state,
 #'                  postprobs,
@@ -43,7 +43,7 @@
 
 
 
-Step3 <- function(data,
+step3 <- function(data,
                   identifier,
                   n_state,
                   postprobs,

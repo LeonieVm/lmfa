@@ -16,6 +16,6 @@ Summary statistics for Step3 analysis
 }
 \examples{
 \dontrun{
-summary(results1)
+summary(results3)
 }
 }

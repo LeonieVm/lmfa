@@ -22,30 +22,48 @@
 #'
 #' @examples
 #' \dontrun{
-#' fitStep1Step2 <- Step1Step2(data,indicators,n_state,
+#' step1_results <- Step1Step2(data,indicators,n_state,
 #'                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
 #'                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
 #' }
 #' @export
 
-Step1Step2 <- function(data,indicators,n_state,
-                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
+step1 <- function(data,indicators,n_state = NULL,
+                       n_fact = NULL, modelselection = FALSE, n_state_range = NULL, n_fact_range = NULL,
+                       n_starts=25,n_initial_ite=15,n_m_step=10,
                        em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500){
 
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(indicators)) stop("argument indicators is missing, with no default")
   #if(missing(identifier)) stop("argument identifier is missing, with no default")
-  if(missing(n_state)) stop("argument n_state is missing, with no default")
-  if(missing(n_fact)) stop("argument n_fact is missing, with no default")
+  
+  if(!is.logical(modelselection)) stop("argument modelselection must be a logical statement")
+  #no modelselection
+  if(modelselection == FALSE){
+  if(is.null(n_state)) stop("argument n_state is missing, with no default")
+  if(is.null(n_fact)) stop("argument n_fact is missing, with no default")
+  if(!is.numeric(n_state)) stop("n_state must be a single scalar")
+  if(length(n_state)>1) stop("n_state must be a single scalar")
+  if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
+  if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
+  if(!is.null(n_state_range)) print("argument n_state_range will be overwritten by n_state")
+  if(!is.null(n_fact_range)) print("argument n_fact_range will be overwritten by n_fact")
+  #modelselection
+  }else{
+  if(is.null(n_state_range)) stop("argument n_state_range is missing, with no default")
+  if(is.null(n_fact_range)) stop("argument n_fact_range is missing, with no default")
+  if(!is.null(n_state)) print("argument n_state will be overwritten by n_state_range")
+  if(!is.null(n_fact)) print("argument n_fact will be overwritten by n_fact_range")
+
+  }
+
+  
 
   if(!is.data.frame(data)) stop("data must be a dataframe")
   if(!is.character(indicators)) stop("indicators must be a vector of characters")
   #if(!is.character(identifier)) stop("identifier must be a single character")
   #if(length(identifier)>1) stop("identifier must be a single character")
-  if(!is.numeric(n_state)) stop("n_state must be a single scalar")
-  if(length(n_state)>1) stop("n_state must be a single scalar")
-  if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
-  if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
+  
 
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
   if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
@@ -90,6 +108,50 @@ Step1Step2 <- function(data,indicators,n_state,
   # Number of cases.
   #n_cases <- length(unique(data[,identifier]))
 
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  #                  --------------------------------------
+  #                        Setup Modelselection
+  #                  --------------------------------------
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+if(modelselection == TRUE){
+        n_fact_range <- unique(n_fact_range)
+        allModels <- list()
+        all_estimated_models <-list()
+        n_models <- 0
+        for(i in 1:length(n_state_range)){
+                MMcombi <- combinations_K_F_k(length(n_fact_range), n_state_range[i], n_fact_range)
+                allModels[[i]] <- MMcombi
+                n_models <- n_models+nrow(MMcombi)
+        }
+        ModelMatrix <- matrix(NA,nrow = n_models,ncol = max(n_state_range))
+        skip <- 0
+        for(i in 1:length(n_state_range)){
+                n_state_specific_model <- nrow(allModels[[i]])
+                ModelMatrix[(1:n_state_specific_model+skip),1:ncol(allModels[[i]])] <- allModels[[i]]
+                skip <- skip+n_state_specific_model
+        }  
+}else{
+        n_models <- 1
+}
+  
+  
+  # for all models in the model selection (if modelselection == FALSE, only one model is estimated)
+  for(comparingmodels in 1:n_models){
+  cat("\n")
+  cat(paste("Model",comparingmodels,"out of", n_models,sep=" "),"\n")
+  if(modelselection==TRUE){
+    currentmodel <- ModelMatrix[comparingmodels,]
+    currentmodel <- currentmodel[!is.na(currentmodel)]
+    n_state <- length(currentmodel)
+    n_fact <- currentmodel
+  }
+
+  cat("\n")
+  cat(paste("Number of states",n_state,sep=": "),"\n")
+  cat("\n")
+  cat(paste("Number of factors: [", paste(n_fact, collapse = " "), "]", sep = ""),"\n")
+  cat("\n")
+
   # List of multistart procedure results.
   MultistartResults1 <- rep(list(list(NA)),n_starts*10)
   MultistartResults2 <- rep(list(list(NA)),n_starts)
@@ -129,11 +191,13 @@ Step1Step2 <- function(data,indicators,n_state,
   ini_mclust <- ini_mclust$classification
 
   if(n_starts>0){ #otherwise only mclust is used
-    MultistartResults1 <- foreach(multistart=1: (n_starts*10),
-                                  .packages=c("doParallel",
+  multistart <- NA #just because the CRAN check would otherwise 
+  # say that there is no visible binding for global variable 'multistart'.
+    MultistartResults1 <- foreach(multistart = 1: (n_starts*10),
+                                  .packages = c("doParallel",
                                               "mclust",
                                               "NPflow"),
-                                  .export=c("RandVec",
+                                  .export = c("RandVec",
                                             #"ini_mclust",
                                             "initializeStep1",
                                             "updExpMem",
@@ -142,7 +206,7 @@ Step1Step2 <- function(data,indicators,n_state,
                                             "updLambPsi",
                                             "DMV"),
                                   .verbose = FALSE)%dopar%{
-
+    
     # Self-created function (see '1InitializeEM.R').
     InitialValues <- initializeStep1(x,n_sub,n_state,
                                      n_fact,J,startval="MCrandom",RandVec=RandVec,ini_mclust=ini_mclust)#random;
@@ -900,7 +964,12 @@ probVector <-c(NA)
       }
   }
 
+  #-------------------------------------------------------------------------------#
+  # Obtain rotated solutions
+  #-------------------------------------------------------------------------------#
+  
 
+  
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
   #-------------------------------------------------------------------------------#
@@ -930,7 +999,7 @@ probVector <-c(NA)
   #                    On exit
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+  x <- x[,-c(ncol(x))]
 
   on.exit(stopImplicitCluster(), add=TRUE)
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -981,7 +1050,18 @@ probVector <-c(NA)
               R2_entropy = R2_entropy
               
               )
-  class(output) = "lmfa_step1step2"
-  output
+  class(output) = "lmfa_step1"
+
+  if(modelselection==TRUE){
+    all_estimated_models[[comparingmodels]] <-output
+  }
+  } #closes comparing loop models
+  
+  if(modelselection==TRUE){
+    class(all_estimated_models) <- "lmfa_modelselection"
+    all_estimated_models
+  }else{
+    output
+  }
   
 }
