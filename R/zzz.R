@@ -14,6 +14,7 @@
 #' @import msm
 #' @import expm
 #' @import NPflow 
+#' @import GPArotation 
 #' @docType package
 #'
 #' @name lmfa

@@ -967,9 +967,10 @@ probVector <-c(NA)
   #-------------------------------------------------------------------------------#
   # Obtain rotated solutions
   #-------------------------------------------------------------------------------#
-  
-
-  
+  Lambda_k_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  standLambda_obli <- lapply(standLambda_obli, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  standLambda2_obli <- lapply(standLambda2_obli, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  correlations_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$Phi[])
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
   #-------------------------------------------------------------------------------#
@@ -1038,6 +1039,10 @@ probVector <-c(NA)
               Lambda_k = lapply(Lambda_k,round,16),
               Lambda_k_st_w = lapply(standLambda,round,16),
               Lambda_k_st_b = lapply(standLambda2,round,16),
+              Lambda_k_obli = lapply(Lambda_k_obli,round,16),
+              Lambda_k_st_w_obli = lapply(standLambda_obli,round,16),
+              Lambda_k_st_b_obli = lapply(standLambda2_obli,round,16), 
+              factor_correlations_obli = lapply(correlations_obli,round,16), 
               Psi_k = Psi_k,
               #Psi_k_st_w = Psi_k_st_w,
               #Psi_k_st_b = Psi_k_st_b,
