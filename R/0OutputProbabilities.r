@@ -63,14 +63,14 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
 
         ini_par <- n_state-1
         tra_par <- n_state*n_state-n_state
-        interceptMatrix <- matrix(NA,nrow = ini_par,ncol = 1+length(initialCovariates))
-        transitionMatrix <-  matrix(NA,nrow = tra_par,ncol = 1+length(transitionCovariates))
+        interceptMatrix <- matrix(NA,nrow = ini_par,ncol = 1+length(initialCovariateScores))
+        transitionMatrix <-  matrix(NA,nrow = tra_par,ncol = 1+length(transitionCovariateScores))
         
         count <- 0
         interceptMatrix[,1] <- x$estimates[1:ini_par+count,1]
         count <- count+ini_par
-        if(!is.null(initialCovariates)){
-                for(i in 1:length(initialCovariates)){
+        if(!is.null(initialCovariateScores)){
+                for(i in 1:length(initialCovariateScores)){
                         interceptMatrix[,i+1] <-x$estimates[1:ini_par+count,1]
                         count <- count+ini_par
                 }      
@@ -78,8 +78,8 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
         
         transitionMatrix[,1] <- x$estimates[1:tra_par+count,1]
         count <- count+tra_par
-        if(!is.null(transitionCovariates)){
-                for(i in 1:length(transitionCovariates)){
+        if(!is.null(transitionCovariateScores)){
+                for(i in 1:length(transitionCovariateScores)){
                         transitionMatrix[,i+1] <-x$estimates[1:tra_par+count,1]
                         count <- count+tra_par
                 }      

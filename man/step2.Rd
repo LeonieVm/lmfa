@@ -9,7 +9,7 @@ step2(data, model)
 \arguments{
 \item{data}{The dataset (must be a dataframe and contain complete cases only).}
 
-\item{model}{The model estimated with step1().}
+\item{model}{The model estimated with step1() (must be of class lmfa_step1).}
 }
 \value{
 Returns the measurement model parameters, the proportional and

@@ -17,7 +17,8 @@ step3(
   i.reltol = 1e-08,
   i.fnscale = "proxi",
   n_q = 10,
-  n_initial_ite = 10
+  n_initial_ite = 10,
+  rounding = 4
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ step3(
 \item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
+
+\item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 }
 \value{
 Returns .
@@ -67,7 +70,8 @@ step3_results <- step3(data,
                  i.reltol = 1e-8,
                  i.fnscale = 1,
                  n_q = 25,
-                 n_initial_ite = 15
+                 n_initial_ite = 15,
+                 rounding = 4
                  )
 }
 }

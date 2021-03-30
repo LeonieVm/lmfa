@@ -369,6 +369,21 @@ on.exit(CleanEnvir(identifier))
   #--------------------------------------#
   #            Preparation
   #--------------------------------------#
+
+  namesTransitions <- NULL
+  for(i in 1:n_state){
+        for(j in 1:n_state){
+                if(i!=j){
+                        namesTransitions <- c(namesTransitions,(paste(i,j,sep = "|")))
+                }
+        }
+  }  
+
+  namesInitial <- NULL
+  for(i in 2:n_state){
+   namesInitial <- c(namesInitial,i)
+  }
+
   # What is the number of estimated parameters?
   # -For the intensities:
   numberParInt <- additionalCounts+length(c(fixed_responseprobabilities))
@@ -392,22 +407,22 @@ on.exit(CleanEnvir(identifier))
   
   rownames(parameterEstimates) <- 
     #initial state probabilities
-    c(paste("initial state",
-            1:(n_state-1)),
-      #cov on initial state probabilities
-      paste(rep(iniName,
-                each=n_state-1),
-            rep(1:(n_state-1),
-                length(iniName))),
-      
-      #intensities
-      paste("transition intercepts",
-            1:length(fixed_responseprobabilities)),
-      #cov on intensities
-      paste(rep(transitionCovariates,
-                each=length(fixed_responseprobabilities)),
-            rep(1:length(fixed_responseprobabilities),
-                length(transitionCovariates))))
+  c(paste("initial state",
+            namesInitial),
+  #cov on initial state probabilities
+  paste(rep(iniName,
+            each=n_state-1),
+        rep(namesInitial,
+            length(iniName))),
+  
+  #intensities
+  paste("transition intercepts",
+        namesTransitions),
+  #cov on intensities
+  paste(rep(transitionCovariates,
+            each=length(fixed_responseprobabilities)),
+        rep(namesTransitions,
+            length(transitionCovariates))))
   #--------------------------------------#
   #         Parameter estimates
   #--------------------------------------#
