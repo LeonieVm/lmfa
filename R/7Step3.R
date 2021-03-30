@@ -18,7 +18,7 @@
 #' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
-#' @param rounding The number of decimals to which the results should be rounded.
+#' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
 #
 #'
 #' @return Returns .
@@ -749,7 +749,11 @@ parameterEstimates[(startTran+1):(startTran+
               WaldTests=round(WaldMatrixNoIntercepts,rounding),
               estimates=round(parameterEstimates,rounding), 
               classification_posterior=as.data.frame(classification_posterior),
-              pi_k = round(pi_k, rounding)
+              pi_k = lapply(pi_k,round,rounding),
+              n_transitionCovariates = length(transitionCovariates),
+              n_initialCovariates = length(initialCovariates),
+              n_state = n_state,
+              data = cbind(data, classification_posterior)
               #hessian=printHessian,
               #cov.matrix = estimatedCovmatrix
               )

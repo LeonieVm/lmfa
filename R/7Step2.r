@@ -5,7 +5,7 @@
 #'
 #'
 #' @param data The dataset (must be a dataframe and contain complete cases only).
-#' @param model The model estimated with step1().
+#' @param model The model estimated with step1() (must be of class lmfa_step1).
 #
 #'
 #' @return Returns the measurement model parameters, the proportional and

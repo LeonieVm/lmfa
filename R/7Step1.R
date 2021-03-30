@@ -18,7 +18,7 @@
 #' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
-#' @param rounding The number of decimals to which the results should be rounded.
+#' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
 #
 #'
 #' @return Returns the measurement model parameters, the proportional and
@@ -50,14 +50,30 @@ step1 <- function(data,indicators,n_state = NULL,
   if(length(n_state)>1) stop("n_state must be a single scalar")
   if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
   if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
-  if(!is.null(n_state_range)) cat("argument n_state_range will be overwritten by n_state because modelselection = TRUE")
-  if(!is.null(n_fact_range)) cat("argument n_fact_range will be overwritten by n_fact because modelselection = TRUE")
+  if(!is.null(n_state_range)){
+    cat("\n")
+    cat("argument n_state_range will be overwritten by n_state because modelselection == FALSE") 
+    cat("\n")
+  } 
+  if(!is.null(n_fact_range)){
+    cat("\n")
+    cat("argument n_fact_range will be overwritten by n_fact because modelselection == FALSE") 
+    cat("\n")
+  }
   #modelselection
   }else{
   if(is.null(n_state_range)) stop("argument n_state_range is missing, with no default")
   if(is.null(n_fact_range)) stop("argument n_fact_range is missing, with no default")
-  if(!is.null(n_state)) cat("argument n_state will be overwritten by n_state_range")
-  if(!is.null(n_fact)) cat("argument n_fact will be overwritten by n_fact_range")
+  if(!is.null(n_state)){
+    cat("\n")
+  cat("argument n_state will be overwritten by n_state_range because modelselection == TRUE") 
+  cat("\n")
+  } 
+  if(!is.null(n_fact)){
+    cat("\n")
+    cat("argument n_fact will be overwritten by n_fact_range because modelselection == TRUE") 
+    cat("\n")
+  } 
 
   }
 
@@ -1012,6 +1028,15 @@ probVector <-c(NA)
     names(Psi_k_st_w[[i]])<- indicators
     names(Psi_k_st_b[[i]])<- indicators
   }
+
+  #-------------------------------------------------------------------------------#
+  # Transpose unique variances and intercepts
+  #-------------------------------------------------------------------------------#
+  for(i in 1:n_state){
+    Psi_k[[i]] <- t(t(Psi_k[[i]]))
+    nu_k[[i]] <- t(t(nu_k[[i]]))
+  }
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                    On exit
@@ -1051,8 +1076,8 @@ probVector <-c(NA)
               explained_var = round(Percent_expl_var, rounding),
               n_state = n_state,
               n_fact = n_fact,
-              pi_k = rounding(pi_k),
-              nu_k = rounding(nu_k),
+              pi_k = lapply(pi_k,round,rounding),
+              nu_k = lapply(nu_k,round,rounding),
               Lambda_k = lapply(Lambda_k,round,rounding),
               Lambda_k_st_w = lapply(standLambda,round,rounding),
               Lambda_k_st_b = lapply(standLambda2,round,rounding),
