@@ -18,6 +18,7 @@
 #' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
+#' @param rounding The number of decimals to which the results should be rounded.
 #
 #'
 #' @return Returns .
@@ -36,7 +37,8 @@
 #'                  i.reltol = 1e-8,
 #'                  i.fnscale = 1,
 #'                  n_q = 25,
-#'                  n_initial_ite = 15
+#'                  n_initial_ite = 15,
+#'                  rounding = 4
 #'                  )
 #' }
 #' @export
@@ -55,7 +57,8 @@ step3 <- function(data,
                   i.reltol = 1e-8,
                   i.fnscale = "proxi",
                   n_q = 10,
-                  n_initial_ite = 10
+                  n_initial_ite = 10,
+                  rounding = 4
                  ){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -95,6 +98,8 @@ step3 <- function(data,
   if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
   if(!is.logical(previousCov)) stop("previousCov must be a single logical statement")
   if(length(previousCov)>1) stop("previousCov must be a single logical statement")
+  if(!is.numeric(rounding)) stop("rounding must be a single scalar")
+  if(length(rounding)>1) stop("rounding must be a single scalar")
 
   
   if(i.maxit <= n_initial_ite) stop("i.maxit must be larger than n_initial_ite")
@@ -738,13 +743,13 @@ parameterEstimates[(startTran+1):(startTran+
   
 
   output <-list(
-              seconds=requiredTime,
+              seconds=round(requiredTime, rounding),
               convergence = convergence,
-              LL=step3Results$minus2loglik/-2,
-              WaldTests=round(WaldMatrixNoIntercepts,4),
-              estimates=round(parameterEstimates,4), 
+              LL=round(step3Results$minus2loglik/-2, rounding),
+              WaldTests=round(WaldMatrixNoIntercepts,rounding),
+              estimates=round(parameterEstimates,rounding), 
               classification_posterior=as.data.frame(classification_posterior),
-              pi_k = pi_k
+              pi_k = round(pi_k, rounding)
               #hessian=printHessian,
               #cov.matrix = estimatedCovmatrix
               )
@@ -761,7 +766,7 @@ parameterEstimates[(startTran+1):(startTran+
     cat("\n")
   }
   cat("\n")
-  cat(paste("LL",round(output$LL,4),sep=" = "),"\n")
+  cat(paste("LL",round(output$LL,rounding),sep=" = "),"\n")
   cat("\n")
 
   output

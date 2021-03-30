@@ -44,7 +44,7 @@ initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval="random",RandVec=R
       z_ik[[i]] <- ifelse(z_ik[[i]]==i,1,0) #give a probability of 1 to the assigned state
     }
   }else{
-    ini_mclust[sample(1:n_sub,size = 0.10*n_sub)] <- sample(1:n_state,(0.1*n_sub),replace=TRUE)
+    #ini_mclust[sample(1:n_sub,size = 0.10*n_sub)] <- sample(1:n_state,(0.1*n_sub),replace=TRUE)
     
     z_ik <- rep(list(as.numeric(ini_mclust)),n_state) #empty list for posterior state probabilities (as start values)
     for(i in 1:n_state){ #fill list

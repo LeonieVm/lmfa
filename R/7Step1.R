@@ -18,6 +18,7 @@
 #' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
+#' @param rounding The number of decimals to which the results should be rounded.
 #
 #'
 #' @return Returns the measurement model parameters, the proportional and
@@ -33,8 +34,8 @@
 
 step1 <- function(data,indicators,n_state = NULL,
                        n_fact = NULL, modelselection = FALSE, n_state_range = NULL, n_fact_range = NULL,
-                       n_starts=25,n_initial_ite=15,n_m_step=10,
-                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500){
+                       n_starts = 25,n_initial_ite = 15,n_m_step = 10,
+                       em_tolerance = 1e-6, m_step_tolerance = 1e-3, max_iterations = 500, rounding = 4){
 
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(indicators)) stop("argument indicators is missing, with no default")
@@ -82,8 +83,10 @@ step1 <- function(data,indicators,n_state = NULL,
   if(sum(complete.cases(data[,indicators])==FALSE)>0) stop("data must contain complete cases with regard to the indicators only")
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
   if(em_tolerance >= m_step_tolerance) stop("em_tolerance must be smaller than m_step_tolerance")
-
-  ptm <- proc.time()
+  
+  if(!is.numeric(rounding)) stop("rounding must be a single scalar")
+  if(length(rounding)>1) stop("rounding must be a single scalar")
+  
 
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Input: b) defined in the package.
@@ -142,7 +145,7 @@ if(modelselection == TRUE){
   cat("\n")
   # for all models in the model selection (if modelselection == FALSE, only one model is estimated)
   for(comparingmodels in 1:n_models){
-
+  ptm <- proc.time()
   cat("\n")
   cat(paste("Model",comparingmodels,"out of", n_models,sep=" "),"\n")
   if(modelselection==TRUE){
@@ -196,6 +199,14 @@ if(modelselection == TRUE){
   ini_mclust <- Mclust(x, G =n_state,verbose=FALSE)
   ini_mclust <- ini_mclust$classification
 
+  ini_mclust_random <- matrix(NA,ncol = (n_starts*10), nrow =n_sub )
+  for(multistart in 1:(n_starts*10)){
+    change_ini_mclust <- ini_mclust
+    change_ini_mclust[sample(1:n_sub,size = 0.10*n_sub)] <- sample(1:n_state,(0.10*n_sub),replace=TRUE)
+    ini_mclust_random[,multistart] <- change_ini_mclust
+  }
+
+
   if(n_starts>0){ #otherwise only mclust is used
   multistart <- NA #just because the CRAN check would otherwise 
   # say that there is no visible binding for global variable 'multistart'.
@@ -215,7 +226,7 @@ if(modelselection == TRUE){
     
     # Self-created function (see '1InitializeEM.R').
     InitialValues <- initializeStep1(x,n_sub,n_state,
-                                     n_fact,J,startval="MCrandom",RandVec=RandVec,ini_mclust=ini_mclust)#random;
+                                     n_fact,J,startval="MCrandom",RandVec=RandVec,ini_mclust=c(ini_mclust_random[,multistart]))#random;
 
     # Extract all parameters that are going to be updated in the EM algorithm.
     z_ik<- InitialValues$z_ik         #expected state-membership-probabilities
@@ -993,9 +1004,9 @@ probVector <-c(NA)
 
   if(NumberZeroVariance>0) warning("one or more states contain zero item variences and therefore, the explained variance per state is not interpretable")
  
-  Psi_k = lapply(lapply(Psi_k,diag),round,16)
-  Psi_k_st_w = lapply(standPsi,round,16)
-  Psi_k_st_b = lapply(standPsi2,round,16)
+  Psi_k = lapply(lapply(Psi_k,diag),round,rounding)
+  Psi_k_st_w = lapply(standPsi,round,rounding)
+  Psi_k_st_b = lapply(standPsi2,round,rounding)
   for(i in 1:n_state){
     names(Psi_k[[i]])<- indicators
     names(Psi_k_st_w[[i]])<- indicators
@@ -1026,39 +1037,39 @@ probVector <-c(NA)
     cat("Maximum number of iterations reached without convergence.")
   }
   cat("\n")
-  cat(paste("LL",round(LL,4),sep=" = "),"\n")
+  cat(paste("LL",round(LL,rounding),sep=" = "),"\n")
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")  
     output <- list(n_it = iteration,
               seconds = requiredTime,
               convergence = convergence,
-              LL = LL,
-              BIC = BIC_T,
+              LL = round(LL,rounding),
+              BIC = round(BIC_T,rounding),
               n_obs = n_sub,
               n_par = R_T,
-              explained_var = Percent_expl_var,
+              explained_var = round(Percent_expl_var, rounding),
               n_state = n_state,
               n_fact = n_fact,
-              pi_k = pi_k,
-              nu_k = nu_k,
-              Lambda_k = lapply(Lambda_k,round,16),
-              Lambda_k_st_w = lapply(standLambda,round,16),
-              Lambda_k_st_b = lapply(standLambda2,round,16),
-              #Lambda_k_obli = lapply(Lambda_k_obli,round,16),
-              Lambda_k_st_w_obli = lapply(standLambda_obli,round,16),
-              Lambda_k_st_b_obli = lapply(standLambda2_obli,round,16), 
-              factor_correlations_obli = lapply(correlations_obli,round,16), 
-              Psi_k = Psi_k,
+              pi_k = rounding(pi_k),
+              nu_k = rounding(nu_k),
+              Lambda_k = lapply(Lambda_k,round,rounding),
+              Lambda_k_st_w = lapply(standLambda,round,rounding),
+              Lambda_k_st_b = lapply(standLambda2,round,rounding),
+              #Lambda_k_obli = lapply(Lambda_k_obli,round,rounding),
+              Lambda_k_st_w_obli = lapply(standLambda_obli,round,rounding),
+              Lambda_k_st_b_obli = lapply(standLambda2_obli,round,rounding), 
+              factor_correlations_obli = lapply(correlations_obli,round,rounding), 
+              Psi_k = lapply(Psi_k,round,rounding),
               #Psi_k_st_w = Psi_k_st_w,
               #Psi_k_st_b = Psi_k_st_b,
               act.contraints = estimation[iteration,3],
               #standard_dev_k = SDList,
               #standard_dev = SDList2,
               classification_posterior = Posteriors,
-              classification_errors = ModalClassificationTable,
-              classification_errors_prob = W_mod,
-              R2_entropy = R2_entropy
+              classification_errors = round(ModalClassificationTable, rounding),
+              classification_errors_prob = round(W_mod, rounding),
+              R2_entropy = round(R2_entropy, rounding)
               
               )
   class(output) = "lmfa_step1"
