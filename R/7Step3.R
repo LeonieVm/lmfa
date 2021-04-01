@@ -423,7 +423,7 @@ on.exit(CleanEnvir(identifier))
   
   rownames(parameterEstimates) <- 
     #initial state probabilities
-  c(paste("initial state",
+  c(paste("initial state parameters",
             namesInitial),
   #cov on initial state probabilities
   paste(rep(iniName,
@@ -432,7 +432,7 @@ on.exit(CleanEnvir(identifier))
             length(iniName))),
   
   #intensities
-  paste("transition intercepts",
+  paste("transition parameters",
         namesTransitions),
   #cov on intensities
   paste(rep(transitionCovariates,
