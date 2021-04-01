@@ -34,7 +34,7 @@
 #'                  initialCovariates = NULL,
 #'                  i.method = "BFGS",
 #'                  i.maxit = 10000,
-#'                  i.reltol = 1e-8,
+#'                  i.reltol = 1e-10,
 #'                  i.fnscale = 1,
 #'                  n_q = 25,
 #'                  n_initial_ite = 15,
@@ -54,9 +54,9 @@ step3 <- function(data,
                   initialCovariates = NULL,
                   i.method = "BFGS",
                   i.maxit = 10000,
-                  i.reltol = 1e-8,
+                  i.reltol = 1e-10,
                   i.fnscale = "proxi",
-                  n_q = 10,
+                  n_q = 25,
                   n_initial_ite = 10,
                   rounding = 4
                  ){
@@ -291,10 +291,12 @@ step3 <- function(data,
   # We briefly put-off the warnings because there will be one if the
   # model does not converge (and it won't with so few iterations).
   
-  bestloglik <- list()
-  q_bestloglik <- list()
-  identifier<<-identifier #is it problematic to add something to the global environment if I also remove it from inside the function again?
-  for(i in 1:n_q){
+bestloglik <- list()
+q_bestloglik <- list()
+identifier<<-identifier #is it problematic to add something to the global environment if I also remove it from inside the function again?
+for(i in 1:n_q){
+  step3Results <- NULL
+  try(
     step3Results <-  suppressWarnings(msm(
     as.formula(paste("State", "~",time_column, sep="")), 
     subject = get(noquote(identifier)),
@@ -305,19 +307,33 @@ step3 <- function(data,
     hessian = TRUE,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
     method  = i.method,
-    control = list(maxit = n_initial_ite,reltol = i.reltol,fnscale= i.fnscale),
+    control = list(maxit = n_initial_ite,reltol = i.reltol,fnscale = i.fnscale),
     center = i.center,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
-                                          
+    , silent = TRUE)
+  
+  #if(!is.null(step3Results)){
     q_bestloglik[[i]] <-step3Results$Qmatrices$baseline
     bestloglik[[i]] <-step3Results$minus2loglik*-2
-  } 
+  #}
+}
 
-  # Consider the transition intensities from the best start set.
+if(length(bestloglik)!=0){
+  if(length(which(sapply(q_bestloglik, is.null)))>0){
+    bestloglik <- bestloglik[-which(sapply(q_bestloglik, is.null))]
+    q_bestloglik <- q_bestloglik[-which(sapply(q_bestloglik, is.null))]
+  }
+}else{
+  q_bestloglik <- NULL
+}
+
+# Consider the transition intensities from the best start set.
+if(is.null(q_bestloglik)){
+  stop("numerical overflow; consider changing scale of argument timeintervals and/or using a different value for the argument i.fnscale ")
+}else{
   Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
- 
-   #print("test1")
+}
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Final Analysis with best startset.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

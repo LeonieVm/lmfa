@@ -26,16 +26,16 @@
 #'
 #' @examples
 #' \dontrun{
-#' step1_results <- Step1Step2(data,indicators,n_state,
-#'                       n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
-#'                       em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
+#' step1_results <- step1(data,indicators, n_state,
+#'                       n_fact, n_starts = 25, n_initial_ite = 15, n_m_step = 10,
+#'                       em_tolerance = 1e-6, m_step_tolerance = 1e-3, max_iterations = 500, rounding = 4)
 #' }
 #' @export
 
 step1 <- function(data,indicators,n_state = NULL,
                        n_fact = NULL, modelselection = FALSE, n_state_range = NULL, n_fact_range = NULL,
                        n_starts = 25,n_initial_ite = 15,n_m_step = 10,
-                       em_tolerance = 1e-6, m_step_tolerance = 1e-3, max_iterations = 500, rounding = 4){
+                       em_tolerance = 1e-8, m_step_tolerance = 1e-3, max_iterations = 1000, rounding = 4){
 
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(indicators)) stop("argument indicators is missing, with no default")
@@ -240,9 +240,13 @@ if(modelselection == TRUE){
                                             "DMV"),
                                   .verbose = FALSE)%dopar%{
     
+    ini_mclust_specific <- c(ini_mclust_random[,multistart])
     # Self-created function (see '1InitializeEM.R').
     InitialValues <- initializeStep1(x,n_sub,n_state,
-                                     n_fact,J,startval="MCrandom",RandVec=RandVec,ini_mclust=c(ini_mclust_random[,multistart]))#random;
+                                     n_fact,J,startval = "MCrandom",
+                                     RandVec = RandVec,
+                                     ini_mclust = ini_mclust,
+                                     ini_mclust_specific = ini_mclust_specific)#random;
 
     # Extract all parameters that are going to be updated in the EM algorithm.
     z_ik<- InitialValues$z_ik         #expected state-membership-probabilities
@@ -328,7 +332,8 @@ if(modelselection == TRUE){
   InitialValues <- initializeStep1(x,n_sub,n_state,n_fact,
                                    J,startval="mclust",
                                    RandVec=RandVec,
-                                   ini_mclust=ini_mclust)#mclust;
+                                   ini_mclust = ini_mclust,
+                                   ini_mclust_specific = ini_mclust_specific)#mclust;
 
 
   # Extract all parameters that are going to be updated in the EM algorithm.
