@@ -5,16 +5,17 @@
 #'
 #'
 #'
-#' @param x An x storing output from the main function Step3()
-#' @param ... Further arguments for the default S3 summary method
+#' @param x  Output from the main function step1().
+#' @param ... Further arguments for the default S3 summary method.
 #' @examples
 #' \dontrun{
-#' plot(results_modelselection)
+#' plot(modelselection)
 #' }
 #' @export
 
 
 plot.lmfa_modelselection <- function(x, ...){
+
         modelcomparison <-matrix(NA,nrow=length(x),ncol=4)
         colnames(modelcomparison) <- c("LL","BIC","convergence","n_par")
         modelnames <- NULL
@@ -27,17 +28,18 @@ plot.lmfa_modelselection <- function(x, ...){
         }
         rownames(modelcomparison) <- modelnames
         modelcomparison <-modelcomparison[order(modelcomparison[,"BIC"]),]
-        
+        modelcomparison <- modelcomparison[modelcomparison[,"convergence"]==1,]
        
         par(mfrow = c(2, 1),mar = c(4.5,4.5,2,2))
         
         plot(modelcomparison[,"n_par"],modelcomparison[,"BIC"],xlab = "n_par",
-             ylab = "BIC",ylim = c(min(modelcomparison[,"BIC"])-1000,max(modelcomparison[,"BIC"])+1000))
+             ylab = "BIC",ylim = c(min(modelcomparison[,"BIC"])-1500,max(modelcomparison[,"BIC"])+1500))
         text(modelcomparison[,"n_par"],modelcomparison[,"BIC"],  rownames(modelcomparison),
              cex=0.75,pos=3)
         plot(modelcomparison[,"n_par"],modelcomparison[,"LL"],xlab = "n_par",
-             ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1000,max(modelcomparison[,"LL"])+1000))
+             ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500))
         text(modelcomparison[,"n_par"],modelcomparison[,"LL"],  rownames(modelcomparison),
              cex=0.75,pos=3)
         
+on.exit(par(mar=c(5.1, 4.1, 4.1, 2.1), mgp=c(3, 1, 0), las=0, mfrow = c(1,1)))
 }

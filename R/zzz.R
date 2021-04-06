@@ -15,6 +15,7 @@
 #' @import expm
 #' @import NPflow 
 #' @import GPArotation 
+#' @import multichull 
 #' @importFrom graphics par text
 #' @docType package
 #'

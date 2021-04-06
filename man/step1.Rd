@@ -15,9 +15,9 @@ step1(
   n_starts = 25,
   n_initial_ite = 15,
   n_m_step = 10,
-  em_tolerance = 1e-06,
+  em_tolerance = 1e-08,
   m_step_tolerance = 0.001,
-  max_iterations = 500,
+  max_iterations = 1000,
   rounding = 4
 )
 }
@@ -59,8 +59,19 @@ Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.
 }
 \examples{
 \dontrun{
-step1_results <- Step1Step2(data,indicators,n_state,
-                      n_fact,n_starts=25,n_initial_ite=15,n_m_step=10,
-                      em_tolerance=1e-6,m_step_tolerance=1e-3,max_iterations=500)
+step1_results <- step1(data,
+                 indicators,
+                 n_state = NULL,
+                 n_fact = NULL, 
+                 modelselection = FALSE, 
+                 n_state_range = NULL, 
+                 n_fact_range = NULL,
+                 n_starts = 25,
+                 n_initial_ite = 15,
+                 n_m_step = 10,
+                 em_tolerance = 1e-8, 
+                 m_step_tolerance = 1e-3, 
+                 max_iterations = 1000, 
+                 rounding = 4
 }
 }
