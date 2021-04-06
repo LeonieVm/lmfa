@@ -2,25 +2,25 @@
 % Please edit documentation in R/0OutputPlot_modelselection_CHull.r
 \name{chull_lmfa}
 \alias{chull_lmfa}
-\title{CHull}
+\title{A Generic Convex-Hull-Based Model Selection Method}
 \usage{
-chull_lmfa(modelselection, PercentageFit = 0.01, ...)
+chull_lmfa(x, PercentageFit = 0.01, ...)
 }
 \arguments{
-\item{modelselection}{min.}
+\item{x}{Output from the main function step1() (must be of class lmfa_step1).}
 
-\item{PercentageFit}{Required proportion of increase in fit of a more complex model}
+\item{PercentageFit}{Required proportion of increase in fit of a more complex model.}
 
-\item{...}{rows.}
+\item{...}{Further arguments for the CHull plot function.}
 }
 \value{
-Returns
+Returns CHull output.
 }
 \description{
-This fun
+This function is based on the CHull function from the R package multichull
 }
 \examples{
 \dontrun{
-
+chull_lmfa(x)
 }
 }

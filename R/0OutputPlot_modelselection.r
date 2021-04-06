@@ -5,7 +5,7 @@
 #'
 #'
 #'
-#' @param x  Output from the main function step1().
+#' @param x  Output from the main function step1() (must be of class lmfa_modelselection).
 #' @param ... Further arguments for the default S3 summary method.
 #' @examples
 #' \dontrun{
@@ -15,7 +15,8 @@
 
 
 plot.lmfa_modelselection <- function(x, ...){
-
+        if(missing(x)) stop("argument data is missing, with no default")
+        
         modelcomparison <-matrix(NA,nrow=length(x),ncol=4)
         colnames(modelcomparison) <- c("LL","BIC","convergence","n_par")
         modelnames <- NULL

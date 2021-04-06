@@ -7,15 +7,15 @@
 \method{plot}{lmfa_modelselection}(x, ...)
 }
 \arguments{
-\item{x}{An x storing output from the main function Step3()}
+\item{x}{Output from the main function step1() (must be of class lmfa_step1).}
 
-\item{...}{Further arguments for the default S3 summary method}
+\item{...}{Further arguments for the default S3 summary method.}
 }
 \description{
 Plot for model selection
 }
 \examples{
 \dontrun{
-plot(results_modelselection)
+plot(modelselection)
 }
 }
