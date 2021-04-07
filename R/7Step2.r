@@ -30,6 +30,7 @@ step2 <- function(data, model){
                    classification_errors = model$classification_errors,
                    classification_errors_prob = model$classification_errors_prob,
                    R2_entropy = model$R2_entropy,
+                   state_proportions = model$state_proportions,
                    data = cbind(data,model$classification_posterior)
     )
     

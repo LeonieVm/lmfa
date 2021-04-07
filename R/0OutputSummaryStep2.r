@@ -25,6 +25,10 @@ summary.lmfa_step2 <- function(object, ...){
   cat("\n")
   print(object$classification_errors_prob)
   cat("\n")
+  cat(paste("state proportions"),"\n")
+  cat("\n")
+  print(object$pi_k)
+  cat("\n")
 
   
 }

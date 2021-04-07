@@ -6,8 +6,8 @@
 #'
 #'
 #' @param data The dataset (must be a dataframe).
-#' @param timeintervals The column name with intervals (must be a single character).
-#' @param identifier The name with subject identifiers (must be a single character).
+#' @param timeintervals The name of the column containing the intervals (must be a single character).
+#' @param identifier The name of the column containing the subject identifiers (must be a single character).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
 #' @param postprobs The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).
 #' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).

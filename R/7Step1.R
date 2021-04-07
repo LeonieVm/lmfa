@@ -1076,6 +1076,52 @@ probVector <-c(NA)
   #                    Return Step 1 and Step 2 Results
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
+state_proportions <- c()
+for(i in 1:length(pi_k)){
+  state_proportions <- cbind(state_proportions,pi_k[[i]])
+}
+state_proportions <- as.data.frame(state_proportions)
+colnames(state_proportions) <- c(paste("S",rep(1:n_state),sep=""))
+
+factornames <- c()
+for(i in 1:n_state){
+  factornames <- c(factornames,1:n_fact[i])
+}
+
+loadings_w_obli<- c()
+for(i in 1:length(standLambda)){
+  loadings_w_obli<- cbind(loadings_w_obli,standLambda[[i]])
+}
+loadings_w_obli<- as.data.frame(loadings_w_obli)
+colnames(loadings_w_obli) <- c(paste("S",rep(1:n_state,n_fact),"F", factornames,sep=""))
+
+
+loadings_b_obli<- c()
+for(i in 1:length(standLambda2_obli)){
+  loadings_b_obli<- cbind(loadings_b_obli,standLambda2_obli[[i]])
+}
+loadings_b_obli<- as.data.frame(loadings_b_obli)
+colnames(loadings_b_obli) <- c(paste("S",rep(1:n_state,n_fact),"F", factornames,sep=""))
+
+intercepts <- c()
+for(i in 1:length(nu_k)){
+  intercepts <- cbind(intercepts,nu_k[[i]])
+}
+intercepts <- as.data.frame(intercepts)
+colnames(intercepts) <- c(paste("S",rep(1:n_state),sep=""))
+
+unique_variances <- c()
+for(i in 1:length(Psi_k)){
+  unique_variances <- cbind(unique_variances,Psi_k[[i]])
+}
+unique_variances <- as.data.frame(unique_variances)
+colnames(unique_variances) <- c(paste("S",rep(1:n_state),sep=""))
+
+names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
+
+
   cat("\n")
   
   if(iteration<max_iterations){
@@ -1097,21 +1143,27 @@ probVector <-c(NA)
               convergence = convergence,
               LL = round(LL,rounding),
               BIC = round(BIC_T,rounding),
+              intercepts = round(intercepts, rounding),
+              loadings_w_obli = round(loadings_w_obli, rounding),
+              loadings_b_obli = round(loadings_b_obli, rounding),
+              unique_variances = round(unique_variances, rounding),
+              factor_correlations_obli = lapply(correlations_obli, round, rounding), 
+              state_proportions = round(state_proportions, rounding),
               n_obs = n_sub,
               n_par = R_T,
               explained_var = round(Percent_expl_var, rounding),
               n_state = n_state,
               n_fact = n_fact,
-              pi_k = lapply(pi_k,round,rounding),
-              nu_k = lapply(nu_k,round,rounding),
-              Lambda_k = lapply(Lambda_k,round,rounding),
-              Lambda_k_st_w = lapply(standLambda,round,rounding),
-              Lambda_k_st_b = lapply(standLambda2,round,rounding),
+              pi_k = lapply(pi_k, round, rounding),
+              nu_k = lapply(nu_k, round, rounding),
+              Lambda_k = lapply(Lambda_k, round, rounding),
+              Lambda_k_st_w = lapply(standLambda, round, rounding),
+              Lambda_k_st_b = lapply(standLambda2, round, rounding),
               #Lambda_k_obli = lapply(Lambda_k_obli,round,rounding),
-              Lambda_k_st_w_obli = lapply(standLambda_obli,round,rounding),
-              Lambda_k_st_b_obli = lapply(standLambda2_obli,round,rounding), 
-              factor_correlations_obli = lapply(correlations_obli,round,rounding), 
-              Psi_k = lapply(Psi_k,round,rounding),
+              Lambda_k_st_w_obli = lapply(standLambda_obli, round, rounding),
+              Lambda_k_st_b_obli = lapply(standLambda2_obli, round, rounding), 
+              
+              Psi_k = lapply(Psi_k, round, rounding),
               #Psi_k_st_w = Psi_k_st_w,
               #Psi_k_st_b = Psi_k_st_b,
               act.contraints = estimation[iteration,3],
