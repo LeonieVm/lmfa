@@ -17,20 +17,19 @@ step3(
   i.reltol = 1e-10,
   i.fnscale = "proxi",
   n_q = 25,
-  n_initial_ite = 10,
-  rounding = 4
+  n_initial_ite = 10
 )
 }
 \arguments{
 \item{data}{The dataset (must be a dataframe).}
 
-\item{identifier}{The name with subject identifiers (must be a single character).}
+\item{identifier}{The name of the column containing the subject identifiers (must be a single character).}
 
 \item{n_state}{The number of states that should be estimated (must be a single scalar).}
 
 \item{postprobs}{The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).}
 
-\item{timeintervals}{The column name with intervals (must be a single character).}
+\item{timeintervals}{The name of the column containing the intervals (must be a single character).}
 
 \item{transitionCovariates}{The covariate(s) for the transition intensities (must be a (vector of) character(s)).}
 
@@ -47,8 +46,6 @@ step3(
 \item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
-
-\item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 }
 \value{
 Returns .
@@ -70,8 +67,7 @@ step3_results <- step3(data,
                  i.reltol = 1e-10,
                  i.fnscale = 1,
                  n_q = 25,
-                 n_initial_ite = 15,
-                 rounding = 4
+                 n_initial_ite = 15
                  )
 }
 }

@@ -7,7 +7,7 @@
 \method{plot}{lmfa_modelselection}(x, ...)
 }
 \arguments{
-\item{x}{Output from the main function step1() (must be of class lmfa_step1).}
+\item{x}{Output from the main function step1() (must be of class lmfa_modelselection).}
 
 \item{...}{Further arguments for the default S3 summary method.}
 }

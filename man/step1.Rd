@@ -17,8 +17,7 @@ step1(
   n_m_step = 10,
   em_tolerance = 1e-08,
   m_step_tolerance = 0.001,
-  max_iterations = 1000,
-  rounding = 4
+  max_iterations = 1000
 )
 }
 \arguments{
@@ -47,8 +46,6 @@ step1(
 \item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations (must be a single scalar).}
 
 \item{max_iterations}{The maximum number of iterations (must be a single scalar and larger than n_initial_ite).}
-
-\item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 }
 \value{
 Returns the measurement model parameters, the proportional and
@@ -71,7 +68,6 @@ step1_results <- step1(data,
                  n_m_step = 10,
                  em_tolerance = 1e-8, 
                  m_step_tolerance = 1e-3, 
-                 max_iterations = 1000, 
-                 rounding = 4
+                 max_iterations = 1000
 }
 }
