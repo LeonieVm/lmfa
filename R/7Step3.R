@@ -798,7 +798,7 @@ parameterEstimates[(startTran+1):(startTran+
     cat("\n")
   }
   cat("\n")
-  cat(paste("LL",round(output$LL,rounding),sep=" = "),"\n")
+  cat(paste("LL",round(output$LL,2),sep=" = "),"\n")
   cat("\n")
 
   output

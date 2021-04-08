@@ -911,6 +911,40 @@ if(modelselection == TRUE){
   for(k in 1:n_state){
     posterior_data[,k] <- z_ik[[k]]
   }
+  
+  #--------------------------------------------------------------------------------#
+  #                reorder parameters based on the size of the states
+  #--------------------------------------------------------------------------------#
+  orderStates <- c()
+for(i in 1:n_state){
+  orderStates <- c(orderStates,pi_k[[i]])
+}
+
+orderStates <- order(orderStates,decreasing = TRUE)
+
+n_fact <- n_fact[orderStates]
+
+pi_k_reorder <-pi_k
+Lambda_k_reorder <- Lambda_k
+Psi_k_reorder <- Psi_k
+nu_k_reorder <- nu_k
+posterior_data_reorder <- posterior_data
+for(i in 1:n_state){
+  pi_k_reorder[[i]] <- pi_k[[orderStates[i]]]
+  Lambda_k_reorder[[i]] <- Lambda_k[[orderStates[i]]]
+  Psi_k_reorder[[i]] <- Psi_k[[orderStates[i]]]
+  nu_k_reorder[[i]] <- nu_k[[orderStates[i]]]
+  posterior_data_reorder[,i] <- posterior_data[,orderStates[i]]
+}
+pi_k <- pi_k_reorder
+Lambda_k <- Lambda_k_reorder
+Psi_k <- Psi_k_reorder
+nu_k <- nu_k_reorder
+posterior_data <- posterior_data_reorder
+
+  #--------------------------------------------------------------------------------#
+  #                            continue with step 2
+  #--------------------------------------------------------------------------------#
 
   # Obtain the modal state assignments.
   modal_data <- max.col(posterior_data)
@@ -1137,8 +1171,10 @@ probVector <-c(NA)
       flipped <- sum(abs(standLambda_obli[[i]][,j][(standLambda_obli[[i]][,j])* -1 > 0]))
       if(flipped>normal){
         standLambda_obli_fl[[i]][,j] <- standLambda_obli[[i]][,j]*-1
-        correlations_obli_fl[[i]][,j] <-  correlations_obli_fl[[i]][,j]*-1 
-        correlations_obli_fl[[i]][j,] <-  correlations_obli_fl[[i]][j,]*-1 
+        if(n_fact[i]>1){
+          correlations_obli_fl[[i]][,j] <-  correlations_obli_fl[[i]][,j]*-1 
+          correlations_obli_fl[[i]][j,] <-  correlations_obli_fl[[i]][j,]*-1 
+        }
       }
     }
   }
@@ -1219,7 +1255,7 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
     cat("Maximum number of iterations reached without convergence.")
   }
   cat("\n")
-  cat(paste("LL",round(LL,rounding),sep=" = "),"\n")
+  cat(paste("LL",round(LL,2),sep=" = "),"\n")
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")  
@@ -1240,7 +1276,7 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               n_state = n_state,
               n_fact = n_fact,
               state_proportions_list = lapply(pi_k, round, rounding),
-              nu_k = lapply(nu_k, round, rounding),
+              intercepts_list = lapply(nu_k, round, rounding),
               loadings_list = lapply(Lambda_k_fl, round, rounding),
               loadings_list_w = lapply(standLambda_fl, round, rounding),
               loadings_list_b = lapply(standLambda2_fl, round, rounding),

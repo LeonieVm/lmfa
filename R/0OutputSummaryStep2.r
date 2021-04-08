@@ -15,19 +15,19 @@
 summary.lmfa_step2 <- function(object, ...){
 
   cat("\n")
-  cat(paste("R2_entropy: ",object$R2_entropy,sep=" = "),"\n")
+  cat(paste("R2_entropy: ",round(object$R2_entropy,2),sep=" = "),"\n")
   cat("\n")
   cat(paste("Classification errors:"),"\n")
   cat("\n")
-  print(object$classification_errors)
+  print(round(object$classification_errors,2))
   cat("\n")
   cat(paste("Classification-error probabilities:"),"\n")
   cat("\n")
-  print(object$classification_errors_prob)
+  print(round(object$classification_errors_prob,2))
   cat("\n")
   cat(paste("State proportions:"),"\n")
   cat("\n")
-  print(object$state_proportions,row.names = FALSE)
+  print(round(object$state_proportions,2),row.names = FALSE)
   cat("\n")
 
   

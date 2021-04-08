@@ -17,7 +17,7 @@
 #' }
 
 
-chull_lmfa <- function(x,PercentageFit = 0.01,...){
+chull_lmfa <- function(x,PercentageFit = 0.0001,...){
 
     if(missing(x)) stop("argument data is missing, with no default")
     if(class(x)!="lmfa_modelselection") stop("x must be of class lmfa_modelselection")
