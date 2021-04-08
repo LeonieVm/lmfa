@@ -1067,43 +1067,110 @@ probVector <-c(NA)
   #                  --------------------------------------
   #                    On exit
   #                  --------------------------------------
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   x <- x[,-c(ncol(x))]
 
   on.exit(stopImplicitCluster(), add=TRUE)
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
-  #                    Return Step 1 and Step 2 Results
+  #                    flip loadings and correlations
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  #copy loadings to flipped versions
+  Lambda_k_fl <- Lambda_k
+  standLambda_fl <- standLambda
+  standLambda2_fl <- standLambda2
+  standLambda_obli_fl <- standLambda_obli
+  standLambda2_obli_fl <- standLambda2_obli
+  correlations_obli_fl <- correlations_obli
 
+  #normal unrotated unstandardized
+  for(i in 1:n_state){
+    for(j in 1:n_fact[i]){
+      normal <- sum(abs(Lambda_k[[i]][,j][(Lambda_k[[i]][,j])>0]))
+      flipped <- sum(abs(Lambda_k[[i]][,j][(Lambda_k[[i]][,j])* -1 > 0]))
+      if(flipped>normal){
+        Lambda_k_fl[[i]][,j] <- Lambda_k[[i]][,j]*-1
+      }
+    }
+  }
 
+  #within Standardized
+  for(i in 1:n_state){
+    for(j in 1:n_fact[i]){
+      normal <- sum(abs(standLambda[[i]][,j][(standLambda[[i]][,j])>0]))
+      flipped <- sum(abs(standLambda[[i]][,j][(standLambda[[i]][,j])* -1 > 0]))
+      if(flipped>normal){
+        standLambda_fl[[i]][,j] <- standLambda[[i]][,j]*-1
+      }
+    }
+  }
+
+  #between Standardized
+  for(i in 1:n_state){
+    for(j in 1:n_fact[i]){
+      normal <- sum(abs(standLambda2[[i]][,j][(standLambda2[[i]][,j])>0]))
+      flipped <- sum(abs(standLambda2[[i]][,j][(standLambda2[[i]][,j])* -1 > 0]))
+      if(flipped>normal){
+        standLambda2_fl[[i]][,j] <- standLambda2[[i]][,j]*-1
+      }
+    }
+  }
+  #within standardized rotated
+  for(i in 1:n_state){
+    for(j in 1:n_fact[i]){
+      normal <- sum(abs(standLambda_obli[[i]][,j][(standLambda_obli[[i]][,j])>0]))
+      flipped <- sum(abs(standLambda_obli[[i]][,j][(standLambda_obli[[i]][,j])* -1 > 0]))
+      if(flipped>normal){
+        standLambda_obli_fl[[i]][,j] <- standLambda_obli[[i]][,j]*-1
+        correlations_obli_fl[[i]][,j] <-  correlations_obli_fl[[i]][,j]*-1 
+        correlations_obli_fl[[i]][j,] <-  correlations_obli_fl[[i]][j,]*-1 
+      }
+    }
+  }
+
+  #between Standardized rotated
+  for(i in 1:n_state){
+    for(j in 1:n_fact[i]){
+      normal <- sum(abs(standLambda2_obli[[i]][,j][(standLambda2_obli[[i]][,j])>0]))
+      flipped <- sum(abs(standLambda2_obli[[i]][,j][(standLambda2_obli[[i]][,j])* -1 > 0]))
+      if(flipped>normal){
+        standLambda2_obli_fl[[i]][,j] <- standLambda2_obli[[i]][,j]*-1
+      }
+    }
+  }
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  #                  --------------------------------------
+  #                             get nice output
+  #                  --------------------------------------
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 state_proportions <- c()
 for(i in 1:length(pi_k)){
   state_proportions <- cbind(state_proportions,pi_k[[i]])
 }
 state_proportions <- as.data.frame(state_proportions)
 colnames(state_proportions) <- c(paste("S",rep(1:n_state),sep=""))
+state_proportions <- as.matrix(state_proportions)
 
 factornames <- c()
 for(i in 1:n_state){
   factornames <- c(factornames,1:n_fact[i])
 }
 
-loadings_w_obli<- c()
-for(i in 1:length(standLambda)){
-  loadings_w_obli<- cbind(loadings_w_obli,standLambda[[i]])
+loadings_w_obli_fl<- c()
+for(i in 1:length(standLambda_obli_fl)){
+  loadings_w_obli_fl<- cbind(loadings_w_obli_fl,standLambda_obli_fl[[i]])
 }
-loadings_w_obli<- as.data.frame(loadings_w_obli)
-colnames(loadings_w_obli) <- c(paste("S",rep(1:n_state,n_fact),"F", factornames,sep=""))
+loadings_w_obli_fl<- as.data.frame(loadings_w_obli_fl)
+colnames(loadings_w_obli_fl) <- c(paste("S",rep(1:n_state,n_fact),"F", factornames,sep=""))
 
 
-loadings_b_obli<- c()
-for(i in 1:length(standLambda2_obli)){
-  loadings_b_obli<- cbind(loadings_b_obli,standLambda2_obli[[i]])
+loadings_b_obli_fl<- c()
+for(i in 1:length(standLambda2_obli_fl)){
+  loadings_b_obli_fl<- cbind(loadings_b_obli_fl,standLambda2_obli_fl[[i]])
 }
-loadings_b_obli<- as.data.frame(loadings_b_obli)
-colnames(loadings_b_obli) <- c(paste("S",rep(1:n_state,n_fact),"F", factornames,sep=""))
+loadings_b_obli_fl<- as.data.frame(loadings_b_obli_fl)
+colnames(loadings_b_obli_fl) <- c(paste("S",rep(1:n_state,n_fact),"F", factornames,sep=""))
 
 intercepts <- c()
 for(i in 1:length(nu_k)){
@@ -1121,7 +1188,11 @@ colnames(unique_variances) <- c(paste("S",rep(1:n_state),sep=""))
 
 names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
 
-
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  #                  --------------------------------------
+  #                    Return Step 1 and Step 2 Results
+  #                  --------------------------------------
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
   
   if(iteration<max_iterations){
@@ -1144,26 +1215,26 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               LL = round(LL,rounding),
               BIC = round(BIC_T,rounding),
               intercepts = round(intercepts, rounding),
-              loadings_w_obli = round(loadings_w_obli, rounding),
-              loadings_b_obli = round(loadings_b_obli, rounding),
+              loadings_w_obli = round(loadings_w_obli_fl, rounding),
+              loadings_b_obli = round(loadings_b_obli_fl, rounding),
               unique_variances = round(unique_variances, rounding),
-              factor_correlations_obli = lapply(correlations_obli, round, rounding), 
+              factor_correlations_obli = lapply(correlations_obli_fl, round, rounding), 
               state_proportions = round(state_proportions, rounding),
               n_obs = n_sub,
               n_par = R_T,
               explained_var = round(Percent_expl_var, rounding),
               n_state = n_state,
               n_fact = n_fact,
-              pi_k = lapply(pi_k, round, rounding),
+              state_proportions_list = lapply(pi_k, round, rounding),
               nu_k = lapply(nu_k, round, rounding),
-              Lambda_k = lapply(Lambda_k, round, rounding),
-              Lambda_k_st_w = lapply(standLambda, round, rounding),
-              Lambda_k_st_b = lapply(standLambda2, round, rounding),
+              loadings_list = lapply(Lambda_k_fl, round, rounding),
+              loadings_list_w = lapply(standLambda_fl, round, rounding),
+              loadings_list_b = lapply(standLambda2_fl, round, rounding),
               #Lambda_k_obli = lapply(Lambda_k_obli,round,rounding),
-              Lambda_k_st_w_obli = lapply(standLambda_obli, round, rounding),
-              Lambda_k_st_b_obli = lapply(standLambda2_obli, round, rounding), 
+              loadings_list_w_obli = lapply(standLambda_obli_fl, round, rounding),
+              loadings_list_b_obli = lapply(standLambda2_obli_fl, round, rounding), 
               
-              Psi_k = lapply(Psi_k, round, rounding),
+              unique_variances_list = lapply(Psi_k, round, rounding),
               #Psi_k_st_w = Psi_k_st_w,
               #Psi_k_st_b = Psi_k_st_b,
               act.contraints = estimation[iteration,3],
