@@ -18,7 +18,6 @@
 #' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
-#' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
 #
 #'
 #' @return Returns the measurement model parameters, the proportional and
@@ -38,8 +37,7 @@
 #'                  n_m_step = 10,
 #'                  em_tolerance = 1e-8, 
 #'                  m_step_tolerance = 1e-3, 
-#'                  max_iterations = 1000, 
-#'                  rounding = 4
+#'                  max_iterations = 1000
 #' }
 #' @export
 
@@ -55,9 +53,9 @@ step1 <- function(data,
                   n_m_step = 10,
                   em_tolerance = 1e-8, 
                   m_step_tolerance = 1e-3, 
-                  max_iterations = 1000, 
-                  rounding = 4){
-
+                  max_iterations = 1000 
+                  ){
+  rounding = 12
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(indicators)) stop("argument indicators is missing, with no default")
   #if(missing(identifier)) stop("argument identifier is missing, with no default")
@@ -69,6 +67,7 @@ step1 <- function(data,
   if(is.null(n_fact)) stop("argument n_fact is missing, with no default")
   if(!is.numeric(n_state)) stop("n_state must be a single scalar")
   if(length(n_state)>1) stop("n_state must be a single scalar")
+  if(length(n_starts)>1) stop("n_starts must be a single scalar")
   if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
   if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
   if(!is.null(n_state_range)){
@@ -1027,9 +1026,24 @@ probVector <-c(NA)
   # Obtain rotated solutions
   #-------------------------------------------------------------------------------#
   #Lambda_k_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
-  standLambda_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
-  standLambda2_obli <- lapply(standLambda2, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
-  correlations_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$Phi[])
+  #standLambda_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  #standLambda2_obli <- lapply(standLambda2, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
+  #correlations_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$Phi[])
+  
+  standLambda_obli <- standLambda
+  standLambda2_obli <- standLambda2
+  correlations_obli <- list()
+
+  for(i in 1:n_state){
+    if(n_fact[i]>1){
+      rotationResults <- GPFoblq(standLambda[[i]], method = "oblimin", normalize = FALSE)
+      standLambda_obli[[i]] <- rotationResults$loadings[]
+      correlations_obli[[i]] <- rotationResults$Phi[]
+      standLambda2_obli[[i]] <- GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE)$loadings[]
+    }else{
+      correlations_obli[[i]] <- 1
+    }
+  }
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
   #-------------------------------------------------------------------------------#

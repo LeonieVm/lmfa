@@ -18,7 +18,6 @@
 #' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
-#' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
 #
 #'
 #' @return Returns .
@@ -37,8 +36,7 @@
 #'                  i.reltol = 1e-10,
 #'                  i.fnscale = 1,
 #'                  n_q = 25,
-#'                  n_initial_ite = 15,
-#'                  rounding = 4
+#'                  n_initial_ite = 15
 #'                  )
 #' }
 #' @export
@@ -57,8 +55,7 @@ step3 <- function(data,
                   i.reltol = 1e-10,
                   i.fnscale = "proxi",
                   n_q = 25,
-                  n_initial_ite = 10,
-                  rounding = 4
+                  n_initial_ite = 10
                  ){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -68,7 +65,7 @@ step3 <- function(data,
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
    #Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
    previousCov = FALSE #option that might be added in the future
-  
+   rounding = 12
   
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(identifier)) stop("argument identifier is missing, with no default")
