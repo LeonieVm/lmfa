@@ -751,18 +751,58 @@ parameterEstimates[(startTran+1):(startTran+
     colnames(printHessian) <- hessianAndCovNames
     
   #--------------------------------------#
-  #           Vitberi
+  #     don't use Vitberi but modal
   #--------------------------------------#
     classification_posteriors <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
     colnames(classification_posteriors) <- c("ModalStep2","Modal",colnames(postprobs))
     classification_posteriors <- classification_posteriors[,-1] #we do not need the previous assignment anymore
-   
+    classification_posteriors <- classification_posteriors[,-1] #also remove vitberi
+
+    modal_data <- max.col(classification_posteriors)
+
+    classification_posteriors <-cbind.data.frame(modal_data,classification_posteriors)
+    colnames(classification_posteriors) <- c("Modal", paste("State",1:n_state,sep=""))
 
     #add updated state proportions
     pi_k <-list()
     for(i in 1:n_state){
       pi_k[[i]] <- as.numeric((table(classification_posteriors[,1])/(nrow(classification_posteriors)))[i])
     }
+    #--------------------------------------#
+    # calculate mean scores for covariates
+    #--------------------------------------#
+    if(!is.null(transitionCovariates)){
+      if(length(transitionCovariates > 1)){
+        transition_covariate_means <- colMeans(ESM[,c(transitionCovariates)])
+      }else{
+        transition_covariate_means <- mean(ESM[,c(transitionCovariates)])
+      }
+    }else{
+      transition_covariate_means <- NULL
+    }
+    
+    if(!is.null(initialCovariates)){
+      if(length(initialCovariates > 1)){
+        initial_covariate_means <- colMeans(ESM[,c(initialCovariates)])
+      }else{
+        initial_covariate_means <- mean(ESM[,c(initialCovariates)])
+      }
+    }else{
+      initial_covariate_means <- NULL
+    }
+
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  #                  --------------------------------------
+  #                             get nice output
+  #                  --------------------------------------
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  state_proportions <- c()
+  for(i in 1:length(pi_k)){
+    state_proportions <- cbind(state_proportions,pi_k[[i]])
+  }
+  state_proportions <- as.data.frame(state_proportions)
+  colnames(state_proportions) <- c(paste("S",rep(1:n_state),sep=""))
+  state_proportions <- as.matrix(state_proportions)
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                         Return Step 3 Results
@@ -774,12 +814,15 @@ parameterEstimates[(startTran+1):(startTran+
               seconds=round(requiredTime, rounding),
               convergence = convergence,
               LL=round(step3Results$minus2loglik/-2, rounding),
-              Wald_tests=round(WaldMatrixNoIntercepts,rounding),
-              estimates=round(parameterEstimates,rounding), 
+              Wald_tests=round(WaldMatrixNoIntercepts, rounding),
+              estimates=round(parameterEstimates, rounding), 
               classification_posteriors=as.data.frame(classification_posteriors),
-              state_proportions_list = lapply(pi_k,round,rounding),
+              state_proportions = round(state_proportions, rounding),
+              state_proportions_list = lapply(pi_k,round, rounding),
               n_transition_covariates = length(transitionCovariates),
               n_initial_covariates = length(initialCovariates),
+              transition_covariate_means = transition_covariate_means,
+              initial_covariate_means = initial_covariate_means,
               n_state = n_state,
               data = cbind(data, classification_posteriors)
               #hessian=printHessian,

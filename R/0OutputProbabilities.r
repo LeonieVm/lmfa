@@ -50,13 +50,15 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
     n_state <- x$n_state
     if(is.null(transitionCovariateScores)){
         if(x$n_transition_covariates>0){
-            transitionCovariateScores <- rep(0,x$n_transition_covariates)
+            #transitionCovariateScores <- rep(0,x$n_transition_covariates)
+            transitionCovariateScores <- x$transition_covariate_means
         }
     }
 
     if(is.null(initialCovariateScores)){
         if(x$n_initial_covariates>0){
-            initialCovariateScores <- rep(0,x$n_initial_covariates)
+            #initialCovariateScores <- rep(0,x$n_initial_covariates)
+            initialCovariateScores <- x$initial_covariate_means
         }
     }
 
@@ -113,6 +115,35 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
         TransitionProbabilities <-expm(Intensities *deltaT)
         TransitionProbabilities <- round(TransitionProbabilities,rounding)
         
-        return(list("transition probabilities" = TransitionProbabilities,
-                    "initial state probabilities" = InitialStateProbabilities))
+        #return(list("transition probabilities" = TransitionProbabilities,
+        #           "initial state probabilities" = InitialStateProbabilities))
+
+    cat("\n")
+    cat(paste("Transition probabilities:","\n"))
+    cat("\n")
+    cat(paste("interval length:",deltaT,"\n"))
+    if(!is.null(transitionCovariateScores)){
+        for(i in 1:length(transitionCovariateScores)){
+           cat(paste(names(x$transition_covariate_means)[i],"score:",round(transitionCovariateScores[i],rounding),"\n"))
+        }
+    }else{
+        cat(paste("(no covariates defined)","\n"))
+        cat("\n")
+    }
+    cat("\n")
+    print(round(TransitionProbabilities, rounding))
+    cat("\n")
+
+    cat(paste("Initial state probabilities:","\n"))
+    cat("\n")
+    if(!is.null(initialCovariateScores)){
+        for(i in 1:length(initialCovariateScores)){
+           cat(paste(names(x$initial_covariate_means)[i],"score:",round(InitialStateProbabilities[i],rounding),"\n"))
+        }
+    }else{
+        cat(paste("(no covariates defined)","\n"))
+        cat("\n")
+    }
+        print(InitialStateProbabilities)
+
 }
