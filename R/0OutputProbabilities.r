@@ -119,7 +119,7 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
         #           "initial state probabilities" = InitialStateProbabilities))
 
     cat("\n")
-    cat(paste("Transition probabilities:","\n"))
+    cat(paste("1. Transition probabilities:","\n"))
     cat("\n")
     cat(paste("interval length:",deltaT,"\n"))
     if(!is.null(transitionCovariateScores)){
@@ -130,11 +130,14 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
         cat(paste("(no covariates defined)","\n"))
         cat("\n")
     }
+
+    colnames(TransitionProbabilities) <-paste("S",1:n_state,sep="")
+    rownames(TransitionProbabilities) <-paste("S",1:n_state,sep="")
     cat("\n")
     print(round(TransitionProbabilities, rounding))
     cat("\n")
 
-    cat(paste("Initial state probabilities:","\n"))
+    cat(paste("2. Initial state probabilities:","\n"))
     cat("\n")
     if(!is.null(initialCovariateScores)){
         for(i in 1:length(initialCovariateScores)){
@@ -144,6 +147,7 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
         cat(paste("(no covariates defined)","\n"))
         cat("\n")
     }
+        names(InitialStateProbabilities) <- paste("S",1:n_state,sep="")
         print(InitialStateProbabilities)
 
 }
