@@ -4,10 +4,12 @@
 \alias{summary.lmfa_step2}
 \title{Summary statistics for step2()}
 \usage{
-\method{summary}{lmfa_step2}(object, ...)
+\method{summary}{lmfa_step2}(object, rounding = 2, ...)
 }
 \arguments{
 \item{object}{An object storing output from the main function step2()}
+
+\item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 
 \item{...}{Further arguments for the default S3 summary method}
 }

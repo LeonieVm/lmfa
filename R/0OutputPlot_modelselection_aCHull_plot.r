@@ -4,14 +4,14 @@
 #'
 #' This function is based on the CHull function from the R package multichull
 #'
-#'
+#' @param x  Output from the main function step1() (must be of class lmfa_modelselection).
 #' @param col Vector of \code{\link{colors}} used for plots.
 #' @param pch Symbol used to indicate selected model(s).
 #' @param ... Further arguments for the CHull plot function.
 
 
 plot.CHull <-
-  function(x,col=NULL,pch=NULL, ...){
+  function(x, col = NULL, pch = NULL, ...){
     hull <- x$Hull
     Solution <- x$Solution
     data <- x$OrigData

@@ -16,6 +16,7 @@
 summary.lmfa_step3 <- function(object, rounding = 4, ...){
   if(!is.numeric(rounding)) stop("rounding must be a single scalar")
   if(length(rounding)>1) stop("rounding must be a single scalar")
+  n_state <- object$n_state
   cat("\n")
   cat(paste("Model estimation:"),"\n")
   if(object$convergence==1){

@@ -16,6 +16,7 @@
 summary.lmfa_step2 <- function(object, rounding = 2,...){
   if(!is.numeric(rounding)) stop("rounding must be a single scalar")
   if(length(rounding)>1) stop("rounding must be a single scalar")
+  n_state <- length(object$state_proportions)
   cat("\n")
   cat(paste("R2_entropy: ",round(object$R2_entropy,rounding),sep=" = "),"\n")
   cat("\n")

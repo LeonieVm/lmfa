@@ -67,6 +67,4 @@ if(sumComplexModels>0){
   cat(paste("  first less complex model."),"\n")
 }
 }
-  
-    
 }

@@ -16,7 +16,7 @@
 #' @import NPflow 
 #' @import GPArotation 
 #' @import multichull 
-#' @importFrom graphics par text
+#' @importFrom graphics par text points
 #' @docType package
 #'
 #' @name lmfa
