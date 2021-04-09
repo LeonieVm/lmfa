@@ -26,7 +26,7 @@ summary.lmfa_step3 <- function(object, ...){
   cat("\n")
 
   cat("\n")
-  print(round(object$WaldTests,2))
+  print(round(object$Wald_tests,2))
 
   cat("\n")
   cat(paste("Information about the regression parameter estimates:"),"\n")

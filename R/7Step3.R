@@ -753,15 +753,15 @@ parameterEstimates[(startTran+1):(startTran+
   #--------------------------------------#
   #           Vitberi
   #--------------------------------------#
-    classification_posterior <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
-    colnames(classification_posterior) <- c("ModalStep2","Modal",colnames(postprobs))
-    classification_posterior <- classification_posterior[,-1] #we do not need the previous assignment anymore
+    classification_posteriors <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
+    colnames(classification_posteriors) <- c("ModalStep2","Modal",colnames(postprobs))
+    classification_posteriors <- classification_posteriors[,-1] #we do not need the previous assignment anymore
    
 
     #add updated state proportions
     pi_k <-list()
     for(i in 1:n_state){
-      pi_k[[i]] <- as.numeric((table(classification_posterior[,1])/(nrow(classification_posterior)))[i])
+      pi_k[[i]] <- as.numeric((table(classification_posteriors[,1])/(nrow(classification_posteriors)))[i])
     }
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
@@ -774,14 +774,14 @@ parameterEstimates[(startTran+1):(startTran+
               seconds=round(requiredTime, rounding),
               convergence = convergence,
               LL=round(step3Results$minus2loglik/-2, rounding),
-              WaldTests=round(WaldMatrixNoIntercepts,rounding),
+              Wald_tests=round(WaldMatrixNoIntercepts,rounding),
               estimates=round(parameterEstimates,rounding), 
-              classification_posterior=as.data.frame(classification_posterior),
-              pi_k = lapply(pi_k,round,rounding),
-              n_transitionCovariates = length(transitionCovariates),
-              n_initialCovariates = length(initialCovariates),
+              classification_posteriors=as.data.frame(classification_posteriors),
+              state_proportions_list = lapply(pi_k,round,rounding),
+              n_transition_covariates = length(transitionCovariates),
+              n_initial_covariates = length(initialCovariates),
               n_state = n_state,
-              data = cbind(data, classification_posterior)
+              data = cbind(data, classification_posteriors)
               #hessian=printHessian,
               #cov.matrix = estimatedCovmatrix
               )

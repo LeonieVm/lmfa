@@ -45,7 +45,7 @@ summary.lmfa_step1 <- function(object, ...){
   cat("\n")
   for(i in 1:object$n_state){
     cat(paste("S",i,sep=""),"\n")
-    print(lapply(object$factor_correlations_obli,round,2)[[i]])
+    print(lapply(object$factor_correlations_obli_list,round,2)[[i]])
     cat("\n")
   }
   cat("\n")

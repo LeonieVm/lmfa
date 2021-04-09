@@ -23,15 +23,15 @@ step2 <- function(data, model){
     if(!is.data.frame(data)) stop("data must be a dataframe")
     
     if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
-    if(nrow(model$classification_posterior)!=nrow(data)) stop("data must be of same length as data used in step1()")
+    if(nrow(model$classification_posteriors)!=nrow(data)) stop("data must be of same length as data used in step1()")
 
     
-      output <- list(classification_posterior = model$classification_posterior,
+      output <- list(classification_posteriors = model$classification_posteriors,
                    classification_errors = model$classification_errors,
                    classification_errors_prob = model$classification_errors_prob,
                    R2_entropy = model$R2_entropy,
                    state_proportions = model$state_proportions,
-                   data = cbind(data,model$classification_posterior)
+                   data = cbind(data,model$classification_posteriors)
     )
     
 

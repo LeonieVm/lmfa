@@ -39,24 +39,24 @@ probabilities <- function(x, deltaT = 1, transitionCovariateScores = NULL,initia
 
     if(!is.null(transitionCovariateScores)){
         if(!is.numeric(transitionCovariateScores)) stop("transitionCovariateScores must be numeric")
-        if(length(transitionCovariateScores)!=x$n_transitionCovariates) stop("argument transitionCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation in step3()")
+        if(length(transitionCovariateScores)!=x$n_transition_covariates) stop("argument transitionCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation in step3()")
     }
 
     if(!is.null(initialCovariateScores)){
         if(!is.numeric(initialCovariateScores)) stop("initialCovariateScores must be numeric")
-        if(length(initialCovariateScores)!=x$n_initialCovariates) stop("argument initialCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation in step3()")
+        if(length(initialCovariateScores)!=x$n_initial_covariates) stop("argument initialCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation in step3()")
     }
 
     n_state <- x$n_state
     if(is.null(transitionCovariateScores)){
-        if(x$n_transitionCovariates>0){
-            transitionCovariateScores <- rep(0,x$n_transitionCovariates)
+        if(x$n_transition_covariates>0){
+            transitionCovariateScores <- rep(0,x$n_transition_covariates)
         }
     }
 
     if(is.null(initialCovariateScores)){
-        if(x$n_initialCovariates>0){
-            initialCovariateScores <- rep(0,x$n_initialCovariates)
+        if(x$n_initial_covariates>0){
+            initialCovariateScores <- rep(0,x$n_initial_covariates)
         }
     }
 
