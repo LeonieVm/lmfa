@@ -58,6 +58,14 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
       loadings_new_1 <- cbind.data.frame(loadings_new_1,loadings_new)
     }
   }
+
+  round_df <- function(df, digits) {
+  nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
+
+  df[,nums] <- round(df[,nums], digits = digits)
+
+  (df)
+}
   
   print(round_df(loadings_new_1, digits=rounding))
   cat("\n")
@@ -87,7 +95,9 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
       colnames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
       rownames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
     }else{
-      names(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
+      factorcors[[i]] <- as.matrix(factorcors[[i]])
+      colnames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
+      rownames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
     }
   }
 
