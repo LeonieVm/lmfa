@@ -36,7 +36,7 @@ plot.lmfa_modelselection <- function(x, ...){
         plot(modelcomparison[,"n_par"],modelcomparison[,"BIC"],xlab = "n_par",
              ylab = "BIC",ylim = c(min(modelcomparison[,"BIC"])-1500,max(modelcomparison[,"BIC"])+1500),col = c("red", rep("black",(nrow(modelcomparison)-1))),...)
         text(modelcomparison[,"n_par"],modelcomparison[,"BIC"],  rownames(modelcomparison),
-             cex=0.75,pos=3)
+             cex=0.1,pos=3)
         #plot(modelcomparison[,"n_par"],modelcomparison[,"LL"],xlab = "n_par",
              #ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500),...)
         #text(modelcomparison[,"n_par"],modelcomparison[,"LL"],  rownames(modelcomparison),

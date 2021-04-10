@@ -3,7 +3,7 @@
 #' This function is based on the CHull function from the R package multichull
 #'
 #'
-#' @param x Output from the main function step1() (must be of class lmfa_modelselection).
+#' @param x Model-selection output from the function step1() (must be of class lmfa_modelselection).
 #' @param PercentageFit Required proportion of increase in fit of a more complex model.
 #' @param ... Further arguments for the CHull plot function.
 
@@ -46,9 +46,6 @@ chull_lmfa <- function(x,PercentageFit = 0.001,...){
         cat("\n")
         print(Solution)
 
-        cat("\n")
-        cat(paste("Note 1: The least and most complex models cannot be selected."),"\n")
-        cat(paste("  Therefore, it is advisable to also visually inspect the CHull plot."),"\n")
         
 #calculate numerators
 if(nrow(Hull)>2){
@@ -62,9 +59,27 @@ for(i in 2:(nrow(Hull)-1)){
 sumComplexModels <- sum(abs(store[,1]-store[,2])<10)
 if(sumComplexModels>0){
   cat("\n")
+  cat(paste("Note 1: The least and most complex models cannot be selected."),"\n")
+  cat(paste("  Therefore, it is advisable to also visually inspect the CHull plot."),"\n")
+        
+  cat("\n")
   cat(paste("Note 2: The st value(s) of the",sumComplexModels,"best model(s) might"),"\n")
   cat(paste("  be artificially inflated. Therefore, it is advisable to also consider the"),"\n")
   cat(paste("  first less complex model."),"\n")
+}else{
+    cat("\n")
+    cat(paste("Note: The least and most complex models cannot be selected."),"\n")
+    cat(paste("  Therefore, it is advisable to also visually inspect the CHull plot."),"\n")
+        
 }
+}else{
+    cat("\n")
+    cat(paste("Note: The least and most complex models cannot be selected."),"\n")
+    cat(paste("  Therefore, it is advisable to also visually inspect the CHull plot."),"\n")
+        
 }
+
+#object <- (list(solution = Solution,
+#            chull = Hull))
+#            object
 }
