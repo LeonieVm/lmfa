@@ -707,7 +707,7 @@ parameterEstimates[(startTran+1):(startTran+
                             transitionCovariates,
                             "initial state",
                             iniName)
-  colnames(waldMatrix) <- c("Wald(0)",
+  colnames(waldMatrix) <- c("Wald",
                             "df",	
                             "p-value")
   
