@@ -33,7 +33,8 @@ rounding = 4){
    
     if(missing(model)) stop("argument model is missing, with no default")
     if(class(model)!="lmfa_step3") stop("model must be of class lmfa_step3")
-    if(!is.numeric(deltaT)) stop("deltaT must be a single scalar")
+    if(!is.numeric(deltaT)) stop("deltaT must be a scalar")
+    if(deltaT < 0) stop("deltaT must be a positive scalar")
     if(length(deltaT)>1) stop("deltaT must be a single scalar")
     if(!is.numeric(rounding)) stop("rounding must be a single scalar")
     if(length(rounding)>1) stop("rounding must be a single scalar")
