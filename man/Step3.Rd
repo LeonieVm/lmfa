@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step3.R
 \name{step3}
 \alias{step3}
-\title{Estimating the transition models (with or without covariates) by means of a CT-LMM}
+\title{Estimating the transition model (with or without covariates) by means of a CT-LMM}
 \usage{
 step3(
   data,
@@ -51,7 +51,7 @@ step3(
 Returns the transition model parameters.
 }
 \description{
-\code{step3} conducts step 3 from the three-step estimation of CT-LMFA, using the classification information from the \code{step2} output.
+\code{step3} conducts step 3 from the three-step estimation of CT-LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
 }
 \examples{
 \dontrun{

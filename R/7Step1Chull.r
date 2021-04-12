@@ -1,6 +1,6 @@
 #' A Generic Convex-Hull-Based Model Selection Method
 #'
-#' This function is based on the CHull function from the R package multichull
+#' \code{chull_lmfa} is based on \code{CHull} from the R package multichull.
 #'
 #'
 #' @param x Model-selection output from the function step1() (must be of class lmfa_modelselection).
@@ -79,11 +79,13 @@ if(sumComplexModels>0){
         
 }
 
-object <- (list(solution = Solution,
-            chull = Hull))
-            object
+output <- (list(fitCHull = fitCHull,
+            solution = Solution,
+            chull = Hull,
+            sumComplexModels = sumComplexModels))
+        
 
 class(output) = "lmfa_chull"
-invisible(object)
+invisible(output)
 
 }

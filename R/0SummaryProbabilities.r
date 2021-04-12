@@ -1,11 +1,11 @@
-#' Summary for probabilities()
+#' Summary for \code{probabilities}
 #'
 #'
 #'
 #'
 #'
 #'
-#' @param object An object storing output from the probabilities() function.
+#' @param object An object storing output from \code{probabilities}.
 #' @param ... Further arguments for the default S3 summary method.
 #' @examples
 #' \dontrun{

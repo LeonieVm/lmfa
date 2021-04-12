@@ -1,6 +1,6 @@
 #' Estimating the transition model (with or without covariates) by means of a CT-LMM
 #'
-#' \code{step3} conducts step 3 from the three-step estimation of CT-LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output.
+#' \code{step3} conducts step 3 from the three-step estimation of CT-LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
 #' 
 #'
 #'

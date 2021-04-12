@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step1.R
 \name{step1}
 \alias{step1}
-\title{Estimating measurement models (with or without model selection)}
+\title{Estimating state-specific measurement models by means of mixture of factor analyzers}
 \usage{
 step1(
   data,

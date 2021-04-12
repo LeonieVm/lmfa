@@ -1,12 +1,12 @@
-#' Summary statistics for modelselection
+#' Summary statistics for \code{step1} with model selection
 #'
 #'
 #'
 #'
 #'
 #'
-#' @param object An object storing output from the main function Step1Step2()
-#' @param ... Further arguments for the default S3 summary method
+#' @param object An object storing output from \code{step1} with model selection.
+#' @param ... Further arguments for the default S3 summary method.
 #' @examples
 #' \dontrun{
 #' summary(results1)

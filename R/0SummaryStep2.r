@@ -1,13 +1,13 @@
-#' Summary statistics for step2()
+#' Summary statistics for \code{step2}
 #'
 #'
 #'
 #'
 #'
 #'
-#' @param object An object storing output from the main function step2()
+#' @param object An object storing output from \code{step2}.
 #' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
-#' @param ... Further arguments for the default S3 summary method
+#' @param ... Further arguments for the default S3 summary method.
 #' @examples
 #' \dontrun{
 #' summary(results2)

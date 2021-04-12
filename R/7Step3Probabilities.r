@@ -1,6 +1,8 @@
 
-#' Calculates initial state and transition probabilities for given covariate scores and time interval.
+#' Caclulating initial state and transition probabilities
 #'
+#' \code{probabilities} calculates initial state and transition probabilities for given covariate scores and time interval for the \code{step3} estimates.
+#' 
 #' 
 #'
 #'
