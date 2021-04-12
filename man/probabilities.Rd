@@ -2,39 +2,36 @@
 % Please edit documentation in R/0OutputProbabilities.r
 \name{probabilities}
 \alias{probabilities}
-\title{Calculates probabilities for given covariate scores and time interval.}
+\title{Calculates initial state and transition probabilities for given covariate scores and time interval.}
 \usage{
 probabilities(
-  x,
+  model,
   deltaT = 1,
-  transitionCovariateScores = NULL,
   initialCovariateScores = NULL,
+  transitionCovariateScores = NULL,
   rounding = 4
 )
 }
 \arguments{
-\item{x}{The model estimated with step3() (must be of class lmfa_step3).}
+\item{model}{The model estimated with step3() (must be of class lmfa_step3).}
 
 \item{deltaT}{The interval for which the transition probabilities should be calculated (must be a single scalar).}
 
-\item{transitionCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default scores are set to zero.}
+\item{initialCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default the values are set to the sample means of the covariates.}
 
-\item{initialCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default scores are set to zero.}
+\item{transitionCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default the values are set to the sample means of the covariates.}
 
 \item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 }
-\value{
-Returns .
-}
 \description{
-Calculates probabilities for given covariate scores and time interval.
+Calculates initial state and transition probabilities for given covariate scores and time interval.
 }
 \examples{
 \dontrun{
-Probs <- probabilities(x, 
+Probs <- probabilities(model, 
          deltaT = 1, 
-         transitionCovariateScores = NULL,
          initialCovariateScores = NULL,
+         transitionCovariateScores = NULL,
          rounding = 4
          )
 }

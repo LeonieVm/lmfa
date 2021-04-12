@@ -2,24 +2,23 @@
 % Please edit documentation in R/7Step2.r
 \name{step2}
 \alias{step2}
-\title{Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.}
+\title{Obtaining state assignment and classification errors}
 \usage{
 step2(data, model)
 }
 \arguments{
 \item{data}{The dataset (must be a dataframe and contain complete cases only).}
 
-\item{model}{The model estimated with step1() (must be of class lmfa_step1).}
+\item{model}{The model estimated with \code{step1} (must be of class lmfa_step1).}
 }
 \value{
-Returns the measurement model parameters, the proportional and
-modal state assignments, and the classification errors.
+Returns the posterior state probabilities, the modal state assignments, the classification errors, and the state proportions.
 }
 \description{
-Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.
+\code{step2} extracts the classification information from the \code{step1} output.
 }
 \examples{
 \dontrun{
-step2_results <- step2(data, model)
+classification <- step2(data, model)
 }
 }

@@ -155,6 +155,16 @@ rounding = 4){
     print(round(TransitionProbabilities, rounding))
     cat("\n")
 
-    #return(list(initial_state_probabilities = InitialStateProbabilities,
-                #transition_probabilities = TransitionProbabilities))
+    output <-(list(initial_state_probabilities = InitialStateProbabilities,
+                transition_probabilities = TransitionProbabilities,
+                initialCovariateScores = initialCovariateScores,
+                transitionCovariateScores = transitionCovariateScores,
+                deltaT = deltaT,
+                initial_covariate_means = model$initial_covariate_means,
+                transition_covariate_means = model$transition_covariate_means,
+                rounding = rounding
+                ))
+
+    class(output) = "lmfa_prob"            
+    invisible(output)
 }

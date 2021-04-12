@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step3.R
 \name{step3}
 \alias{step3}
-\title{Conducts step 3 from the three-step estimation of CT-LMFA.}
+\title{Estimating the transition models (with or without covariates) by means of a CT-LMM}
 \usage{
 step3(
   data,
@@ -10,8 +10,8 @@ step3(
   n_state,
   postprobs,
   timeintervals = NULL,
-  transitionCovariates = NULL,
   initialCovariates = NULL,
+  transitionCovariates = NULL,
   i.method = "BFGS",
   i.maxit = 10000,
   i.reltol = 1e-10,
@@ -31,9 +31,9 @@ step3(
 
 \item{timeintervals}{The name of the column containing the intervals (must be a single character).}
 
-\item{transitionCovariates}{The covariate(s) for the transition intensities (must be a (vector of) character(s)).}
-
 \item{initialCovariates}{The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).}
+
+\item{transitionCovariates}{The covariate(s) for the transition intensities (must be a (vector of) character(s)).}
 
 \item{i.method}{The type of optimization method that should be used (must be "BFGS" or "CG")}
 
@@ -48,10 +48,10 @@ step3(
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
 }
 \value{
-Returns .
+Returns the transition model parameters.
 }
 \description{
-Conducts step 3 from the three-step estimation of CT-LMFA.
+\code{step3} conducts step 3 from the three-step estimation of CT-LMFA, using the classification information from the \code{step2} output.
 }
 \examples{
 \dontrun{

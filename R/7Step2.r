@@ -1,19 +1,20 @@
-#' Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.
+#' Obtaining state assignment and classification errors
+#'
+#' \code{step2} conducts step 2 of the three-step estimation of CT-LMFA. More specifically, the function extracts the classification information from the \code{step1} output.
 #'
 #'
 #'
 #'
 #'
 #' @param data The dataset (must be a dataframe and contain complete cases only).
-#' @param model The model estimated with step1() (must be of class lmfa_step1).
+#' @param model The model estimated with \code{step1} (must be of class lmfa_step1).
 #
 #'
-#' @return Returns the measurement model parameters, the proportional and
-#' modal state assignments, and the classification errors.
+#' @return Returns the posterior state probabilities, the modal state assignments, the classification errors, and the state proportions.
 #'
 #' @examples
 #' \dontrun{
-#' step2_results <- step2(data, model)
+#' classification <- step2(data, model)
 #' }
 #' @export
 

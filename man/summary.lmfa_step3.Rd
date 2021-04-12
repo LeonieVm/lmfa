@@ -7,11 +7,11 @@
 \method{summary}{lmfa_step3}(object, rounding = 4, ...)
 }
 \arguments{
-\item{object}{An object storing output from the main function Step3()}
+\item{object}{An object storing output from the main function step3().}
 
 \item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 
-\item{...}{Further arguments for the default S3 summary method}
+\item{...}{Further arguments for the default S3 summary method.}
 }
 \description{
 Summary statistics for step3()

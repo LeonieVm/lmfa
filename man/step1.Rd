@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step1.R
 \name{step1}
 \alias{step1}
-\title{Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.}
+\title{Estimating measurement models (with or without model selection)}
 \usage{
 step1(
   data,
@@ -48,11 +48,10 @@ step1(
 \item{max_iterations}{The maximum number of iterations (must be a single scalar and larger than n_initial_ite).}
 }
 \value{
-Returns the measurement model parameters, the proportional and
-modal state assignments, and the classification errors.
+Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
 }
 \description{
-Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.
+\code{step1} conducts step 1 of the three-step estimation of CT-LMFA and thus the estimation of the measurement models. It is possible to estimate the parameters for a single model or for a range of models in order to conduct model selection.
 }
 \examples{
 \dontrun{
@@ -69,5 +68,6 @@ step1_results <- step1(data,
                  em_tolerance = 1e-8, 
                  m_step_tolerance = 1e-3, 
                  max_iterations = 1000
+                 )
 }
 }

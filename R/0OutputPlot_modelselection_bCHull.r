@@ -79,7 +79,11 @@ if(sumComplexModels>0){
         
 }
 
-#object <- (list(solution = Solution,
-#            chull = Hull))
-#            object
+object <- (list(solution = Solution,
+            chull = Hull))
+            object
+
+class(output) = "lmfa_chull"
+invisible(object)
+
 }

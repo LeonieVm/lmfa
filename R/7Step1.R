@@ -1,4 +1,6 @@
-#' Conducts steps 1 and 2 from the three-step estimation of CT-LMFA.
+#' Estimating state-specific measurement models by means of mixture of factor analyzers
+#'
+#' \code{step1} conducts step 1 of the three-step estimation of CT-LMFA and thus the estimation of the measurement models. It is possible to estimate the parameters for a single model or for a range of models in order to conduct model selection.
 #'
 #'
 #'
@@ -20,8 +22,7 @@
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
 #
 #'
-#' @return Returns the measurement model parameters, the proportional and
-#' modal state assignments, and the classification errors.
+#' @return Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
 #'
 #' @examples
 #' \dontrun{
@@ -38,6 +39,7 @@
 #'                  em_tolerance = 1e-8, 
 #'                  m_step_tolerance = 1e-3, 
 #'                  max_iterations = 1000
+#'                  )
 #' }
 #' @export
 
