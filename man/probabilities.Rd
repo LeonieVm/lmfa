@@ -13,13 +13,13 @@ probabilities(
 )
 }
 \arguments{
-\item{model}{The model estimated with step3() (must be of class lmfa_step3).}
+\item{model}{The model estimated with \code{step3} (must be of class lmfa_step3).}
 
 \item{deltaT}{The interval for which the transition probabilities should be calculated (must be a single scalar).}
 
-\item{initialCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default the values are set to the sample means of the covariates.}
+\item{initialCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation with \code{step3}). By default the values are set to the sample means of the covariates.}
 
-\item{transitionCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default the values are set to the sample means of the covariates.}
+\item{transitionCovariateScores}{The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation with \code{step3}). By default the values are set to the sample means of the covariates.}
 
 \item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 }

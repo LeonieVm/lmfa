@@ -7,7 +7,7 @@
 chull_lmfa(x, PercentageFit = 0.001, ...)
 }
 \arguments{
-\item{x}{Model-selection output from the function step1() (must be of class lmfa_modelselection).}
+\item{x}{Model-selection output from \code{step1} (must be of class lmfa_modelselection).}
 
 \item{PercentageFit}{Required proportion of increase in fit of a more complex model.}
 
