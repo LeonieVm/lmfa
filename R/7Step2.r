@@ -24,7 +24,7 @@ step2 <- function(data, model){
     if(!is.data.frame(data)) stop("data must be a dataframe")
     
     if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
-    if(nrow(model$classification_posteriors)!=nrow(data)) stop("data must be of same length as data used in step1()")
+    if(nrow(model$classification_posteriors)!=nrow(data)) stop("data must be of same length as data used for \code{step1}")
 
     
       output <- list(classification_posteriors = model$classification_posteriors,

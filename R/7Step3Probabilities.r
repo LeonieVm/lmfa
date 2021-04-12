@@ -8,10 +8,10 @@
 #'
 #'
 #'
-#' @param model The model estimated with step3() (must be of class lmfa_step3).
+#' @param model The model estimated with \code{step3} (must be of class lmfa_step3).
 #' @param deltaT The interval for which the transition probabilities should be calculated (must be a single scalar).
-#' @param initialCovariateScores The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default the values are set to the sample means of the covariates.
-#' @param transitionCovariateScores The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation in step3()). By default the values are set to the sample means of the covariates.
+#' @param initialCovariateScores The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation with \code{step3}). By default the values are set to the sample means of the covariates.
+#' @param transitionCovariateScores The covariate scores for which the probabilities should be calculated (must be a vector with a length equal to the number of covariates that were used for the estimation with \code{step3}). By default the values are set to the sample means of the covariates.
 #' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
 #
 #'
@@ -44,12 +44,12 @@ rounding = 4){
 
     if(!is.null(transitionCovariateScores)){
         if(!is.numeric(transitionCovariateScores)) stop("transitionCovariateScores must be numeric")
-        if(length(transitionCovariateScores)!=model$n_transition_covariates) stop("argument transitionCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation in step3()")
+        if(length(transitionCovariateScores)!=model$n_transition_covariates) stop("argument transitionCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation with \code{step3}")
     }
 
     if(!is.null(initialCovariateScores)){
         if(!is.numeric(initialCovariateScores)) stop("initialCovariateScores must be numeric")
-        if(length(initialCovariateScores)!=model$n_initial_covariates) stop("argument initialCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation in step3()")
+        if(length(initialCovariateScores)!=model$n_initial_covariates) stop("argument initialCovariateScores must be a vector with a length equal to the number of covariates that were used for the estimation with \code{step3}")
     }
 
     n_state <- model$n_state

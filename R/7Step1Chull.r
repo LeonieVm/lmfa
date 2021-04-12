@@ -3,7 +3,7 @@
 #' \code{chull_lmfa} is based on \code{CHull} from the R package multichull.
 #'
 #'
-#' @param x Model-selection output from the function step1() (must be of class lmfa_modelselection).
+#' @param x Model-selection output from \code{step1} (must be of class lmfa_modelselection).
 #' @param PercentageFit Required proportion of increase in fit of a more complex model.
 #' @param ... Further arguments for the CHull plot function.
 
