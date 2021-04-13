@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' summary(results1)
+#' summary(measurementmodel)
 #' }
 #' @export
 summary.lmfa_step1 <- function(object, rounding = 2,...){

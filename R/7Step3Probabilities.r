@@ -31,7 +31,7 @@
 probabilities <- function(model, deltaT = 1, 
 initialCovariateScores = NULL, 
 transitionCovariateScores = NULL,
-rounding = 4){
+rounding = 2){
    
     if(missing(model)) stop("argument model is missing, with no default")
     if(class(model)!="lmfa_step3") stop("model must be of class lmfa_step3")

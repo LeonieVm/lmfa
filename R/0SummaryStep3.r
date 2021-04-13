@@ -10,7 +10,7 @@
 #' @param ... Further arguments for the default S3 summary method.
 #' @examples
 #' \dontrun{
-#' summary(results3)
+#' summary(transitionmodel)
 #' }
 #' @export
 summary.lmfa_step3 <- function(object, rounding = 4, ...){
