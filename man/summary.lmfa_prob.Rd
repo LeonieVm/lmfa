@@ -16,6 +16,6 @@ Summary for \code{probabilities}
 }
 \examples{
 \dontrun{
-summary(results3)
+summary(transitionmodel)
 }
 }

@@ -18,6 +18,6 @@ Summary statistics for \code{step2}
 }
 \examples{
 \dontrun{
-summary(results2)
+summary(classification)
 }
 }

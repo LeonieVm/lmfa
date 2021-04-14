@@ -18,6 +18,6 @@ Summary statistics for \code{step3}
 }
 \examples{
 \dontrun{
-summary(results3)
+summary(transitionmodel)
 }
 }

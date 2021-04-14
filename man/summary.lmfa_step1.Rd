@@ -18,6 +18,6 @@ Summary statistics for \code{step1}
 }
 \examples{
 \dontrun{
-summary(results1)
+summary(measurementmodel)
 }
 }

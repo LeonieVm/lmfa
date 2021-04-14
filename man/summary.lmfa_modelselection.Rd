@@ -16,6 +16,6 @@ Summary statistics for \code{step1} with model selection
 }
 \examples{
 \dontrun{
-summary(results1)
+summary(modelselection)
 }
 }

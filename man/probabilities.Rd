@@ -9,7 +9,7 @@ probabilities(
   deltaT = 1,
   initialCovariateScores = NULL,
   transitionCovariateScores = NULL,
-  rounding = 4
+  rounding = 2
 )
 }
 \arguments{

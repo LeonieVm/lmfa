@@ -16,6 +16,6 @@ Summary for \code{lmfa_chull}
 }
 \examples{
 \dontrun{
-summary(results3)
+summary(chullresults)
 }
 }
