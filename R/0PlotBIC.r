@@ -33,14 +33,22 @@ plot.lmfa_modelselection <- function(x, ...){
        
         #par(mfrow = c(2, 1),mar = c(4.5,4.5,2,2))
         
+
+        plot(modelcomparison[,"n_par"],modelcomparison[,"LL"],xlab = "n_par",
+             ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500),...)
+        text(modelcomparison[,"n_par"],modelcomparison[,"LL"],  rownames(modelcomparison),
+             cex=1,pos=3)
+
         plot(modelcomparison[,"n_par"],modelcomparison[,"BIC"],xlab = "n_par",
              ylab = "BIC",ylim = c(min(modelcomparison[,"BIC"])-1500,max(modelcomparison[,"BIC"])+1500),col = c("red", rep("black",(nrow(modelcomparison)-1))),...)
         text(modelcomparison[,"n_par"],modelcomparison[,"BIC"],  rownames(modelcomparison),
-             cex=0.1,pos=3)
-        #plot(modelcomparison[,"n_par"],modelcomparison[,"LL"],xlab = "n_par",
-             #ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500),...)
-        #text(modelcomparison[,"n_par"],modelcomparison[,"LL"],  rownames(modelcomparison),
-             #cex=0.75,pos=3)
+             cex=1,pos=3)
+
+       
+        cat("\n")
+        cat(paste('Use the navigation arrow in the "Plots" tab to switch',"\n"))
+        cat(paste("between the LL and the BIC plots.","\n"))
+        cat("\n")
         
 #on.exit(par(mar=c(5.1, 4.1, 4.1, 2.1), mgp=c(3, 1, 0), las=0, mfrow = c(1,1)))
 }
