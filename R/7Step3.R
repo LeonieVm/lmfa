@@ -13,10 +13,10 @@
 #' @param postprobs The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).
 #' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).
 #' @param initialCovariates The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).
-#' @param i.method The type of optimization method that should be used (must be "BFGS" or "CG")
-#' @param i.maxit The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
-#' @param i.reltol The tolerance to evaluate convergend that should be used (must be a single scalar).
-#' @param i.fnscale An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
+#' @param method The type of optimization method that should be used (must be "BFGS" or "CG")
+#' @param max_iterations The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
+#' @param tolerance The tolerance to evaluate convergend that should be used (must be a single scalar).
+#' @param scaling An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
 #' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
 #
@@ -32,10 +32,10 @@
 #'                  timeintervals = NULL,
 #'                  transitionCovariates = NULL,
 #'                  initialCovariates = NULL,
-#'                  i.method = "BFGS",
-#'                  i.maxit = 10000,
-#'                  i.reltol = 1e-10,
-#'                  i.fnscale = 1,
+#'                  method = "BFGS",
+#'                  max_iterations = 10000,
+#'                  tolerance = 1e-10,
+#'                  scaling = 1,
 #'                  n_q = 25,
 #'                  n_initial_ite = 15
 #'                  )
@@ -51,10 +51,10 @@ step3 <- function(data,
                   timeintervals = NULL,
                   initialCovariates = NULL,
                   transitionCovariates = NULL,
-                  i.method = "BFGS",
-                  i.maxit = 10000,
-                  i.reltol = 1e-10,
-                  i.fnscale = "proxi",
+                  method = "BFGS",
+                  max_iterations = 10000,
+                  tolerance = 1e-10,
+                  scaling = "proxi",
                   n_q = 25,
                   n_initial_ite = 10
                  ){
@@ -80,14 +80,14 @@ step3 <- function(data,
   if(!is.null(initialCovariates)) if(!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
   if(sum(transitionCovariates %in% names(data)) != length(transitionCovariates)) stop("all covariates in transitionCovariates must exist in data")
   if(sum(initialCovariates %in% names(data)) != length(initialCovariates)) stop("all covariates in initialCovariates must exist in data")
-  if(i.method != "BFGS") if(i.method != "CG") stop('i.method must be "BFGS" or "CG"')
-  if(!is.numeric(i.maxit)) stop("i.maxit must be a single scalar")
-  if(length(i.maxit)>1) stop("i.maxit must be a single scalar")
-  if(!is.numeric(i.reltol)) stop("i.reltol must be a single scalar")
-  if(length(i.reltol)>1) stop("i.reltol must be a single scalar")
-  if(length(i.fnscale)>1) stop("i.fnscale must be a single statement")
-  if(!is.numeric(i.fnscale) & i.fnscale!="proxi") stop("i.fnscale must be a single scalar")
-  if(i.fnscale<1) stop("i.fnscale must be a positive scalar equal to or larger than 1")
+  if(method != "BFGS") if(method != "CG") stop('method must be "BFGS" or "CG"')
+  if(!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
+  if(length(max_iterations)>1) stop("max_iterations must be a single scalar")
+  if(!is.numeric(tolerance)) stop("tolerance must be a single scalar")
+  if(length(tolerance)>1) stop("tolerance must be a single scalar")
+  if(length(scaling)>1) stop("scaling must be a single statement")
+  if(!is.numeric(scaling) & scaling!="proxi") stop("scaling must be a single scalar")
+  if(scaling<1) stop("scaling must be a positive scalar equal to or larger than 1")
   #if(!is.logical(i.center)) stop("i.center must be a single logical statement")
   #if(length(i.center)>1) stop("i.center must be a single logical statement")
   if(!is.numeric(n_q)) stop("n_q must be a single scalar")
@@ -100,7 +100,7 @@ step3 <- function(data,
   if(length(rounding)>1) stop("rounding must be a single scalar")
 
   
-  if(i.maxit <= n_initial_ite) stop("i.maxit must be larger than n_initial_ite")
+  if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
   # just a warning for non-specified interval column
   if(is.null(timeintervals)) warning("intervals are assumed to be equidistant because no timeintervals has been specified")
   ptm <- proc.time()
@@ -166,14 +166,14 @@ step3 <- function(data,
   W_mod <- W_mod/rowSums(W_mod)
   
   #add a proxi for the LL in step 3 (for better fnscale start)
-  if(i.fnscale == "proxi"){
+  if(scaling == "proxi"){
   ll_proxi <- 0
   for(i in 1:n_state){
     ll_proxi <- ll_proxi+rowSums(ModalClassificationTable)[i]*
       log(rowSums(ModalClassificationTable)[i]/sum(ModalClassificationTable))
   }
   ll_proxi <-ll_proxi*-2
-  i.fnscale <- ll_proxi
+  scaling <- ll_proxi
   }
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Fixing the right parameters
@@ -304,8 +304,8 @@ for(i in 1:n_q){
     est.initprobs=TRUE,
     hessian = TRUE,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
-    method  = i.method,
-    control = list(maxit = n_initial_ite,reltol = i.reltol,fnscale = i.fnscale),
+    method  = method,
+    control = list(maxit = n_initial_ite,reltol = tolerance,fnscale = scaling),
     center = i.center,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
@@ -328,7 +328,7 @@ if(length(bestloglik)!=0){
 
 # Consider the transition intensities from the best start set.
 if(is.null(q_bestloglik)){
-  stop("numerical overflow; consider changing scale of argument timeintervals and/or using a different value for the argument i.fnscale ")
+  stop("numerical overflow; consider changing scale of argument timeintervals and/or using a different value for the argument scaling")
 }else{
   Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
 }
@@ -346,8 +346,8 @@ if(is.null(q_bestloglik)){
     est.initprobs=TRUE,
     hessian = TRUE,
     fixedpars = c(fixed_responseprobabilities)+additionalCounts,
-    method  = i.method,
-    control=list(maxit = i.maxit,reltol = i.reltol,fnscale= i.fnscale),
+    method  = method,
+    control=list(maxit = max_iterations,reltol = tolerance,fnscale= scaling),
     center = i.center,
     covariates = defineCovariates,
     initcovariates = defineInitialCovariates))
