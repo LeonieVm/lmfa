@@ -13,12 +13,13 @@
 #' @param postprobs The posterior state-membership probabilities (must be a dataframe with n_state columns and of same length as the data).
 #' @param transitionCovariates The covariate(s) for the transition intensities (must be a (vector of) character(s)).
 #' @param initialCovariates The covariate(s) for the initial state probabilities (must be a (vector of) character(s)).
+#' @param n_starts The number of start values for the transition intensity parameters that should be used (must be a single scalar).
+#' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
 #' @param method The type of optimization method that should be used (must be "BFGS" or "CG")
 #' @param max_iterations The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
 #' @param tolerance The tolerance to evaluate convergend that should be used (must be a single scalar).
 #' @param scaling An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
-#' @param n_q The number of start values for the transition intensity parameters that should be used (must be a single scalar).
-#' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
+
 #
 #'
 #' @return Returns the transition model parameters.
@@ -32,12 +33,12 @@
 #'                  timeintervals = NULL,
 #'                  transitionCovariates = NULL,
 #'                  initialCovariates = NULL,
+#'                  n_starts = 25,
+#'                  n_initial_ite = 10,
 #'                  method = "BFGS",
 #'                  max_iterations = 10000,
 #'                  tolerance = 1e-10,
-#'                  scaling = 1,
-#'                  n_q = 25,
-#'                  n_initial_ite = 15
+#'                  scaling = 1
 #'                  )
 #' }
 #' @export
@@ -51,12 +52,12 @@ step3 <- function(data,
                   timeintervals = NULL,
                   initialCovariates = NULL,
                   transitionCovariates = NULL,
+                  n_starts = 25,
+                  n_initial_ite = 10,
                   method = "BFGS",
                   max_iterations = 10000,
                   tolerance = 1e-10,
-                  scaling = "proxi",
-                  n_q = 25,
-                  n_initial_ite = 10
+                  scaling = "proxi"
                  ){
   
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -90,8 +91,8 @@ step3 <- function(data,
   if(scaling<1) stop("scaling must be a positive scalar equal to or larger than 1")
   #if(!is.logical(i.center)) stop("i.center must be a single logical statement")
   #if(length(i.center)>1) stop("i.center must be a single logical statement")
-  if(!is.numeric(n_q)) stop("n_q must be a single scalar")
-  if(length(n_q)>1) stop("n_q must be a single scalar")
+  if(!is.numeric(n_starts)) stop("n_starts must be a single scalar")
+  if(length(n_starts)>1) stop("n_starts must be a single scalar")
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
   if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
   if(!is.logical(previousCov)) stop("previousCov must be a single logical statement")
@@ -273,8 +274,8 @@ step3 <- function(data,
   
   initialQm <- list()
   initialPm <- list()
-  probabilityVector <- runif(n_q,min = 0.5,max=1)
-  for(i in 1:n_q){
+  probabilityVector <- runif(n_starts,min = 0.5,max=1)
+  for(i in 1:n_starts){
     Pm <-diag(n_state)
     Pm[Pm==1] <-probabilityVector[i] 
     Pm[Pm==0] <-(1-probabilityVector[i])/(n_state-1 )
@@ -292,7 +293,7 @@ step3 <- function(data,
 bestloglik <- list()
 q_bestloglik <- list()
 identifier<<-identifier #is it problematic to add something to the global environment if I also remove it from inside the function again?
-for(i in 1:n_q){
+for(i in 1:n_starts){
   step3Results <- NULL
   try(
     step3Results <-  suppressWarnings(msm(

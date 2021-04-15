@@ -12,12 +12,12 @@ step3(
   timeintervals = NULL,
   initialCovariates = NULL,
   transitionCovariates = NULL,
-  i.method = "BFGS",
-  i.maxit = 10000,
-  i.reltol = 1e-10,
-  i.fnscale = "proxi",
-  n_q = 25,
-  n_initial_ite = 10
+  n_starts = 25,
+  n_initial_ite = 10,
+  method = "BFGS",
+  max_iterations = 10000,
+  tolerance = 1e-10,
+  scaling = "proxi"
 )
 }
 \arguments{
@@ -35,17 +35,17 @@ step3(
 
 \item{transitionCovariates}{The covariate(s) for the transition intensities (must be a (vector of) character(s)).}
 
-\item{i.method}{The type of optimization method that should be used (must be "BFGS" or "CG")}
-
-\item{i.maxit}{The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).}
-
-\item{i.reltol}{The tolerance to evaluate convergend that should be used (must be a single scalar).}
-
-\item{i.fnscale}{An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.}
-
-\item{n_q}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
+\item{n_starts}{The number of start values for the transition intensity parameters that should be used (must be a single scalar).}
 
 \item{n_initial_ite}{The number of initial iterations for the different start sets that should be used (must be a single scalar).}
+
+\item{method}{The type of optimization method that should be used (must be "BFGS" or "CG")}
+
+\item{max_iterations}{The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).}
+
+\item{tolerance}{The tolerance to evaluate convergend that should be used (must be a single scalar).}
+
+\item{scaling}{An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.}
 }
 \value{
 Returns the transition model parameters.
@@ -62,12 +62,12 @@ step3_results <- step3(data,
                  timeintervals = NULL,
                  transitionCovariates = NULL,
                  initialCovariates = NULL,
-                 i.method = "BFGS",
-                 i.maxit = 10000,
-                 i.reltol = 1e-10,
-                 i.fnscale = 1,
-                 n_q = 25,
-                 n_initial_ite = 15
+                 n_starts = 25,
+                 n_initial_ite = 10,
+                 method = "BFGS",
+                 max_iterations = 10000,
+                 tolerance = 1e-10,
+                 scaling = 1
                  )
 }
 }

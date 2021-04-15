@@ -1196,13 +1196,13 @@ probVector <-c(NA)
   #                             get nice output
   #                  --------------------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-state_proportions <- c()
-for(i in 1:length(pi_k)){
-  state_proportions <- cbind(state_proportions,pi_k[[i]])
-}
-state_proportions <- as.data.frame(state_proportions)
-colnames(state_proportions) <- c(paste("S",rep(1:n_state),sep=""))
-state_proportions <- as.matrix(state_proportions)
+state_proportions <- table(Posteriors[,1])/n_sub
+# for(i in 1:length(pi_k)){
+#   state_proportions <- cbind(state_proportions,pi_k[[i]])
+# }
+# state_proportions <- as.data.frame(state_proportions)
+# colnames(state_proportions) <- c(paste("S",rep(1:n_state),sep=""))
+# state_proportions <- as.matrix(state_proportions)
 
 factornames <- c()
 for(i in 1:n_state){
@@ -1277,7 +1277,7 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               explained_variance = round(Percent_expl_var, rounding),
               n_state = n_state,
               n_fact = n_fact,
-              state_proportions_list = lapply(pi_k, round, rounding),
+              #state_proportions_list = lapply(pi_k, round, rounding),
               intercepts_list = lapply(nu_k, round, rounding),
               loadings_list = lapply(Lambda_k_fl, round, rounding),
               loadings_w_list = lapply(standLambda_fl, round, rounding),
