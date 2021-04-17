@@ -18,7 +18,7 @@ summary.lmfa_step2 <- function(object, rounding = 2,...){
   if(length(rounding)>1) stop("rounding must be a single scalar")
   n_state <- length(object$state_proportions)
   cat("\n")
-  cat(paste("R2_entropy: ",round(object$R2_entropy,rounding),sep=" = "),"\n")
+  cat(paste("R2_entropy",round(object$R2_entropy,rounding),sep=": "),"\n")
   cat("\n")
   cat(paste("Classification errors:"),"\n")
   cat("\n")
@@ -34,6 +34,8 @@ summary.lmfa_step2 <- function(object, rounding = 2,...){
     rownames(classification_errors_prob) <-paste("S",1:n_state,sep="")
   print(classification_errors_prob)
   cat("\n")
+  cat(paste("Overall missclassification",round(object$misclassification,rounding),sep=": "),"\n")
+  cat("\n")
   cat(paste("State proportions:"),"\n")
   cat("\n")
   state_proportions <- c(round(object$state_proportions,rounding))
@@ -43,3 +45,4 @@ summary.lmfa_step2 <- function(object, rounding = 2,...){
 
   
 }
+

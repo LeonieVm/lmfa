@@ -19,8 +19,8 @@
 #' @param max_iterations The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
 #' @param tolerance The tolerance to evaluate convergend that should be used (must be a single scalar).
 #' @param scaling An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
-
-#
+#'
+#'
 #'
 #' @return Returns the transition model parameters.
 #'
