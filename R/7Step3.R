@@ -73,7 +73,7 @@ step3 <- function(data,
   if(missing(identifier)) stop("argument identifier is missing, with no default")
   if(missing(n_state)) stop("argument n_state is missing, with no default")
   if(missing(postprobs)) stop("argument postprobs is missing, with no default")
-  #if(nrow(data)!=fitStep1Step2$number_of_timepoints) stop("data must have the same length as the data used in fitStep1Step2")
+  
   if(nrow(postprobs)!=nrow(data)) stop("postprobs must have the same length as data")
   if(ncol(postprobs)!=n_state) stop("the number of columns of postprobs must be of length n_state")
   if(!is.data.frame(data)) stop("data must be a dataframe")
@@ -89,8 +89,6 @@ step3 <- function(data,
   if(length(scaling)>1) stop("scaling must be a single statement")
   if(!is.numeric(scaling) & scaling!="proxi") stop("scaling must be a single scalar")
   if(scaling<1) stop("scaling must be a positive scalar equal to or larger than 1")
-  #if(!is.logical(i.center)) stop("i.center must be a single logical statement")
-  #if(length(i.center)>1) stop("i.center must be a single logical statement")
   if(!is.numeric(n_starts)) stop("n_starts must be a single scalar")
   if(length(n_starts)>1) stop("n_starts must be a single scalar")
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
@@ -103,7 +101,7 @@ step3 <- function(data,
   
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
   # just a warning for non-specified interval column
-  if(is.null(timeintervals)) warning("intervals are assumed to be equidistant because no timeintervals has been specified")
+  if(is.null(timeintervals)) warning("measurement occasions are assumed to be equidistant because no timeintervals has been specified")
   ptm <- proc.time()
   # i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
    i.center <- TRUE #option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
@@ -112,9 +110,19 @@ step3 <- function(data,
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   
   # Obtain the time_column from timeintervals
-  #identifier <- fitStep1Step2$identifier
+ 
   n_cases <- length(unlist(unique(data[,identifier])))
-  #n_state <- ncol(postprobs)
+  
+  if(!is.null(timeintervals)){
+      negativeOrZero1 <- 0
+      negativeOrZero2 <- 0
+      for(i in 1:n_cases){
+        negativeOrZero1 <- negativeOrZero1+ sum(data[data[,identifier]==i,timeintervals][-1]==0)
+        negativeOrZero2 <- negativeOrZero1+ sum(data[data[,identifier]==i,timeintervals][-1]<0)
+       }
+       if(negativeOrZero1>0) stop("timeintervals must not contain zero intervals for observations within subjects")
+       if(negativeOrZero2>0) stop("timeintervals must not contain negative intervals for observations within subjects")
+  }
  
   
   newData <- c()

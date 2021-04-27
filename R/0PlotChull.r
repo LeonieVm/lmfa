@@ -25,9 +25,9 @@ plot.CHull <-
 
     pos_vector <- rep(3, nrow(hull))
     pos_vector[1] <- 4
-    pos_vector[nrow(hull)] <- 2
+    pos_vector[nrow(hull)] <- 3
     
-    plot(data[,1],data[,2],xlab="n_par",ylab=label,col=col[1],lty=1,type="p")
+    plot(data[,1],data[,2],xlab="n_par",ylab=label,col=col[1],lty=1,type="p",ylim=c(min(data[,2])-1000,max(data[,2])+1000),xlim=c(min(data[,1])-10,max(data[,1])+10))
     points(hull[,1],hull[,2],col=col[2],type="b",lty=1)
     points(Solution[,1],Solution[,2],col=col[3],type="p",lty=1,pch=pch)
     text(hull[,1],hull[,2], labels=rownames(hull), cex= 1, pos=pos_vector,col=col[2])
