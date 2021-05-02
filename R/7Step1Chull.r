@@ -15,7 +15,7 @@
 #' \dontrun{
 #' chull_lmfa(x)
 #' }
-
+#' @export
 
 chull_lmfa <- function(x,PercentageFit = 0.001,...){
 

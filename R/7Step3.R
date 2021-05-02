@@ -118,7 +118,7 @@ step3 <- function(data,
       negativeOrZero2 <- 0
       for(i in 1:n_cases){
         negativeOrZero1 <- negativeOrZero1+ sum(data[data[,identifier]==i,timeintervals][-1]==0)
-        negativeOrZero2 <- negativeOrZero1+ sum(data[data[,identifier]==i,timeintervals][-1]<0)
+        negativeOrZero2 <- negativeOrZero2+ sum(data[data[,identifier]==i,timeintervals][-1]<0)
        }
        if(negativeOrZero1>0) stop("timeintervals must not contain zero intervals for observations within subjects")
        if(negativeOrZero2>0) stop("timeintervals must not contain negative intervals for observations within subjects")
