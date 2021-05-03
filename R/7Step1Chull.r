@@ -4,7 +4,6 @@
 #'
 #'
 #' @param x Model-selection output from \code{step1} (must be of class lmfa_modelselection).
-#' @param PercentageFit Required proportion of increase in fit of a more complex model.
 #' @param ... Further arguments for the CHull plot function.
 
 #'
@@ -17,13 +16,13 @@
 #' }
 #' @export
 
-chull_lmfa <- function(x,PercentageFit = 0.001,...){
+chull_lmfa <- function(x,...){
 
     if(missing(x)) stop("argument data is missing, with no default")
     if(class(x)!="lmfa_modelselection") stop("x must be of class lmfa_modelselection")
-    if(!is.numeric(PercentageFit)) stop("PercentageFit must be a single scalar")
-    if(length(PercentageFit)>1) stop("PercentageFit must be a single scalar")
-
+    #if(!is.numeric(PercentageFit)) stop("PercentageFit must be a single scalar")
+    #if(length(PercentageFit)>1) stop("PercentageFit must be a single scalar")
+    PercentageFit = 0.0
     
         CHullInput <-summary(x)
         CHullInput <- CHullInput[CHullInput[,"convergence"]==1,]
@@ -63,9 +62,9 @@ if(sumComplexModels>0){
   cat(paste("  Therefore, it is advisable to also visually inspect the CHull plot."),"\n")
         
   cat("\n")
-  cat(paste("Note 2: The st value(s) of the",sumComplexModels,"best model(s) might"),"\n")
-  cat(paste("  be artificially inflated. Therefore, it is advisable to also consider the"),"\n")
-  cat(paste("  first less complex model."),"\n")
+  cat(paste("Note 2: The st value(s) of the",sumComplexModels,"best model(s) might be artificially"),"\n")
+  cat(paste("  inflated. Therefore, it is advisable to also consider the next best model(s)."),"\n")
+
 }else{
     cat("\n")
     cat(paste("Note: The least and most complex models cannot be selected."),"\n")
