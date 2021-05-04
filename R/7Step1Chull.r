@@ -23,8 +23,55 @@ chull_lmfa <- function(x,...){
     #if(!is.numeric(PercentageFit)) stop("PercentageFit must be a single scalar")
     #if(length(PercentageFit)>1) stop("PercentageFit must be a single scalar")
     PercentageFit = 0.0
-    
-        CHullInput <-summary(x)
+         object <- x
+#the following is just the summary for the model selection object. However, because of the added non-convergence note, it is not possible to simply extract the statistics. Thus, I compute them here as well.
+                #---------------------------------------------------------------------------------------------------------#
+                modelcomparison <-matrix(NA,nrow=length(object),ncol=6)
+                colnames(modelcomparison) <- c("LL","BIC","convergence","n_par","n_fact","n_state")
+                modelnames <- NULL
+                for(i in 1:length(object)){
+                  modelcomparison[i,1] <-object[[i]]$LL
+                  modelcomparison[i,2] <-object[[i]]$BIC
+                  modelcomparison[i,3] <-object[[i]]$convergence
+                  modelcomparison[i,4] <-object[[i]]$n_par
+                  modelcomparison[i,5] <-sum(object[[i]]$n_fact)
+                  modelcomparison[i,6] <-object[[i]]$n_state
+                  modelnames <- c(modelnames,paste("[",paste(object[[i]]$n_fact,collapse = ""),"]",sep=""))
+                }
+                rownames(modelcomparison) <- modelnames
+                modelcomparison <-modelcomparison[order(modelcomparison[,"BIC"]),]
+
+
+
+                modelcomparison2 <- c()
+                unistates <- unique(modelcomparison[,"n_state"])
+                for(i in 1:length(unistates)){
+                  modeli <- modelcomparison[modelcomparison[,"n_state"]==unistates[i],]
+                  modeli <- modeli[order(modeli[,"n_par"]),]
+                  local_max <- c(0)
+                  for(j in 2:nrow(modeli)){
+                    if(modeli[j,"n_par"] != modeli[j-1,"n_par"]){
+                      local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-1,"LL"])<0))
+                    }else{
+                      if((j-2)<1){
+                        local_max <- c(local_max,0)
+                      }else{
+                        local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-2,"LL"])<0))
+                      }
+                    }
+                  }
+                  modeli <- cbind(modeli,local_max)
+                  modelcomparison2 <- rbind(modelcomparison2,modeli)
+                }
+
+                modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"BIC"]),]
+
+                objecModelselection <- (modelcomparison2[,c(1:4,7)])
+#---------------------------------------------------------------------------------------------------------#
+
+
+
+        CHullInput <-objecModelselection
         CHullInput <- CHullInput[CHullInput[,"convergence"]==1,]
         fitCHull <- CHull(CHullInput[,c("n_par","LL")],bound = "upper", PercentageFit = PercentageFit)
         plot(fitCHull,col=c("black", "black","red"),pch=21, 
