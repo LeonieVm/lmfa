@@ -239,7 +239,11 @@ if(modelselection == TRUE){
 
   ini_mclust_random <- matrix(NA,ncol = (n_starts*10), nrow =n_sub )
   for(multistart in 1:(n_starts*10)){
-    change_ini_mclust <- ini_mclust
+    if(multistart == 1){
+        change_ini_mclust <- ini_mclust
+    }else{
+      change_ini_mclust <-ini_mclust_random[,multistart-1]
+    }
     change_ini_mclust[sample(1:n_sub,size = 0.10*n_sub)] <- sample(1:n_state,(0.10*n_sub),replace=TRUE)
     ini_mclust_random[,multistart] <- change_ini_mclust
   }
@@ -507,7 +511,9 @@ if(modelselection == TRUE){
    iteration <- 0
    differenceLL <- 1
 
-   while(iteration<n_initial_ite){
+   #while(iteration<n_initial_ite){
+    while((sum(abs(differenceLL)>1e-3, iteration < max_iterations)==2)){
+   #while(abs(differenceLL)>1e-3){
      iteration <- iteration+1
 
      #*******************************************************************************#
@@ -637,7 +643,8 @@ if(modelselection == TRUE){
                            total_logl,        #loglikelihood value
                            DMV_list,          #state-specific resp. probabilities
                            C_k,               #sample covariance matrix
-                           list(estimation))
+                           list(estimation),
+                           iteration)
 
      AllParameters <- AllParametersN
    }
@@ -654,7 +661,10 @@ if(modelselection == TRUE){
   # Obtain the number of the best starts
   best <- order(loglikMulti,decreasing = T)[1]
 
-
+  equalLogli <- round(loglikMulti[,1])
+  equalLogli <- unlist(equalLogli)
+  hitrate <- (length(equalLogli[duplicated(equalLogli)]))/(length(equalLogli)-1)
+  #hitrate <- 1- length(unique(equalLogli))/length(equalLogli)
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Continue looping through the start set with the best loglikelihood value
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -669,6 +679,7 @@ if(modelselection == TRUE){
   DMV_list <- TakeOverResults[[6]]
   C_k <- TakeOverResults[[7]]
   estimation <- TakeOverResults[[8]][[1]]
+  iteration <-TakeOverResults[[9]]
 
   # Needs to be a matrix again.
   Psi_k<-lapply(Psi_k,function(x) x*diag(J))
@@ -700,7 +711,7 @@ if(modelselection == TRUE){
   # values to 1. The values will be updated in the loop.
   #*******************************************************************************#
   LL <- total_logl
-  iteration <- n_initial_ite
+  #iteration <- n_initial_ite
   differenceLL <- 1
 
   #*******************************************************************************#
@@ -1296,7 +1307,10 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               classification_posteriors = Posteriors,
               classification_errors = round(ModalClassificationTable, rounding),
               classification_errors_prob = round(W_mod, rounding),
-              R2_entropy = round(R2_entropy, rounding)
+              R2_entropy = round(R2_entropy, rounding),
+              hitrate = hitrate,
+              loglies = loglikMulti,
+              estimation = estimation
               
               )
   class(output) = "lmfa_step1"

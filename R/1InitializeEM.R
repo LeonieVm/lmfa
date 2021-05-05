@@ -1,6 +1,6 @@
 #' Initialize all Parameters
 #'
-#' Initial state-membership probabilities are based on mclust and random assignment.
+#' Initial state-membership probabilities are based on mclust.
 #'
 #'
 #' @param x The dataset.
