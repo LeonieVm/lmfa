@@ -33,8 +33,6 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   cat("\n")
   cat(paste("Number of factors: [", paste(object$n_fact, collapse = " "), "]", sep = ""),"\n")
   cat("\n")
-  cat("\n")
-  
   #cat(paste("Obliquely rotated within-state standardized loadings:"),"\n")
   #cat("\n")
   J <- nrow(object$intercepts)
@@ -66,11 +64,21 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
 
   (df)
 }
-  
+  cat("\n")
+  cat("-------------------------------------------------------------")
+  cat("\n")
+  cat("\n")
   #print(round_df(loadings_new_1, digits=rounding))
   #cat("\n")
   cat(paste("Obliquely rotated standardized loadings:"),"\n")
   cat("\n")
+  #if(object$warning_loadings_stand == c("no warning")){
+  if(object$warning_loadings_stand == c("Warning message: convergence for rotating loadings in at least one state was not obtained")){
+
+    cat(paste("(when rotating the loadings convergence was not achieved in at least one state)"),"\n")
+    cat("\n")
+  }
+
 
   loadings <- as.data.frame(object$loadings_stand_obli)
   for(i in 1:n_state){
@@ -84,7 +92,11 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   
   print(round_df(loadings_new_1, digits=rounding))
   cat("\n")
-
+  
+  cat("\n")
+  cat("-------------------------------------------------------------")
+  cat("\n")
+  cat("\n")
   cat(paste("Factor correlations after oblique rotation:"),"\n")
   cat("\n")
   
@@ -107,14 +119,19 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
     print(lapply(factorcors,round,rounding)[[i]])
     cat("\n")
   }
-
+  cat("\n")
+  cat("-------------------------------------------------------------")
+  cat("\n")
   cat("\n")
   cat(paste("Intercepts:"),"\n")
   cat("\n")
   print(round(object$intercepts,rounding))
   cat("\n")
 
- 
+  cat("\n")
+  cat("-------------------------------------------------------------")
+  cat("\n")
+  cat("\n")
   cat(paste("Unique variances:"),"\n")
   cat("\n")
   print(round(object$unique_variances,rounding))
