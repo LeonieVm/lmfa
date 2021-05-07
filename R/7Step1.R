@@ -20,7 +20,7 @@
 #' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
-#
+#' @param n_mclust The number of mclust starts.
 #'
 #' @return Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
 #'
@@ -38,7 +38,8 @@
 #'                  n_m_step = 10,
 #'                  em_tolerance = 1e-8, 
 #'                  m_step_tolerance = 1e-3, 
-#'                  max_iterations = 1000
+#'                  max_iterations = 1000,
+#'                  n_mclust = 5
 #'                  )
 #' }
 #' @export
@@ -55,7 +56,8 @@ step1 <- function(data,
                   n_m_step = 10,
                   em_tolerance = 1e-8, 
                   m_step_tolerance = 1e-3, 
-                  max_iterations = 1000 
+                  max_iterations = 1000,
+                  n_mclust = 5 
                   ){
   rounding = 12
   if(missing(data)) stop("argument data is missing, with no default")
@@ -125,7 +127,9 @@ step1 <- function(data,
   if(!is.numeric(rounding)) stop("rounding must be a single scalar")
   if(length(rounding)>1) stop("rounding must be a single scalar")
   
-
+  if(!is.numeric(n_mclust)) stop("n_mclust must be a single scalar")
+  if(length(n_mclust)>1) stop("n_mclust must be a single scalar")
+  if(n_mclust<1) stop("n_mclust must be larger than 0")
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Input: b) defined in the package.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -237,7 +241,7 @@ if(modelselection == TRUE){
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   ini_mclust_list <- list()
 
-  for(mcluststarts in 1:3){
+  for(mcluststarts in 1:n_mclust){
     ini_mclust <- Mclust(x, G = n_state, verbose=FALSE)
     ini_mclust <- ini_mclust$classification
     ini_mclust_list[[mcluststarts]] <- ini_mclust
@@ -333,7 +337,7 @@ if(modelselection == TRUE){
   # Extract the likelihood values.
   loglikMulti <- as.data.frame(matrix(unlist(lapply(MclustResults,
                                                     function(x) {x[[5]]})),ncol=1))
-  row.names(loglikMulti) <- 1:3
+  row.names(loglikMulti) <- 1:n_mclust
 
   # Obtain the number of the best mclust starts and use them for creating random deviations.
   best_mclust <- order(loglikMulti,decreasing = T)[1]
@@ -545,14 +549,14 @@ if(modelselection == TRUE){
   # # Add the mclust solution to the (existing multistart) results.
   # MultistartResults1[[(length(lengths(MultistartResults1))+1)]] <- AllParameters
   
-  # Add the three mclust solutions to the (existing multistart) results.
-  for(i in 1:3){
+  # Add the mclust solutions to the (existing multistart) results.
+  for(i in 1:n_mclust){
     MultistartResults1[[(length(lengths(MultistartResults1))+1)]] <- MclustResults[[i]]
   }
   # Extract the likelihood values.
   loglikMulti <- as.data.frame(matrix(unlist(lapply(MultistartResults1,
                                                     function(x) {x[[5]]})),ncol = 1))
-  row.names(loglikMulti) <- 1:((n_starts*10)+3) #plus three for the three mclust starts
+  row.names(loglikMulti) <- 1:((n_starts*10)+n_mclust) #plus n_mclust for the three mclust starts
 
   # Obtain the number of the best starts.
   best <- order(loglikMulti,decreasing = T)[1:(n_starts)]
