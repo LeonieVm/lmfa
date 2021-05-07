@@ -460,94 +460,6 @@ if(modelselection == TRUE){
     return(AllParameters)
    }
   }
-
-  # #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  # # Initialize: b) once based on mclust (in parallel).
-  # #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
-  # # Self-created function (see '1InitializeEM.R').
-  # InitialValues <- initializeStep1(x,n_sub,n_state,n_fact,
-  #                                  J,startval="mclust",
-  #                                  RandVec=RandVec,
-  #                                  ini_mclust = ini_mclust,
-  #                                  ini_mclust_specific = ini_mclust_specific)#mclust;
-
-
-  # # Extract all parameters that are going to be updated in the EM algorithm.
-  # z_ik<- InitialValues$z_ik         #expected state-membership-probabilities
-  # N_k<- InitialValues$N_k           #sample size per state
-  # pi_k<- InitialValues$pi_k         #state proportions
-  # nu_k<- InitialValues$nu_k         #state-specific intercepts
-  # C_k<- InitialValues$C_k           #sample covariance matrix
-  # Lambda_k<- InitialValues$Lambda_k #state-specific loading matrices
-  # Psi_k<- InitialValues$Psi_k       #state-specific unique variances
-
-  # #-------------------------------------------------------------------------------#
-  # # Compute: Regression Weights (Beta)
-  # #-------------------------------------------------------------------------------#
-
-  # # Self-created function (see '3ComputeBeta.R').
-  # Beta_k <- comBetas(Lambda_k, Psi_k, n_state,n_fact)
-
-  # #-------------------------------------------------------------------------------#
-  # # Compute: Exp. of crossproduct of factor scores given data (Theta)
-  # #-------------------------------------------------------------------------------#
-
-  # # Self-created function (see '4ComputeTheta.R').
-  # Theta_k <- comTheta(Beta_k, n_state, C_k, Lambda_k, n_fact)
-
-  # #===============================================================================#
-  # # Update: Loadings Lambda_k and unique variances Psi_k
-  # #===============================================================================#
-
-  # # Self-created function (see '5UpdateLoadingUnique.R')
-  # LambPsi<-updLambPsi(n_state, C_k, n_fact, Beta_k, Theta_k,
-  #                     residualVariance,J)
-  # Lambda_k <- LambPsi$Lambda_k
-  # Psi_k <- LambPsi$Psi_k
-
-  # #-------------------------------------------------------------------------------#
-  # # Compute: Observed-data loglikelihood
-  # #-------------------------------------------------------------------------------#
-
-  # #*******************************************************************************#
-  # # NOTE: FIRST calculate the DMV (response probabilities) to be able to re-use
-  # # them because this takes quite some time.
-  # # THEN calculate the likelihood while reusing the response probabilities DMV.
-  # #*******************************************************************************#
-
-  # # Self-created function (see '6ComputeResponseprobSaveDMV.R').
-  # saveDMV<- DMV(x, Lambda_k, Psi_k, n_state, J,n_sub,nu_k)
-
-  # # Obtain the observed-data loglikelihood.
-  # logli <- c(rep(0,n_sub))
-  # for(i in 1:n_sub){
-  #   for(k in 1:n_state){
-  #     logli[i] <-logli[i]+pi_k[[k]]*saveDMV[k,i]
-  #   }
-  # }
-  # total_logl <-sum(log(logli))
-
-
-  # #*******************************************************************************#
-  # # NOTE: Get all relevant parameters in one list to continue with the ones that
-  # # belong to the best start sets according to the loglikelihood.
-  # #*******************************************************************************#
-
-  # # Make DMV a list for convenient storage.
-  # DMV_list <- rep(list(NA),n_state)
-  # for(k in 1:n_state){ DMV_list[[k]] <- saveDMV[k,]}
-
-  # AllParameters <-list(pi_k,              #state proportions
-  #                      nu_k,              #state-specific intercepts
-  #                      Lambda_k,          #state-specific loading matrices
-  #                      lapply(Psi_k,diag),#state-specific unique variances
-  #                      total_logl,        #loglikelihood value
-  #                      DMV_list,          #state-specific resp. probabilities
-  #                      C_k)               #sample covariance matrix
-
-  # # Add the mclust solution to the (existing multistart) results.
-  # MultistartResults1[[(length(lengths(MultistartResults1))+1)]] <- AllParameters
   
   # Add the mclust solutions to the (existing multistart) results.
   for(i in 1:n_mclust){
@@ -627,8 +539,9 @@ if(modelselection == TRUE){
    differenceLL <- 1
 
    while(iteration<n_initial_ite){
+    #the other line (below) would be necessary for calculating the hitrate
     #while((sum(abs(differenceLL)>1e-3, iteration < max_iterations)==2)){
-   #while(abs(differenceLL)>1e-3){
+
      iteration <- iteration+1
 
      #*******************************************************************************#

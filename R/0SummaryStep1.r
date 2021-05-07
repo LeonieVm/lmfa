@@ -35,8 +35,8 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   cat("\n")
   cat("\n")
   
-  cat(paste("Obliquely rotated within-state standardized loadings:"),"\n")
-  cat("\n")
+  #cat(paste("Obliquely rotated within-state standardized loadings:"),"\n")
+  #cat("\n")
   J <- nrow(object$intercepts)
   n_fact <- object$n_fact
   n_state <- object$n_state
@@ -49,15 +49,15 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   }
   starti <- steps-(n_fact-1)
 
-  loadings <- as.data.frame(object$loadings_w_obli)
-  for(i in 1:n_state){
-    loadings_new <- cbind.data.frame(loadings[,starti[i]:steps[i], drop = FALSE],"  " = c(rep("  ",J)))
-    if(i==1){
-      loadings_new_1 <- loadings_new
-    }else{
-      loadings_new_1 <- cbind.data.frame(loadings_new_1,loadings_new)
-    }
-  }
+  # loadings <- as.data.frame(object$loadings_w_obli)
+  # for(i in 1:n_state){
+  #   loadings_new <- cbind.data.frame(loadings[,starti[i]:steps[i], drop = FALSE],"  " = c(rep("  ",J)))
+  #   if(i==1){
+  #     loadings_new_1 <- loadings_new
+  #   }else{
+  #     loadings_new_1 <- cbind.data.frame(loadings_new_1,loadings_new)
+  #   }
+  # }
 
   round_df <- function(df, digits) {
   nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
@@ -67,9 +67,9 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   (df)
 }
   
-  print(round_df(loadings_new_1, digits=rounding))
-  cat("\n")
-  cat(paste("Obliquely rotated between-state standardized loadings:"),"\n")
+  #print(round_df(loadings_new_1, digits=rounding))
+  #cat("\n")
+  cat(paste("Obliquely rotated standardized loadings:"),"\n")
   cat("\n")
 
   loadings <- as.data.frame(object$loadings_b_obli)
