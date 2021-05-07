@@ -4,12 +4,10 @@
 \alias{chull_lmfa}
 \title{A Generic Convex-Hull-Based Model Selection Method}
 \usage{
-chull_lmfa(x, PercentageFit = 0.001, ...)
+chull_lmfa(x, ...)
 }
 \arguments{
 \item{x}{Model-selection output from \code{step1} (must be of class lmfa_modelselection).}
-
-\item{PercentageFit}{Required proportion of increase in fit of a more complex model.}
 
 \item{...}{Further arguments for the CHull plot function.}
 }

@@ -17,7 +17,8 @@ step1(
   n_m_step = 10,
   em_tolerance = 1e-08,
   m_step_tolerance = 0.001,
-  max_iterations = 1000
+  max_iterations = 1000,
+  n_mclust = 5
 )
 }
 \arguments{
@@ -46,6 +47,8 @@ step1(
 \item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations (must be a single scalar).}
 
 \item{max_iterations}{The maximum number of iterations (must be a single scalar and larger than n_initial_ite).}
+
+\item{n_mclust}{The number of mclust starts.}
 }
 \value{
 Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
@@ -67,7 +70,8 @@ step1_results <- step1(data,
                  n_m_step = 10,
                  em_tolerance = 1e-8, 
                  m_step_tolerance = 1e-3, 
-                 max_iterations = 1000
+                 max_iterations = 1000,
+                 n_mclust = 5
                  )
 }
 }
