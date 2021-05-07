@@ -72,7 +72,7 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   cat(paste("Obliquely rotated standardized loadings:"),"\n")
   cat("\n")
 
-  loadings <- as.data.frame(object$loadings_b_obli)
+  loadings <- as.data.frame(object$loadings_stand_obli)
   for(i in 1:n_state){
     loadings_new <- cbind.data.frame(loadings[,starti[i]:steps[i], drop = FALSE],"  " = c(rep("  ",J)))
     if(i==1){
@@ -88,7 +88,7 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   cat(paste("Factor correlations after oblique rotation:"),"\n")
   cat("\n")
   
-  factorcors <- object$factor_correlations_obli_list
+  factorcors <- object$factor_correlations_stand_obli_list
 
   for(i in 1:n_state){
     if(n_fact[i]>1){

@@ -1104,21 +1104,78 @@ probVector <-c(NA)
   #standLambda_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
   #standLambda2_obli <- lapply(standLambda2, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
   #correlations_obli <- lapply(standLambda, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$Phi[])
-  
+  Lambda_obli <- Lambda_k
   standLambda_obli <- standLambda
   standLambda2_obli <- standLambda2
   correlations_obli <- list()
+  correlations_obli_unstandardized <- list()
 
   for(i in 1:n_state){
     if(n_fact[i]>1){
-      rotationResults <- GPFoblq(standLambda[[i]], method = "oblimin", normalize = FALSE)
-      standLambda_obli[[i]] <- rotationResults$loadings[]
-      correlations_obli[[i]] <- rotationResults$Phi[]
-      standLambda2_obli[[i]] <- GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE)$loadings[]
+      rotationResults <- suppressWarnings(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE))#between
+      rotationResultsunstandardized <-suppressWarnings(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE))
+      standLambda_obli[[i]] <- suppressWarnings(GPFoblq(standLambda[[i]], method = "oblimin", normalize = FALSE)$loadings[])#within
+      correlations_obli[[i]] <- rotationResults$Phi[]#between
+      correlations_obli_unstandardized[[i]] <- rotationResultsunstandardized$Phi[]#unstandardized; usually, for unstandardized loadings, only normalizing works, which can lead to small deviations in correlations
+      standLambda2_obli[[i]] <- rotationResults$loadings[]#between
+      Lambda_obli[[i]] <- rotationResultsunstandardized$loadings[]#unstandardized
     }else{
       correlations_obli[[i]] <- 1
+      correlations_obli_unstandardized[[i]]<- 1 #usually, for unstandardized loadings, only normalizing works, which can lead to small deviations in correlations
     }
   }
+
+  #sometimes the rotation results in warnings (thus, the results are not reliable)
+  #for now we only check this for the between-state standardized loadings and unstandardized loadings because the within-state standardized loadings are not reported
+  #standardized
+  warning_stand_loadings <- c()
+
+  for(i in 1:n_state){
+    if(n_fact[i]>1){
+
+          WarningStandardized <- suppressWarnings(tryCatch(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),
+            warning = function(w) return(list(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),w))))
+
+
+    if(length(grep("simpleWarning", as.character(WarningStandardized[[2]])))>0){
+      warning_stand_loadings <- c(warning_stand_loadings,1)
+    }else{
+      warning_stand_loadings <- c(warning_stand_loadings,0)
+    }
+   }
+  }
+
+  if(sum(warning_stand_loadings)>0){
+    warningRotationStandardized <- c("Warning message: convergence for rotating loadings in at least one state was not obtained")
+  }else{
+    warningRotationStandardized <- c("no warning")
+  }
+
+  #unstandardized
+  warning_loadings <- c()
+
+  for(i in 1:n_state){
+    if(n_fact[i]>1){
+
+    WarningUnstandardized <- suppressWarnings(tryCatch(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE),
+                                                    warning = function(w) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE),w))))
+
+
+    if(length(grep("simpleWarning", as.character(WarningUnstandardized[[2]])))>0){
+      warning_loadings <- c(warning_loadings,1)
+    }else{
+      warning_loadings <- c(warning_loadings,0)
+    }
+   }
+  }
+    
+  if(sum(warning_loadings)>0){
+    warningRotationUnstandardized <- c("Warning message: convergence for rotating loadings in at least one state was not obtained")
+  }else{
+    warningRotationUnstandardized <- c("no warning")
+  }
+
+
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
   #-------------------------------------------------------------------------------#
@@ -1172,6 +1229,8 @@ probVector <-c(NA)
   standLambda_obli_fl <- standLambda_obli
   standLambda2_obli_fl <- standLambda2_obli
   correlations_obli_fl <- correlations_obli
+  Lambda_obli_fl <- Lambda_obli
+  correlations_obli_unstandardized_fl <- correlations_obli_unstandardized
 
   #normal unrotated unstandardized
   for(i in 1:n_state){
@@ -1212,10 +1271,6 @@ probVector <-c(NA)
       flipped <- sum(abs(standLambda_obli[[i]][,j][(standLambda_obli[[i]][,j])* -1 > 0]))
       if(flipped>normal){
         standLambda_obli_fl[[i]][,j] <- standLambda_obli[[i]][,j]*-1
-        if(n_fact[i]>1){
-          correlations_obli_fl[[i]][,j] <-  correlations_obli_fl[[i]][,j]*-1 
-          correlations_obli_fl[[i]][j,] <-  correlations_obli_fl[[i]][j,]*-1 
-        }
       }
     }
   }
@@ -1227,6 +1282,25 @@ probVector <-c(NA)
       flipped <- sum(abs(standLambda2_obli[[i]][,j][(standLambda2_obli[[i]][,j])* -1 > 0]))
       if(flipped>normal){
         standLambda2_obli_fl[[i]][,j] <- standLambda2_obli[[i]][,j]*-1
+        if(n_fact[i]>1){
+          correlations_obli_fl[[i]][,j] <-  correlations_obli_fl[[i]][,j]*-1 
+          correlations_obli_fl[[i]][j,] <-  correlations_obli_fl[[i]][j,]*-1 
+        }
+      }
+    }
+  }
+
+  #Unstandardized unrotated
+  for(i in 1:n_state){
+    for(j in 1:n_fact[i]){
+      normal <- sum(abs(Lambda_obli_fl[[i]][,j][(Lambda_obli_fl[[i]][,j])>0]))
+      flipped <- sum(abs(Lambda_obli_fl[[i]][,j][(Lambda_obli_fl[[i]][,j])* -1 > 0]))
+      if(flipped>normal){
+        Lambda_obli_fl[[i]][,j] <- Lambda_obli_fl[[i]][,j]*-1
+        if(n_fact[i]>1){
+          correlations_obli_unstandardized_fl[[i]][,j] <-  correlations_obli_unstandardized_fl[[i]][,j]*-1 
+          correlations_obli_unstandardized_fl[[i]][j,] <-  correlations_obli_unstandardized_fl[[i]][j,]*-1 
+        }
       }
     }
   }
@@ -1306,10 +1380,9 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               LL = round(LL,rounding),
               BIC = round(BIC_T,rounding),
               intercepts = round(intercepts, rounding),
-              loadings_w_obli = round(loadings_w_obli_fl, rounding),
-              loadings_b_obli = round(loadings_b_obli_fl, rounding),
+              #loadings_w_obli = round(loadings_w_obli_fl, rounding),
+              loadings_stand_obli = round(loadings_b_obli_fl, rounding),
               unique_variances = round(unique_variances, rounding),
-              
               state_proportions = round(state_proportions, rounding),
               n_obs = n_sub,
               n_par = R_T,
@@ -1319,14 +1392,15 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               #state_proportions_list = lapply(pi_k, round, rounding),
               intercepts_list = lapply(nu_k, round, rounding),
               loadings_list = lapply(Lambda_k_fl, round, rounding),
-              loadings_w_list = lapply(standLambda_fl, round, rounding),
-              loadings_b_list = lapply(standLambda2_fl, round, rounding),
-              #Lambda_k_obli = lapply(Lambda_k_obli,round,rounding),
-              loadings_w_obli_list = lapply(standLambda_obli_fl, round, rounding),
-              loadings_b_obli_list = lapply(standLambda2_obli_fl, round, rounding), 
+              #loadings_w_list = lapply(standLambda_fl, round, rounding),
+              loadings_stand_list = lapply(standLambda2_fl, round, rounding),
+              loadings_obli_list = lapply(Lambda_obli_fl,round,rounding),
+              #loadings_w_obli_list = lapply(standLambda_obli_fl, round, rounding),
+              loadings_stand_obli_list = lapply(standLambda2_obli_fl, round, rounding), 
               
               unique_variances_list = lapply(Psi_k, round, rounding),
-              factor_correlations_obli_list = lapply(correlations_obli_fl, round, rounding), 
+              factor_correlations_stand_obli_list = lapply(correlations_obli_fl, round, rounding), 
+              factor_correlations_obli_list = lapply(correlations_obli_unstandardized_fl, round, rounding), 
               #Psi_k_st_w = Psi_k_st_w,
               #Psi_k_st_b = Psi_k_st_b,
               activated_contraints = estimation[iteration,3],
@@ -1336,9 +1410,11 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               classification_errors = round(ModalClassificationTable, rounding),
               classification_errors_prob = round(W_mod, rounding),
               R2_entropy = round(R2_entropy, rounding),
-              hitrate = hitrate,
-              loglies = loglikMulti,
-              estimation = estimation
+              warning_loadings = warningRotationUnstandardized,
+              warning_loadings_stand = warningRotationStandardized
+              #hitrate = hitrate,
+              #loglies = loglikMulti,
+              #estimation = estimation
               
               )
   class(output) = "lmfa_step1"
