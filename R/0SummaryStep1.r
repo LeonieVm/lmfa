@@ -64,7 +64,7 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
 
   (df)
 }
-  cat("\n")
+  
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
@@ -128,7 +128,7 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   print(round(object$intercepts,rounding))
   cat("\n")
 
-  cat("\n")
+
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")

@@ -57,7 +57,7 @@ for(i in 1:length(unistates)){
 modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"BIC"]),]
 
 objecModelselection <- (modelcomparison2[,c(1:4,7)])
-print(objecModelselection)
+print(objecModelselection[,-5])
 cat("\n")
 cat(paste("Note: When re-estimating models that are not convergent, the"),"\n")
 cat(paste("   number of maximum iterations should be increased."),"\n")
