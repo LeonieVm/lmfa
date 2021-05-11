@@ -34,7 +34,7 @@
 #'                  n_state_range = NULL, 
 #'                  n_fact_range = NULL,
 #'                  n_starts = 25,
-#'                  n_initial_ite = 15,
+#'                  n_initial_ite = 10,
 #'                  n_m_step = 10,
 #'                  em_tolerance = 1e-8, 
 #'                  m_step_tolerance = 1e-3, 
@@ -52,7 +52,7 @@ step1 <- function(data,
                   n_state_range = NULL, 
                   n_fact_range = NULL,
                   n_starts = 25,
-                  n_initial_ite = 15,
+                  n_initial_ite = 10,
                   n_m_step = 10,
                   em_tolerance = 1e-8, 
                   m_step_tolerance = 1e-3, 
@@ -468,7 +468,7 @@ if(modelselection == TRUE){
   # Extract the likelihood values.
   loglikMulti <- as.data.frame(matrix(unlist(lapply(MultistartResults1,
                                                     function(x) {x[[5]]})),ncol = 1))
-  row.names(loglikMulti) <- 1:((n_starts*10)+n_mclust) #plus n_mclust for the three mclust starts
+  row.names(loglikMulti) <- 1:((n_starts*10)+n_mclust) #plus n_mclust for the mclust starts
 
   # Obtain the number of the best starts.
   best <- order(loglikMulti,decreasing = T)[1:(n_starts)]

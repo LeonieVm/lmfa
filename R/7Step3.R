@@ -848,6 +848,7 @@ parameterEstimates[(startTran+1):(startTran+
   }else{
     cat("\n")
     cat(paste("Maximum number of iterations reached without convergence.","\n"))
+    cat(paste("Increase the number of max_iterations and repeat the estimation","\n"))
     cat("\n")
   }
   cat("\n")
