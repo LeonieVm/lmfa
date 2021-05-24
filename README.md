@@ -17,7 +17,7 @@ devtools::install_github("leonievm/lmfa")
  
 After successful installation, you can perform LMFA by means of the three-step estimation. The package consists of the three main functions. For details about the function arguments, you may call the function documentations with ?'functionname' 
 
-1. The step 1 function estimates the state-specific factor analysis models (with or without model selection):
+1. The step 1 function estimates the state-specific factor analysis models by means of an expectation maximization algorithm (with or without model selection):
 ```R
 step1(data,
       indicators,
