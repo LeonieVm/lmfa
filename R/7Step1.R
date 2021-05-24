@@ -970,18 +970,21 @@ Lambda_k_reorder <- Lambda_k
 Psi_k_reorder <- Psi_k
 nu_k_reorder <- nu_k
 posterior_data_reorder <- posterior_data
+C_k_reorder <- C_k
 for(i in 1:n_state){
   pi_k_reorder[[i]] <- pi_k[[orderStates[i]]]
   Lambda_k_reorder[[i]] <- Lambda_k[[orderStates[i]]]
   Psi_k_reorder[[i]] <- Psi_k[[orderStates[i]]]
   nu_k_reorder[[i]] <- nu_k[[orderStates[i]]]
   posterior_data_reorder[,i] <- posterior_data[,orderStates[i]]
+  C_k_reorder[[i]] <-C_k[[orderStates[i]]]
 }
 pi_k <- pi_k_reorder
 Lambda_k <- Lambda_k_reorder
 Psi_k <- Psi_k_reorder
 nu_k <- nu_k_reorder
 posterior_data <- posterior_data_reorder
+C_k <- C_k_reorder
 
   #--------------------------------------------------------------------------------#
   #                            continue with step 2
@@ -1411,7 +1414,9 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               classification_errors_prob = round(W_mod, rounding),
               R2_entropy = round(R2_entropy, rounding),
               warning_loadings = warningRotationUnstandardized,
-              warning_loadings_stand = warningRotationStandardized
+              warning_loadings_stand = warningRotationStandardized,
+              sample_cov_matrix_list = C_k,
+              raw_data = x
               #hitrate = hitrate,
               #loglies = loglikMulti,
               #estimation = estimation
