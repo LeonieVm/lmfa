@@ -11,7 +11,7 @@
 #' @param indicators The variable names of the indicators (must be a vector of characters).
 #' @param n_state The number of states that should be estimated (must be a single scalar).
 #' @param n_fact The number of factors per state that should be estimated (must be a numeric vector of length n_state).
-#' @param modelselection Indicates whether model selection should be performed or not. If TRUE, the arguments n_state_range and n_fact_range are required.
+#' @param modelselection Indicates whether model selection should be performed or not. If TRUE, the arguments n_state_range and n_fact_range are required (must be a logical statement).
 #' @param n_state_range A vector indicating the number of states that should be considered in the model selection.
 #' @param n_fact_range A vector indicating the number of factors that should be considered in the model selection.
 #' @param n_starts The number of random starts that should be used (must be a single scalar).
@@ -1415,7 +1415,7 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               R2_entropy = round(R2_entropy, rounding),
               warning_loadings = warningRotationUnstandardized,
               warning_loadings_stand = warningRotationStandardized,
-              sample_cov_matrix_list = C_k,
+              #sample_cov_matrix_list = C_k,
               raw_data = x
               #hitrate = hitrate,
               #loglies = loglikMulti,

@@ -30,7 +30,7 @@ step1(
 
 \item{n_fact}{The number of factors per state that should be estimated (must be a numeric vector of length n_state).}
 
-\item{modelselection}{Indicates whether model selection should be performed or not. If TRUE, the arguments n_state_range and n_fact_range are required.}
+\item{modelselection}{Indicates whether model selection should be performed or not. If TRUE, the arguments n_state_range and n_fact_range are required (must be a logical statement).}
 
 \item{n_state_range}{A vector indicating the number of states that should be considered in the model selection.}
 
@@ -66,7 +66,7 @@ step1_results <- step1(data,
                  n_state_range = NULL, 
                  n_fact_range = NULL,
                  n_starts = 25,
-                 n_initial_ite = 15,
+                 n_initial_ite = 10,
                  n_m_step = 10,
                  em_tolerance = 1e-8, 
                  m_step_tolerance = 1e-3, 
