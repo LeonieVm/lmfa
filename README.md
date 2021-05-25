@@ -6,7 +6,7 @@
 ### Installation
 You can download the development version from GitHub as follow:
 
-```R
+```{python}
 install.packages("devtools"); library(devtools)
 
 devtools::install_github("leonievm/lmfa")
@@ -18,7 +18,7 @@ devtools::install_github("leonievm/lmfa")
 After successful installation, you can perform LMFA by means of the three-step estimation. The package consists of the three main functions. For details about the function arguments, you may call the function documentations with ?'functionname' 
 
 1. The step 1 function estimates the state-specific factor analysis models by means of an expectation maximization algorithm (with or without model selection):
-```R
+```javascript
 step1(data,
       indicators,
       n_state = NULL,
@@ -36,12 +36,12 @@ step1(data,
 ```
 
 2. The step 2 function obtains the posterior state-membership probabilities and the modal state assignments and calculates the classification error: 
-```R
+```javascript
 step2(data, model)
 ```
 
 3. The step 3 function estimates the transitions between the states (conditional on covariates) by means of a continuous-time latent Markov model:
-```R
+```javascript
 step3(data,
       identifier,
       n_state,
