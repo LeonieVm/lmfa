@@ -6,7 +6,7 @@
 ### Installation
 You can download the development version from GitHub as follow:
 
-```{python}
+```javascript
 install.packages("devtools"); library(devtools)
 
 devtools::install_github("leonievm/lmfa")
