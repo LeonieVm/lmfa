@@ -19,7 +19,7 @@
 #'                      model, 
 #'                      oblique = TRUE,
 #'                      rounding = 4
-#'                       )
+#'                      )
 #' }
 #' @export
 
@@ -39,8 +39,8 @@ if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
   factorscores <- c()
   
   #scale the raw data (i.e., the observations for the indicators)
-  #raw_data_scaled <- scale(model$raw_data, center = TRUE, scale = TRUE)
-  raw_data_scaled <- as.matrix(model$raw_data)
+  #raw_data <- scale(model$raw_data, center = TRUE, scale = TRUE)
+  raw_data <- as.matrix(model$raw_data)
   
   #empty factor names
   factornames <- c()
@@ -53,7 +53,10 @@ if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
     
     #obliquely rotated
     if(oblique==TRUE){
-      estimated_cov_matrix <-  (tcrossprod(model$loadings_obli_list[[i]])+ diag(c(model$unique_variances_list[[i]])))
+      estimated_cov_matrix <-  (model$loadings_obli_list[[i]]%*%
+                                model$factor_correlations_obli_list[[i]]%*%
+                                t(model$loadings_obli_list[[i]])+ 
+                                diag(c(model$unique_variances_list[[i]])))
       weights_s = 
         solve(estimated_cov_matrix) %*%              #state-specific estimated covariance matrix
         model$loadings_obli_list[[i]] %*%            #state-specific obliquely rotated loadings
@@ -70,7 +73,7 @@ if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
     
     #calculate factor scores
     F_s <- 
-      raw_data_scaled %*%                            #scaled raw data 
+      raw_data %*%                                   #raw data
       weights_s                                      #the weights (depening on (un)rotated loadings)
     factorscores <- cbind(factorscores,F_s)
   }
@@ -80,5 +83,5 @@ if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
   
   factorscores <- as.matrix(factorscores)
   factorscores <- as.data.frame(factorscores)
-  return(cbind(data,factorscores))
+  return(cbind(data,round(factorscores, rounding)))
 }
