@@ -20,6 +20,11 @@ You can add multiple sections.
 }
 
 \author{
-\strong{Maintainer}: Leonie Vogelsmeier \email{l.v.d.e.vogelsmeier@uvt.nl} (\href{https://orcid.org/0000-0002-1666-7112}{ORCID})
+\strong{Maintainer}: Leonie V. D. E. Vogelsmeier \email{l.v.d.e.vogelsmeier@uvt.nl} (\href{https://orcid.org/0000-0002-1666-7112}{ORCID})
+
+Authors:
+\itemize{
+  \item Kim De Roover \email{K.DeRoover@tilburguniversity.edu}
+}
 
 }

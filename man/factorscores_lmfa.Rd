@@ -24,6 +24,6 @@ ESM_factorscores <- factorscores_lmfa(data,
                      model, 
                      oblique = TRUE,
                      rounding = 4
-                      )
+                     )
 }
 }

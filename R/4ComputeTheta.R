@@ -1,4 +1,4 @@
-#' Compute coefficients Theta
+#' Compute Coefficients Theta
 #'
 #'
 #'

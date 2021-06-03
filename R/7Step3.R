@@ -1,6 +1,6 @@
 #' Estimating the transition model (with or without covariates) by means of a CT-LMM
 #'
-#' \code{step3} conducts step 3 from the three-step estimation of CT-LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
+#' \code{step3} conducts step 3 from the three-step estimation of LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
 #' 
 #'
 #'
@@ -96,9 +96,12 @@ step3 <- function(data,
   if(!is.logical(previousCov)) stop("previousCov must be a single logical statement")
   if(length(previousCov)>1) stop("previousCov must be a single logical statement")
   if(!is.numeric(rounding)) stop("rounding must be a single scalar")
-  if(length(rounding)>1) stop("rounding must be a single scalar")
+  if(round(n_state)!=n_state) stop("n_state must be an integer")
+  if(round(n_starts)!=n_starts) stop("n_starts must be an integer")
+  if(round(n_initial_ite)!=n_initial_ite) stop("n_initial_ite must be an integer")
+  if(round(max_iterations)!=max_iterations) stop("max_iterations must be an integer")
 
-  
+
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
   # just a warning for non-specified interval column
   if(is.null(timeintervals)) warning("measurement occasions are assumed to be equidistant because no timeintervals has been specified")

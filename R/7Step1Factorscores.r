@@ -1,6 +1,6 @@
-#' Caclulating initial state and transition probabilities
+#' Caclulating state-specific factor scores
 #'
-#' \code{probabilities} calculates initial state and transition probabilities for given covariate scores and time interval for the \code{step3} estimates.
+#' \code{factorscores_lmfa} calculates factor scores by means of the regression method.
 #' 
 #' 
 #'
@@ -28,19 +28,19 @@ factorscores_lmfa <- function(data, model, oblique = TRUE, rounding = 4){
   
 if(missing(data)) stop("argument data is missing, with no default")
 if(missing(model)) stop("argument model is missing, with no default")
+if(length(oblique)>1) stop("oblique must be a single logical statement")
 if(!is.logical(oblique)) stop("argument oblique must be a logical statement")
 if(!is.numeric(rounding)) stop("rounding must be a single scalar")
 if(length(rounding)>1) stop("rounding must be a single scalar")
-
+if(round(rounding)!=rounding) stop("rounding must be an integer")
 if(class(model)!="lmfa_step1") stop("model must be of class lmfa_step1")
 
 
+
+  raw_data <- as.matrix(model$raw_data)
+  
   #empty objects with factor scores
   factorscores <- c()
-  
-  #scale the raw data (i.e., the observations for the indicators)
-  #raw_data <- scale(model$raw_data, center = TRUE, scale = TRUE)
-  raw_data <- as.matrix(model$raw_data)
   
   #empty factor names
   factornames <- c()

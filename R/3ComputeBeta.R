@@ -1,4 +1,4 @@
-#' Compute Regression coefficients Beta
+#' Compute Regression Coefficients Beta
 #'
 #'
 #'

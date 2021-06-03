@@ -2,14 +2,16 @@ Package: lmfa
 Title: LMFA for Exploring Measurement Model Differences in Intensive Longitudinal Data
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "Leonie V. D. E.",
+    c(person(given = "Leonie V. D. E.",
            family = "Vogelsmeier",
            role = c("aut", "cre"),
            email = "l.v.d.e.vogelsmeier@uvt.nl",
-           comment = c(ORCID = "0000-0002-1666-7112"))
+           comment = c(ORCID = "0000-0002-1666-7112")),
     person(given = "Kim",
            family = "De Roover",
-           role = c("aut"))
+           role = c("aut"),
+           email = "K.DeRoover@tilburguniversity.edu"))
+Maintainer: Leonie V. D. E. Vogelsmeier <l.v.d.e.vogelsmeier@uvt.nl>
 Description: `lmfa` allows to explore within-person changes 
     and between person differences in measurement models in 
     (intensive) longitudinal data by means of three-step 

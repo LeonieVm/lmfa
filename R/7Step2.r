@@ -1,6 +1,6 @@
 #' Obtaining state assignment and classification errors
 #'
-#' \code{step2} conducts step 2 of the three-step estimation of CT-LMFA. More specifically, the function extracts the classification information from the \code{step1} output.
+#' \code{step2} conducts step 2 of the three-step estimation of LMFA. More specifically, the function extracts the classification information from the \code{step1} output.
 #'
 #'
 #'

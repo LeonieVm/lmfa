@@ -78,7 +78,7 @@ initializeStep1 <- function(x,n_sub,n_state,n_fact,J,startval = "random",
 
   #eigendecomposition; P = matrix of eigenvectors, D = diagonal matrix with eigenvalues
   P_k <- lapply(C_k, function(x) eigen(x)$vectors)  #eigenvectors
-  D_k <- lapply(C_k, function(x) eigen(x)$values) #eigenvalues
+  D_k <- lapply(C_k, function(x) eigen(x)$values)   #eigenvalues
   
   #save all eigenvalues to use the disregarded onces for calculating the average of the J ??? ff smallest eigenvalues
   D_k_all <-D_k

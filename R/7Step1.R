@@ -1,6 +1,6 @@
-#' Estimating state-specific measurement models by means of mixture of factor analyzers
+#' Estimating state-specific measurement models
 #'
-#' \code{step1} conducts step 1 of the three-step estimation of CT-LMFA and thus the estimation of the measurement models. It is possible to estimate the parameters for a single model or for a range of models in order to conduct model selection.
+#' \code{step1} conducts step 1 of the three-step estimation of LMFA and thus the estimation of the measurement models. It is possible to estimate the parameters for a single model or for a range of models and to conduct model selection.
 #'
 #'
 #'
@@ -20,7 +20,7 @@
 #' @param em_tolerance The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).
 #' @param m_step_tolerance The criterion for stopping the n_m_step M-step interations (must be a single scalar).
 #' @param max_iterations The maximum number of iterations (must be a single scalar and larger than n_initial_ite).
-#' @param n_mclust The number of mclust starts.
+#' @param n_mclust The number of mclust starts (must be a single scalar and at least euqal to 2).
 #'
 #' @return Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
 #'
@@ -62,8 +62,7 @@ step1 <- function(data,
   rounding = 12
   if(missing(data)) stop("argument data is missing, with no default")
   if(missing(indicators)) stop("argument indicators is missing, with no default")
-  #if(missing(identifier)) stop("argument identifier is missing, with no default")
-  
+  if(length(modelselection)>1) stop("modelselection must be a single logical statement")
   if(!is.logical(modelselection)) stop("argument modelselection must be a logical statement")
   #no modelselection
   if(modelselection == FALSE){
@@ -72,7 +71,7 @@ step1 <- function(data,
   if(!is.numeric(n_state)) stop("n_state must be a single scalar")
   if(length(n_state)>1) stop("n_state must be a single scalar")
   if(length(n_starts)>1) stop("n_starts must be a single scalar")
-  if(!is.numeric(n_fact)) stop("n_state must be a numeric vector")
+  if(!is.numeric(n_fact)) stop("n_fact must be a numeric vector")
   if(length(n_fact)!=n_state) stop("n_fact must be of length n_state")
   if(!is.null(n_state_range)){
     cat("\n")
@@ -101,41 +100,46 @@ step1 <- function(data,
 
   }
 
-  
-
   if(!is.data.frame(data)) stop("data must be a dataframe")
   if(!is.character(indicators)) stop("indicators must be a vector of characters")
-  #if(!is.character(identifier)) stop("identifier must be a single character")
-  #if(length(identifier)>1) stop("identifier must be a single character")
-  
-
   if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
   if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
   if(!is.numeric(n_m_step)) stop("n_m_step must be a single scalar")
   if(length(n_m_step)>1) stop("n_m_step must be a single scalar")
   if(!is.numeric(em_tolerance)) stop("em_tolerance must be a single scalar")
   if(length(em_tolerance)>1) stop("em_tolerance must be a single scalar")
+  if(em_tolerance<0) stop("em_tolerance must be a positive scalar")
   if(!is.numeric(m_step_tolerance)) stop("m_step_tolerance must be a single scalar")
   if(length(m_step_tolerance)>1) stop("m_step_tolerance must be a single scalar")
-  if(!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
+  if(m_step_tolerance<0) stop("m_step_tolerance must be a positive scalar")
   if(length(max_iterations)>1) stop("max_iterations must be a single scalar")
-
+  if(!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
+  if(max_iterations<0) stop("max_iterations must be a positive scalar")
   if(sum(complete.cases(data[,indicators])==FALSE)>0) stop("data must contain complete cases with regard to the indicators only")
   if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
+  if(n_initial_ite<0) stop("n_initial_ite must be a positive scalar")
   if(em_tolerance >= m_step_tolerance) stop("em_tolerance must be smaller than m_step_tolerance")
-  
   if(!is.numeric(rounding)) stop("rounding must be a single scalar")
   if(length(rounding)>1) stop("rounding must be a single scalar")
-  
   if(!is.numeric(n_mclust)) stop("n_mclust must be a single scalar")
   if(length(n_mclust)>1) stop("n_mclust must be a single scalar")
-  if(n_mclust<1) stop("n_mclust must be larger than 0")
+  if(n_mclust<2) stop("n_mclust must be larger than 1")
+  if(sum(round(n_fact)!=n_fact)>0) stop("n_fact must be a vector of integers")
+  if(sum(round(n_state_range)!=n_state_range)>0) stop("n_state_range must be a sequence of integers")
+  if(sum(round(n_fact_range)!=n_fact_range)>0) stop("n_fact_range must be a sequence of integers")
+  if(round(n_state)!=n_state) stop("n_state must be an integer")
+  if(round(n_starts)!=n_starts) stop("n_starts must be an integer")
+  if(round(n_initial_ite)!=n_initial_ite) stop("n_initial_ite must be an integer")
+  if(round(n_m_step)!=n_m_step) stop("n_m_step must be an integer")
+  if(round(max_iterations)!=max_iterations) stop("max_iterations must be an integer")
+  if(round(n_mclust)!=n_mclust) stop("n_mclust must be an integer")
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Input: b) defined in the package.
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
   # Perhaps set a seed in order to replicate results (e.g., same starting values).
-  #set.seed(16)
+  
 
   # Obtain the columns with the variables
   x <- data[,indicators]

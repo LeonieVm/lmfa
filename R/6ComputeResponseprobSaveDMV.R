@@ -1,6 +1,6 @@
 #' Compute Multivariate Normal Densities
 #'
-#' Needed to calculate the posterio-state membership probabilities and the loglikelihood
+#' Needed to calculate the posterio-state membership probabilities and the loglikelihood.
 #' The function is based on code in dMvn() that is used internally by the mixture of normals model in bayesm.
 #'
 #' @param x The dataset.

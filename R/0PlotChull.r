@@ -2,7 +2,7 @@
 
 #' Plot function for: A Generic Convex-Hull-Based Model Selection Method
 #'
-#' This function is based on the CHull function from the R package multichull
+#' This function is based on the CHull function from the R package multichull.
 #'
 #' @param x  Output from the main function step1() (must be of class lmfa_modelselection).
 #' @param col Vector of \code{\link{colors}} used for plots.

@@ -17,7 +17,7 @@
 summary.lmfa_step1 <- function(object, rounding = 2,...){
     if(!is.numeric(rounding)) stop("rounding must be a single scalar")
     if(length(rounding)>1) stop("rounding must be a single scalar")
-
+    if(round(rounding)!=rounding) stop("rounding must be an integer")
   if(object$convergence==1){
     cat("\n")
     cat(paste("Estimation converged after",round(object$seconds,2),"seconds and",object$n_it,"iterations.","\n"))
