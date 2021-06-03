@@ -5,7 +5,7 @@
 #'
 #' @param x Model-selection output from \code{step1} (must be of class lmfa_modelselection).
 #' @param ... Further arguments for the CHull plot function.
-
+#'
 #'
 #'
 #' @return Returns CHull output.
@@ -109,7 +109,7 @@ if(sumComplexModels>0){
   cat(paste("  Therefore, it is advisable to also visually inspect the CHull plot."),"\n")
         
   cat("\n")
-  cat(paste("Note 2: The st value(s) of the",sumComplexModels,"best model(s) might be artificially"),"\n")
+  cat(paste("Note 2: The st value(s) of the best model(s) might be artificially"),"\n")
   cat(paste("  inflated. Therefore, it is advisable to also consider the next best model(s)."),"\n")
 
 }else{
