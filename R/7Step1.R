@@ -124,10 +124,23 @@ step1 <- function(data,
   if(!is.numeric(n_mclust)) stop("n_mclust must be a single scalar")
   if(length(n_mclust)>1) stop("n_mclust must be a single scalar")
   if(n_mclust<2) stop("n_mclust must be larger than 1")
-  if(sum(round(n_fact)!=n_fact)>0) stop("n_fact must be a vector of integers")
-  if(sum(round(n_state_range)!=n_state_range)>0) stop("n_state_range must be a sequence of integers")
-  if(sum(round(n_fact_range)!=n_fact_range)>0) stop("n_fact_range must be a sequence of integers")
-  if(round(n_state)!=n_state) stop("n_state must be an integer")
+  
+  if(!is.null(n_state_range)){
+    if(sum(round(n_state_range)!=n_state_range)>0) stop("n_state_range must be a sequence of integers")
+  }
+
+  if(!is.null(n_fact_range)){
+    if(sum(round(n_fact_range)!=n_fact_range)>0) stop("n_fact_range must be a sequence of integers")
+  }
+
+  if(!is.null(n_state)){
+    if(round(n_state)!=n_state) stop("n_state must be an integer")
+  }
+
+  if(!is.null(n_fact)){
+    if(sum(round(n_fact)!=n_fact)>0) stop("n_fact must be a vector of integers")
+  }
+
   if(round(n_starts)!=n_starts) stop("n_starts must be an integer")
   if(round(n_initial_ite)!=n_initial_ite) stop("n_initial_ite must be an integer")
   if(round(n_m_step)!=n_m_step) stop("n_m_step must be an integer")
