@@ -9,7 +9,7 @@ Authors@R:
            comment = c(ORCID = "0000-0002-1666-7112"))
     person(given = "Kim",
            family = "De Roover",
-           role = c("aut"),)
+           role = c("aut"))
 Description: `lmfa` allows to explore within-person changes 
     and between person differences in measurement models in 
     (intensive) longitudinal data by means of three-step 
