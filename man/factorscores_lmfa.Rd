@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step1Factorscores.r
 \name{factorscores_lmfa}
 \alias{factorscores_lmfa}
-\title{Caclulating state-specific factor scores}
+\title{Calculating state-specific factor scores}
 \usage{
 factorscores_lmfa(data, model, oblique = TRUE, rounding = 4)
 }

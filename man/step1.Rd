@@ -44,11 +44,11 @@ step1(
 
 \item{em_tolerance}{The convergence criterion for parameters and loglikelihood (must be a single scalar and smaller than m_step_tolerance).}
 
-\item{m_step_tolerance}{The criterion for stopping the n_m_step M-step interations (must be a single scalar).}
+\item{m_step_tolerance}{The criterion for stopping the n_m_step M-step iterations (must be a single scalar).}
 
 \item{max_iterations}{The maximum number of iterations (must be a single scalar and larger than n_initial_ite).}
 
-\item{n_mclust}{The number of mclust starts (must be a single scalar and at least euqal to 2).}
+\item{n_mclust}{The number of mclust starts (must be a single scalar and at least equal to 2).}
 }
 \value{
 Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
