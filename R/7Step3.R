@@ -1,4 +1,4 @@
-#' Estimating the transition model (with or without covariates) by means of a CT-LMM
+#' Estimating the transition model (with or without covariates)
 #'
 #' \code{step3} conducts step 3 from the three-step estimation of LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
 #' 
@@ -17,8 +17,8 @@
 #' @param n_initial_ite The number of initial iterations for the different start sets that should be used (must be a single scalar).
 #' @param method The type of optimization method that should be used (must be "BFGS" or "CG")
 #' @param max_iterations The maximum number of iterations that should be used (must be a single scalar and larger than n_initial_ite).
-#' @param tolerance The tolerance to evaluate convergend that should be used (must be a single scalar).
-#' @param scaling An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() docomentation for details). In this package it has to be a positive integer.
+#' @param tolerance The tolerance to evaluate convergence that should be used (must be a single scalar).
+#' @param scaling An overall scaling to be applied to the value of fn (a function to be minimized) and gr (a function to return the gradient for the "BFGS" and "CG" methods) during optimization (see optim() documentation for details). In this package it has to be a positive integer.
 #'
 #'
 #'

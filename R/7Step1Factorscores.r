@@ -1,4 +1,4 @@
-#' Caclulating state-specific factor scores
+#' Calculating state-specific factor scores
 #'
 #' \code{factorscores_lmfa} calculates factor scores by means of the regression method.
 #' 

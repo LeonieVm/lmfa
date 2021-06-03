@@ -16,5 +16,5 @@
 \item{...}{Further arguments for the CHull plot function.}
 }
 \description{
-This function is based on the CHull function from the R package multichull
+This function is based on the CHull function from the R package multichull.
 }

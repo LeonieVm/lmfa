@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step1.R
 \name{step1}
 \alias{step1}
-\title{Estimating state-specific measurement models by means of mixture of factor analyzers}
+\title{Estimating state-specific measurement models}
 \usage{
 step1(
   data,
@@ -48,13 +48,13 @@ step1(
 
 \item{max_iterations}{The maximum number of iterations (must be a single scalar and larger than n_initial_ite).}
 
-\item{n_mclust}{The number of mclust starts.}
+\item{n_mclust}{The number of mclust starts (must be a single scalar and at least euqal to 2).}
 }
 \value{
 Returns the state-specific measurement model parameters and model fit information (for one or multiple estimated model).
 }
 \description{
-\code{step1} conducts step 1 of the three-step estimation of CT-LMFA and thus the estimation of the measurement models. It is possible to estimate the parameters for a single model or for a range of models in order to conduct model selection.
+\code{step1} conducts step 1 of the three-step estimation of LMFA and thus the estimation of the measurement models. It is possible to estimate the parameters for a single model or for a range of models and to conduct model selection.
 }
 \examples{
 \dontrun{

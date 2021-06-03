@@ -2,7 +2,7 @@
 % Please edit documentation in R/7Step1Factorscores.r
 \name{factorscores_lmfa}
 \alias{factorscores_lmfa}
-\title{Caclulating initial state and transition probabilities}
+\title{Caclulating state-specific factor scores}
 \usage{
 factorscores_lmfa(data, model, oblique = TRUE, rounding = 4)
 }
@@ -16,7 +16,7 @@ factorscores_lmfa(data, model, oblique = TRUE, rounding = 4)
 \item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 }
 \description{
-\code{probabilities} calculates initial state and transition probabilities for given covariate scores and time interval for the \code{step3} estimates.
+\code{factorscores_lmfa} calculates factor scores by means of the regression method.
 }
 \examples{
 \dontrun{

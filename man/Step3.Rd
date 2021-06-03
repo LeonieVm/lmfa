@@ -51,7 +51,7 @@ step3(
 Returns the transition model parameters.
 }
 \description{
-\code{step3} conducts step 3 from the three-step estimation of CT-LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
+\code{step3} conducts step 3 from the three-step estimation of LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
 }
 \examples{
 \dontrun{
