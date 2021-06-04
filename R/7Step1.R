@@ -1400,7 +1400,6 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               LL = round(LL,rounding),
               BIC = round(BIC_T,rounding),
               intercepts = round(intercepts, rounding),
-              #loadings_w_obli = round(loadings_w_obli_fl, rounding),
               loadings_stand_obli = round(loadings_b_obli_fl, rounding),
               unique_variances = round(unique_variances, rounding),
               state_proportions = round(state_proportions, rounding),
@@ -1409,35 +1408,22 @@ names(correlations_obli) <- c(paste("S",rep(1:n_state),sep=""))
               explained_variance = round(Percent_expl_var, rounding),
               n_state = n_state,
               n_fact = n_fact,
-              #state_proportions_list = lapply(pi_k, round, rounding),
               intercepts_list = lapply(nu_k, round, rounding),
               loadings_list = lapply(Lambda_k_fl, round, rounding),
-              #loadings_w_list = lapply(standLambda_fl, round, rounding),
               loadings_stand_list = lapply(standLambda2_fl, round, rounding),
               loadings_obli_list = lapply(Lambda_obli_fl,round,rounding),
-              #loadings_w_obli_list = lapply(standLambda_obli_fl, round, rounding),
               loadings_stand_obli_list = lapply(standLambda2_obli_fl, round, rounding), 
-              
               unique_variances_list = lapply(Psi_k, round, rounding),
               factor_correlations_stand_obli_list = lapply(correlations_obli_fl, round, rounding), 
-              factor_correlations_obli_list = lapply(correlations_obli_unstandardized_fl, round, rounding), 
-              #Psi_k_st_w = Psi_k_st_w,
-              #Psi_k_st_b = Psi_k_st_b,
+              factor_correlations_obli_list = lapply(correlations_obli_unstandardized_fl, round, rounding),
               activated_contraints = estimation[iteration,3],
-              #standard_dev_k = SDList,
-              #standard_dev = SDList2,
               classification_posteriors = Posteriors,
               classification_errors = round(ModalClassificationTable, rounding),
               classification_errors_prob = round(W_mod, rounding),
               R2_entropy = round(R2_entropy, rounding),
               warning_loadings = warningRotationUnstandardized,
               warning_loadings_stand = warningRotationStandardized,
-              #sample_cov_matrix_list = C_k,
               raw_data = x
-              #hitrate = hitrate,
-              #loglies = loglikMulti,
-              #estimation = estimation
-              
               )
   class(output) = "lmfa_step1"
 
