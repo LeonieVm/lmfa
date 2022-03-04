@@ -222,7 +222,7 @@ if(modelselection == TRUE){
   # List of multistart procedure results.
   MultistartResults1 <- rep(list(list(NA)),n_starts*10)
   MultistartResults2 <- rep(list(list(NA)),n_starts)
-  MclustResults <- rep(list(list(NA)),3)
+  MclustResults <- rep(list(list(NA)),n_mclust)
 
   # Prepare storing iterations.
   estimation <- matrix(c(NA),ncol=3,nrow=max_iterations)
