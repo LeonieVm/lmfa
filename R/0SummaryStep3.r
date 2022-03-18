@@ -31,6 +31,8 @@ summary.lmfa_step3 <- function(object, rounding = 4, ...){
   }
   cat("\n")
   cat(paste("LL",round(object$LL,rounding),sep=" = "),"\n")
+  cat(paste("BIC",round(object$BIC,rounding),sep=" = "),"\n")
+  cat(paste("n_par",round(object$n_par,rounding),sep=" = "),"\n")
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
