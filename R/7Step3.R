@@ -786,7 +786,7 @@ parameterEstimates[(startTran+1):(startTran+
     # calculate mean scores for covariates
     #--------------------------------------#
     if(!is.null(transitionCovariates)){
-      if(length(transitionCovariates > 1)){
+      if(length(transitionCovariates) > 1){
         transition_covariate_means <- colMeans(data[,c(transitionCovariates)])
       }else{
         transition_covariate_means <- mean(data[,c(transitionCovariates)])
@@ -796,7 +796,7 @@ parameterEstimates[(startTran+1):(startTran+
     }
     
     if(!is.null(initialCovariates)){
-      if(length(initialCovariates > 1)){
+      if(length(initialCovariates) > 1){
         initial_covariate_means <- colMeans(data[,c(initialCovariates)])
       }else{
         initial_covariate_means <- mean(data[,c(initialCovariates)])
