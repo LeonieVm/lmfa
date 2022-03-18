@@ -829,7 +829,7 @@ parameterEstimates[(startTran+1):(startTran+
               convergence = convergence,
               LL=round(step3Results$minus2loglik/-2, rounding),
               Wald_tests=round(WaldMatrixNoIntercepts, rounding),
-              BIC = round(step3Results$minus2loglik + fp_step3 *log(n_obs), rounding)
+              BIC = round(step3Results$minus2loglik + fp_step3 *log(n_obs), rounding),
               estimates=round(parameterEstimates, rounding), 
               classification_posteriors=as.data.frame(classification_posteriors),
               state_proportions = round(state_proportions, rounding),
@@ -838,8 +838,8 @@ parameterEstimates[(startTran+1):(startTran+
               n_transition_covariates = length(transitionCovariates),
               initial_covariate_means = initial_covariate_means,
               transition_covariate_means = transition_covariate_means,
-              n_obs = n_obs
-              n_par = fp_step3
+              n_obs = n_obs,
+              n_par = fp_step3,
               n_state = n_state,
               data = cbind(data, classification_posteriors)
               #hessian=printHessian,
