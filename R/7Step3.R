@@ -115,7 +115,7 @@ step3 <- function(data,
   # Obtain the time_column from timeintervals
   n_obs <- nrow(data)
   n_cases <- length(unlist(unique(data[,identifier])))
-  fp_step3 <- (n_state-1)*(1+length(initialCovariates))+(n_state*n_state-n_state)+(1+length(transitionCovariates))
+  fp_step3 <- (n_state-1)*(1+length(initialCovariates))+(n_state*n_state-n_state)*(1+length(transitionCovariates))
   
   if(!is.null(timeintervals)){
       negativeOrZero1 <- 0
