@@ -67,8 +67,8 @@ summary.lmfa_step3 <- function(object, rounding = 4, ...){
   cat("\n")
   cat(paste("Note: The probabilities are calculated for covariate scores"),"\n")
   cat(paste("equal to the sample means (and a unit time interval). Use"),"\n")
-  cat(paste("the function probabilities() to calculate the initial state and"),"\n")
-  cat(paste("transition probabilities for any covariate score (and "),"\n")
+  cat(paste("the function probabilities() to calculate the initial state"),"\n")
+  cat(paste("and transition probabilities for any covariate score (and "),"\n")
   cat(paste("interval) of interest."),"\n")
 
   cat("\n")
