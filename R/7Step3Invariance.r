@@ -56,7 +56,7 @@ names(invariance_subjects) <- paste("S",sort(unique(statemembership)),sep="")
 
 print(invariance_subjects)
 }else{
-    cat(paste("There are subjects for which invariance holds over time.","\n"))
+    cat(paste("There are no individuals for whom invariance over time holds.","\n"))
     cat("\n")
 }
 
