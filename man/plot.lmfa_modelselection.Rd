@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{Output from the main function step1() (must be of class lmfa_modelselection).}
 
-\item{...}{Further arguments for the default S3 summary method.}
+\item{...}{Further arguments for the default S3 plot method.}
 }
 \description{
 Plot for model selection

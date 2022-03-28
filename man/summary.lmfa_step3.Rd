@@ -7,7 +7,7 @@
 \method{summary}{lmfa_step3}(object, rounding = 4, ...)
 }
 \arguments{
-\item{object}{An object storing output from \code{step3}.}
+\item{object}{An object storing output from \code{step3} (must be of class lmfa_modelselection).}
 
 \item{rounding}{The number of decimals to which the results should be rounded (must be a single scalar).}
 
