@@ -1,6 +1,6 @@
-#' Caclulating initial state and transition probabilities
+#' Evaluating for which individuals invariance holds across all measurement occasions
 #'
-#' \code{probabilities} calculates initial state and transition probabilities for given covariate scores and time interval for the \code{step3} estimates.
+#' \code{invariance} evaluates for which individuals invariance holds across all measurement occasions based on the \code{step3} output.
 #' 
 #' 
 #'
@@ -14,12 +14,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' Probs <- probabilities(model, 
-#'          deltaT = 1, 
-#'          initialCovariateScores = NULL,
-#'          transitionCovariateScores = NULL,
-#'          rounding = 4
-#'          )
+#' invariance(object, identifier)
 #' }
 #' @export
 
@@ -32,32 +27,32 @@ invariance <- function(object, identifier){
 
         dataInvariance <- object$data
         invariance_time <- c()
-statemembership <- c()
-subjects <- unique(dataInvariance[,identifier])
-for(i in 1:length(subjects)){
-  subject_number <- unique(dataInvariance[,identifier])[i]
-  
-  if(length(unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))==1){
-    invariance_time <- c(invariance_time,subject_number)
-    statemembership <- c(statemembership,unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))
-  }
-}
-if(!is.null(statemembership)){
-    statemembership <- as.matrix(statemembership,ncol=1)
-rownames(statemembership) <- invariance_time
+        statemembership <- c()
+        subjects <- unique(dataInvariance[,identifier])
+        for(i in 1:length(subjects)){
+        subject_number <- unique(dataInvariance[,identifier])[i]
+        
+        if(length(unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))==1){
+            invariance_time <- c(invariance_time,subject_number)
+            statemembership <- c(statemembership,unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))
+        }
+        }
+        if(!is.null(statemembership)){
+            statemembership <- as.matrix(statemembership,ncol=1)
+        rownames(statemembership) <- invariance_time
 
 
-invariance_subjects <- list()
-for(i in 1:length(sort(unique(statemembership)))){
-  invariance_subjects[[i]]<- which(statemembership==i)
-}
+        invariance_subjects <- list()
+        for(i in 1:length(sort(unique(statemembership)))){
+        invariance_subjects[[i]]<- which(statemembership==i)
+        }
 
-names(invariance_subjects) <- paste("S",sort(unique(statemembership)),sep="")
+        names(invariance_subjects) <- paste("S",sort(unique(statemembership)),sep="")
 
-print(invariance_subjects)
-}else{
-    cat(paste("There are no individuals for whom invariance over time holds.","\n"))
-    cat("\n")
-}
+        print(invariance_subjects)
+        }else{
+            cat(paste("There are no individuals for whom invariance over time holds.","\n"))
+            cat("\n")
+        }
 
 }
