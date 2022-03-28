@@ -24,7 +24,7 @@ plot.lmfa_step3 <- function(object, identifier, id, ...){
         if(is.element(id,unique(dataPlot[,identifier]))==FALSE) stop("id is not part of the specified identifier column")
 
   
-     plot(dataPlot[dataPlot[,identifier]==1,"Modal"],
+     plot(dataPlot[dataPlot[,identifier]==id,"Modal"],
      type = "b",
      xlab = "Measurement Occasion",
      ylab = "State Membership",
