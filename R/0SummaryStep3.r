@@ -5,7 +5,7 @@
 #'
 #'
 #'
-#' @param object An object storing output from \code{step3}.
+#' @param object An object storing output from \code{step3} (must be of class lmfa_modelselection).
 #' @param rounding The number of decimals to which the results should be rounded (must be a single scalar).
 #' @param ... Further arguments for the default S3 summary method.
 #' @examples

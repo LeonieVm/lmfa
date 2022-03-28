@@ -6,7 +6,7 @@
 #'
 #'
 #' @param x  Output from the main function step1() (must be of class lmfa_modelselection).
-#' @param ... Further arguments for the default S3 summary method.
+#' @param ... Further arguments for the default S3 plot method.
 #' @examples
 #' \dontrun{
 #' plot(modelselection)
