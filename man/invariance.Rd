@@ -4,10 +4,10 @@
 \alias{invariance}
 \title{Evaluating for which individuals invariance holds across all measurement occasions}
 \usage{
-invariance(object, identifier)
+invariance(model, identifier)
 }
 \arguments{
-\item{object}{Output from the main function step3() (must be of class lmfa_step3).}
+\item{model}{Output from the main function step3() (must be of class lmfa_step3).}
 
 \item{identifier}{The name of the column containing the subject identifiers (must be a single character).}
 }
@@ -16,6 +16,6 @@ invariance(object, identifier)
 }
 \examples{
 \dontrun{
-invariance(object, identifier)
+invariance(model, identifier)
 }
 }

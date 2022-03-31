@@ -4,10 +4,10 @@
 \alias{plot.lmfa_step3}
 \title{Transition plot for a specific subject}
 \usage{
-\method{plot}{lmfa_step3}(object, identifier, id, ...)
+\method{plot}{lmfa_step3}(x, identifier, id, ...)
 }
 \arguments{
-\item{object}{Output from the main function step3() (must be of class lmfa_step3).}
+\item{x}{Output from the main function step3() (must be of class lmfa_step3).}
 
 \item{identifier}{The name of the column containing the subject identifiers (must be a single character).}
 

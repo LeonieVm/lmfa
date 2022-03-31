@@ -17,6 +17,7 @@
 #' @import GPArotation 
 #' @import multichull 
 #' @importFrom graphics par text points
+#' @importFrom graphics axis
 #' @docType package
 #'
 #' @name lmfa
