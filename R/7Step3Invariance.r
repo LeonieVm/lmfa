@@ -31,11 +31,11 @@ invariance <- function(model, identifier){
         subjects <- unique(dataInvariance[,identifier])
         for(i in 1:length(subjects)){
         subject_number <- unique(dataInvariance[,identifier])[i]
-        
+
         #if within perosn invariance holds...
-        if(length(unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))!=1){
+        if(length(unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))==1){
             invariance_time <- c(invariance_time,subject_number)
-            statemembership <- c(statemembership,unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"])[1])
+            statemembership <- c(statemembership,unique(dataInvariance[dataInvariance[,identifier]==subject_number,"Modal"]))
         }
         }
         #if it holds for anyone...
