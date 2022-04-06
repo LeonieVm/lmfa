@@ -1,6 +1,6 @@
 Package: lmfa
-Title: LMFA for Exploring Measurement Model Differences in Intensive Longitudinal Data
-Version: 0.1.0
+Title: Latent Markov Factor Analysis for Exploring Measurement Model Differences in Intensive Longitudinal Data
+Version: 0.1.1
 Authors@R: 
     c(person(given = "Leonie V. D. E.",
            family = "Vogelsmeier",
@@ -12,7 +12,7 @@ Authors@R:
            role = c("aut"),
            email = "K.DeRoover@tilburguniversity.edu"))
 Maintainer: Leonie V. D. E. Vogelsmeier <l.v.d.e.vogelsmeier@uvt.nl>
-Description: `lmfa` allows to explore within-person changes 
+Description: Latent Markov factor analysis (`lmfa`) to explore within-person changes 
     and between person differences in measurement models in 
     (intensive) longitudinal data by means of three-step 
     continuous-time latent Markov factor analysis.
@@ -21,12 +21,13 @@ Imports:
     mclust,    
     foreach, 
     doParallel,
-    msm,    
-    readr,     
+    msm,      
     expm,
     NPflow,
     GPArotation,
-    multichull     
+    multichull,
+    parallel,
+    stats     
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2

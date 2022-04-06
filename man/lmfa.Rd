@@ -6,7 +6,7 @@
 \alias{lmfa-package}
 \title{`lmfa`: The R-package for exploring within-person changes and between person differences in measurement models in (intensive) longitudinal data.}
 \description{
-`lmfa` allows to explore within-person changes and between person differences in measurement models in (intensive) longitudinal data by means of three-step continuous-time latent Markov factor analysis.
+The package `lmfa` allows to explore within-person changes and between person differences in measurement models in (intensive) longitudinal data by means of three-step continuous-time latent Markov factor analysis.
 }
 \details{
 The package employs a three-step estimation of continuous-time latent Markov factor analysis.
