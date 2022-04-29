@@ -46,23 +46,26 @@ plot.lmfa_modelselection <- function(x, ...){
           modelcomparison2 <- c()
           unistates <- unique(modelcomparison[,"n_state"])
           for(i in 1:length(unistates)){
-          modeli <- modelcomparison[modelcomparison[,"n_state"]==unistates[i],]
-          modeli <- modeli[order(modeli[,"n_par"]),]
-          local_max <- c(0)
-          for(j in 2:nrow(modeli)){
-          # if(modeli[j,"n_par"] != modeli[j-1,"n_par"]){
-               local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-1,"LL"])<0))
-          # }else{
-          #      if((j-2)<1){
-          #      local_max <- c(local_max,0)
-          #      }else{
-          #      local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-2,"LL"])<0))
-          #      }
-          # }
-          }
-          modeli <- cbind(modeli,local_max)
-          modelcomparison2 <- rbind(modelcomparison2,modeli)
-          }
+    modeli <- modelcomparison[modelcomparison[,"n_state"]==unistates[i],]
+    local_max <- c(0)
+    if(!is.null(nrow(modeli))){
+      modeli <- modeli[order(modeli[,"n_par"]),]
+      
+      for(j in 2:nrow(modeli)){
+        # if(modeli[j,"n_par"] != modeli[j-1,"n_par"]){
+        local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-1,"LL"])<0))
+        # }else{
+        #      if((j-2)<1){
+        #      local_max <- c(local_max,0)
+        #      }else{
+        #      local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-2,"LL"])<0))
+        #      }
+        # }
+      }
+      modeli <- cbind(modeli,local_max)
+      modelcomparison2 <- rbind(modelcomparison2,modeli)
+    }
+    }
           
           modelcomparison2 <- modelcomparison2[modelcomparison2[,"convergence"]==1,]
           modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"local_max"], decreasing = TRUE),]
