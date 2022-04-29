@@ -1117,7 +1117,7 @@ probVector <-c(NA)
       }
   }
 
-    #-------------------------------------------------------------------------------#
+  #-------------------------------------------------------------------------------#
   # Obtain rotated solutions
   #-------------------------------------------------------------------------------#
   #Lambda_k_obli <- lapply(Lambda_k, function(x) GPFoblq(x, method = "oblimin", normalize = FALSE)$loadings[])
@@ -1129,21 +1129,21 @@ probVector <-c(NA)
   standLambda2_obli <- standLambda2
   correlations_obli <- list()
   correlations_obli_unstandardized <- list()
-  
+
   for(i in 1:n_state){
     if(n_fact[i]>1){
-      rotationResults <- suppressWarnings(tryCatch(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),
-                                                   warning = function(w) return(list(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),w))))#between
-
-      
-      if(min(rowSums(Lambda_k[[i]]),2)<0.001){
-        rotationResultsunstandardized <- suppressWarnings(tryCatch(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = FALSE),
-                                                           warning = function(w) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = FALSE),w))))
-      }else{
+      rotationResults <- suppressWarnings(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE))#between
+      #rotationResultsunstandardized <-suppressWarnings(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE))
         rotationResultsunstandardized <- suppressWarnings(tryCatch(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE),
-                                                           warning = function(w) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE),w))))
-      }
-      
+                            error = function(ww) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = FALSE),"normalizeFALSE"))))
+  
+  if(length(grep("normalizeFALSE", as.character(rotationResultsunstandardized[[2]])))>0){
+    rotationResultsunstandardized <- rotationResultsunstandardized[[1]]
+    nextNormalize <- FALSE
+  }else{
+    rotationResultsunstandardized <- rotationResultsunstandardized
+    nextNormalize <- TRUE
+  }
       standLambda_obli[[i]] <- suppressWarnings(GPFoblq(standLambda[[i]], method = "oblimin", normalize = FALSE)$loadings[])#within
       correlations_obli[[i]] <- rotationResults$Phi[]#between
       correlations_obli_unstandardized[[i]] <- rotationResultsunstandardized$Phi[]#unstandardized; usually, for unstandardized loadings, only normalizing works, which can lead to small deviations in correlations
@@ -1154,62 +1154,57 @@ probVector <-c(NA)
       correlations_obli_unstandardized[[i]]<- 1 #usually, for unstandardized loadings, only normalizing works, which can lead to small deviations in correlations
     }
   }
-  
+
   #sometimes the rotation results in warnings (thus, the results are not reliable)
   #for now we only check this for the between-state standardized loadings and unstandardized loadings because the within-state standardized loadings are not reported
   #standardized
   warning_stand_loadings <- c()
-  
+
   for(i in 1:n_state){
     if(n_fact[i]>1){
-      
-      # WarningStandardized <- suppressWarnings(tryCatch(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),
-      #                                                  warning = function(w) return(list(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),w))))
-      
-      
-      if(length(grep("simpleWarning", as.character(rotationResults[[2]])))>0){
-        warning_stand_loadings <- c(warning_stand_loadings,1)
-      }else{
-        warning_stand_loadings <- c(warning_stand_loadings,0)
-      }
+
+          WarningStandardized <- suppressWarnings(tryCatch(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),
+            warning = function(w) return(list(GPFoblq(standLambda2[[i]], method = "oblimin", normalize = FALSE),w))))
+
+
+    if(length(grep("simpleWarning", as.character(WarningStandardized[[2]])))>0){
+      warning_stand_loadings <- c(warning_stand_loadings,1)
+    }else{
+      warning_stand_loadings <- c(warning_stand_loadings,0)
     }
+   }
   }
-  
+
   if(sum(warning_stand_loadings)>0){
     warningRotationStandardized <- c("Warning message: convergence for rotating loadings in at least one state was not obtained")
   }else{
     warningRotationStandardized <- c("no warning")
   }
-  
+
   #unstandardized
   warning_loadings <- c()
-  
+
   for(i in 1:n_state){
     if(n_fact[i]>1){
-      # if(min(rowSums(Lambda_k[[i]]),2)<0.001){
-      #   WarningUnstandardized <- suppressWarnings(tryCatch(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = FALSE),
-      #                                                      warning = function(w) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = FALSE),w))))
-      # }else{
-      #   WarningUnstandardized <- suppressWarnings(tryCatch(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE),
-      #                                                      warning = function(w) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = TRUE),w))))
-      # }
-      
-      
-      
-      if(length(grep("simpleWarning", as.character(rotationResultsunstandardized[[2]])))>0){
-        warning_loadings <- c(warning_loadings,1)
-      }else{
-        warning_loadings <- c(warning_loadings,0)
-      }
+
+    WarningUnstandardized <- suppressWarnings(tryCatch(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = nextNormalize),
+                                                    warning = function(w) return(list(GPFoblq(Lambda_k[[i]], method = "oblimin", normalize = nextNormalize),w))))
+
+
+    if(length(grep("simpleWarning", as.character(WarningUnstandardized[[2]])))>0){
+      warning_loadings <- c(warning_loadings,1)
+    }else{
+      warning_loadings <- c(warning_loadings,0)
     }
+   }
   }
-  
+    
   if(sum(warning_loadings)>0){
     warningRotationUnstandardized <- c("Warning message: convergence for rotating loadings in at least one state was not obtained")
   }else{
     warningRotationUnstandardized <- c("no warning")
   }
-  
+
 
   #-------------------------------------------------------------------------------#
   # Obtain explained variance per state and in total.
