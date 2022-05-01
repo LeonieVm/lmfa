@@ -77,9 +77,9 @@ plot.lmfa_modelselection <- function(x, ...){
         #-------------------------------------------------------
         
 
-        plot(modelcomparison2[,"n_par"],modelcomparison2[,"LL"],xlab = "n_par",
-             ylab = "LL", ylim = c(min(modelcomparison2[,"LL"])-1500,max(modelcomparison2[,"LL"])+1500),col= c(rep("blue", n_lo),rep("black",nrow(modelcomparison2)-n_lo) ), ...)
-        text(modelcomparison2[,"n_par"],modelcomparison2[,"LL"],  rownames(modelcomparison2),
+        plot(modelcomparison[,"n_par"],modelcomparison[,"LL"],xlab = "n_par",
+             ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500),col= c(rep("blue", n_lo),rep("black",nrow(modelcomparison2)-n_lo) ), ...)
+        text(modelcomparison[,"n_par"],modelcomparison[,"LL"],  rownames(modelcomparison),
              cex=1,pos=3)
 
         #-------------------------------------------------------
