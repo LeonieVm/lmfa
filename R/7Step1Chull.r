@@ -94,6 +94,7 @@ chull_lmfa <- function(x,...){
 
         
 #calculate numerators
+sumComplexModels<-0
 if(nrow(Hull)>2){
 store <- matrix(NA,nrow = (nrow(Hull)-2), ncol = 2)
 for(i in 2:(nrow(Hull)-1)){
