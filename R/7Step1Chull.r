@@ -41,40 +41,16 @@ chull_lmfa <- function(x,...){
                 rownames(modelcomparison) <- modelnames
                 modelcomparison <-modelcomparison[order(modelcomparison[,"BIC"]),]
 
-
-
-                modelcomparison2 <- c()
-                unistates <- unique(modelcomparison[,"n_state"])
-                for(i in 1:length(unistates)){
-                  modeli <- modelcomparison[modelcomparison[,"n_state"]==unistates[i],]
-                  modeli <- modeli[order(modeli[,"n_par"]),]
-                  local_max <- c(0)
-                  for(j in 2:nrow(modeli)){
-                    if(modeli[j,"n_par"] != modeli[j-1,"n_par"]){
-                      local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-1,"LL"])<0))
-                    }else{
-                      if((j-2)<1){
-                        local_max <- c(local_max,0)
-                      }else{
-                        local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-2,"LL"])<0))
-                      }
-                    }
-                  }
-                  modeli <- cbind(modeli,local_max)
-                  modelcomparison2 <- rbind(modelcomparison2,modeli)
-                }
-
-                modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"BIC"]),]
-
-                objecModelselection <- (modelcomparison2[,c(1:4,7)])
 #---------------------------------------------------------------------------------------------------------#
 
-
+objecModelselection <- (modelcomparison[,c(1:4)])
 
         CHullInput <-objecModelselection
-        CHullInput <- CHullInput[CHullInput[,"convergence"]==1,]
-        fitCHull <- CHull(CHullInput[,c("n_par","LL")],bound = "upper", PercentageFit = PercentageFit)
-        plot(fitCHull,col=c("black", "black","red"),pch=21, 
+        CHullInput <- CHullInput[CHullInput[,"convergence"]==1,drop=FALSE,]
+        if(nrow(CHullInput)>1){
+fitCHull <- CHull(CHullInput[,c("n_par","LL")],bound = "upper", PercentageFit = PercentageFit)
+if(!is.null(nrow(fitCHull))){
+          plot(fitCHull,col=c("black", "black","red"),pch=21, 
            bg="white",ylab="LL",xlab="n_par",...)
 
         Hull <- fitCHull$Hull
@@ -130,9 +106,18 @@ output <- (list(fitCHull = fitCHull,
             solution = Solution,
             chull = Hull,
             sumComplexModels = sumComplexModels))
-        
 
 class(output) = "lmfa_chull"
 invisible(output)
+}
+        }else{
+          cat("\n")
+    cat(paste("Not enough data points available to compute the convex hull"),"\n")
+cat("\n")
+        }
+        
+        
+
+
 
 }
