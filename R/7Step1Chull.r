@@ -49,7 +49,7 @@ objecModelselection <- (modelcomparison[,c(1:4)])
         CHullInput <- CHullInput[CHullInput[,"convergence"]==1,drop=FALSE,]
         if(nrow(CHullInput)>1){
 fitCHull <- CHull(CHullInput[,c("n_par","LL")],bound = "upper", PercentageFit = PercentageFit)
-if(!is.null(nrow(fitCHull))){
+if(length(fitCHull)>1){
           plot(fitCHull,col=c("black", "black","red"),pch=21, 
            bg="white",ylab="LL",xlab="n_par",...)
 
