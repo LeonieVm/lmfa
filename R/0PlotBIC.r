@@ -68,9 +68,14 @@ plot.lmfa_modelselection <- function(x, ...){
     }
           
           modelcomparison2 <- modelcomparison2[modelcomparison2[,"convergence"]==1,]
-          modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"local_max"], decreasing = TRUE),]
-
-          n_lo <- length(modelcomparison2[modelcomparison2[,"local_max"]==1,local_max])
+          
+    if(is.null(modelcomparison2)){
+      n_lo <- 0
+    }else{
+      modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"local_max"], decreasing = TRUE),]
+      
+      n_lo <- length(modelcomparison2[modelcomparison2[,"local_max"]==1,local_max])
+    }
 
         #-------------------------------------------------------
         #                 LL
@@ -78,9 +83,10 @@ plot.lmfa_modelselection <- function(x, ...){
         
 
         plot(modelcomparison[,"n_par"],modelcomparison[,"LL"],xlab = "n_par",
-             ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500),col= c(rep("blue", n_lo),rep("black",nrow(modelcomparison2)-n_lo) ), ...)
+           ylab = "LL", ylim = c(min(modelcomparison[,"LL"])-1500,max(modelcomparison[,"LL"])+1500),
+           col= c(rep("black",nrow(modelcomparison)) ), ...)
         text(modelcomparison[,"n_par"],modelcomparison[,"LL"],  rownames(modelcomparison),
-             cex=1,pos=3)
+           cex=1,pos=3)
 
         #-------------------------------------------------------
         #                 BIC
