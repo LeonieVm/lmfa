@@ -31,51 +31,17 @@ plot.lmfa_modelselection <- function(x, ...){
           }
           rownames(modelcomparison) <- modelnames
 
-          modelcomparison <- modelcomparison[modelcomparison[,"convergence"]==1,]
-
-          modelcomparison <-modelcomparison[order(modelcomparison[,"BIC"]),]
+    modelcomparison <- modelcomparison[modelcomparison[,"convergence"]==1,,drop=FALSE]
+    
+    if(nrow(modelcomparison)>1){
+      modelcomparison <-modelcomparison[order(modelcomparison[,"BIC"]),]
+    }
+   
 
 
         #par(mfrow = c(2, 1),mar = c(4.5,4.5,2,2))
         
-        #-------------------------------------------------------
-        #                 local optima?
-        #-------------------------------------------------------
-
-        
-          modelcomparison2 <- c()
-          unistates <- unique(modelcomparison[,"n_state"])
-          for(i in 1:length(unistates)){
-    modeli <- modelcomparison[modelcomparison[,"n_state"]==unistates[i],]
-    local_max <- c(0)
-    if(!is.null(nrow(modeli))){
-      modeli <- modeli[order(modeli[,"n_par"]),]
-      
-      for(j in 2:nrow(modeli)){
-        # if(modeli[j,"n_par"] != modeli[j-1,"n_par"]){
-        local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-1,"LL"])<0))
-        # }else{
-        #      if((j-2)<1){
-        #      local_max <- c(local_max,0)
-        #      }else{
-        #      local_max <- c(local_max,sum((modeli[j,"LL"]-modeli[j-2,"LL"])<0))
-        #      }
-        # }
-      }
-      modeli <- cbind(modeli,local_max)
-      modelcomparison2 <- rbind(modelcomparison2,modeli)
-    }
-    }
-          
-          modelcomparison2 <- modelcomparison2[modelcomparison2[,"convergence"]==1,]
-          
-    if(is.null(modelcomparison2)){
-      n_lo <- 0
-    }else{
-      modelcomparison2 <-modelcomparison2[order(modelcomparison2[,"local_max"], decreasing = TRUE),]
-      
-      n_lo <- length(modelcomparison2[modelcomparison2[,"local_max"]==1,local_max])
-    }
+ 
 
         #-------------------------------------------------------
         #                 LL
