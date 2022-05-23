@@ -1,6 +1,6 @@
 Package: lmfa
 Title: Latent Markov Factor Analysis for Exploring Measurement Model Differences in Intensive Longitudinal Data
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: 
     c(person(given = "Leonie V. D. E.",
            family = "Vogelsmeier",
