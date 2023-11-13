@@ -46,7 +46,7 @@ invariance <- function(model, identifier){
 
         invariance_subjects <- list()
         for(i in 1:length(sort(unique(statemembership)))){
-        invariance_subjects[[i]]<- which(statemembership==i)
+        invariance_subjects[[i]]<- as.numeric(row.names(statemembership)[which(statemembership==i)])
         }
 
         names(invariance_subjects) <- paste("S",sort(unique(statemembership)),sep="")
