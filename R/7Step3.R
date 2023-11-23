@@ -494,7 +494,7 @@ on.exit(CleanEnvir(identifier))
 if(!is.null(initialCovariates)){
   newSEsIni <- NULL
   if(length(initialCovariates)==1){
-    meanvectorInitial <- mean(data[,initialCovariates])
+    meanvectorInitial <- mean(data[[initialCovariates]])
   }else{
     meanvectorInitial <- colMeans(data[,initialCovariates])
   }
@@ -563,7 +563,7 @@ parameterEstimates[1:(n_state-1),1:2] <- cbind(newInterceptInitial,newSEsIni)
 if(!is.null(transitionCovariates)){
   newSEs <- NULL
   if(length(transitionCovariates)==1){
-    meanvectorTransition <- mean(data[,transitionCovariates])
+    meanvectorTransition <- mean(data[[transitionCovariates]])
   }else{
     meanvectorTransition <- colMeans(data[,transitionCovariates])
   }
@@ -789,7 +789,7 @@ parameterEstimates[(startTran+1):(startTran+
       if(length(transitionCovariates) > 1){
         transition_covariate_means <- colMeans(data[,c(transitionCovariates)])
       }else{
-        transition_covariate_means <- mean(data[,c(transitionCovariates)])
+        transition_covariate_means <- mean(data[[transitionCovariates]])
       }
     }else{
       transition_covariate_means <- NULL
@@ -799,7 +799,7 @@ parameterEstimates[(startTran+1):(startTran+
       if(length(initialCovariates) > 1){
         initial_covariate_means <- colMeans(data[,c(initialCovariates)])
       }else{
-        initial_covariate_means <- mean(data[,c(initialCovariates)])
+        initial_covariate_means <- mean(data[[initialCovariates]])
       }
     }else{
       initial_covariate_means <- NULL
