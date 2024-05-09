@@ -2,8 +2,6 @@
 #'
 #'
 #' @format list
-#' 
+#'
 #'
 "modelselection"
-
-

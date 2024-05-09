@@ -14,38 +14,38 @@
 #' summary(measurementmodel)
 #' }
 #' @export
-summary.lmfa_step1 <- function(object, rounding = 2,...){
-    if(!is.numeric(rounding)) stop("rounding must be a single scalar")
-    if(length(rounding)>1) stop("rounding must be a single scalar")
-    if(round(rounding)!=rounding) stop("rounding must be an integer")
-  if(object$convergence==1){
+summary.lmfa_step1 <- function(object, rounding = 2, ...) {
+  if (!is.numeric(rounding)) stop("rounding must be a single scalar")
+  if (length(rounding) > 1) stop("rounding must be a single scalar")
+  if (round(rounding) != rounding) stop("rounding must be an integer")
+  if (object$convergence == 1) {
     cat("\n")
-    cat(paste("Estimation converged after",round(object$seconds,2),"seconds and",object$n_it,"iterations.","\n"))
-  }else{
+    cat(paste("Estimation converged after", round(object$seconds, 2), "seconds and", object$n_it, "iterations.", "\n"))
+  } else {
     cat("\n")
-    cat(paste("Maximum number of iterations reached without convergence.","\n"))
+    cat(paste("Maximum number of iterations reached without convergence.", "\n"))
     cat("\n")
   }
   cat("\n")
-  cat(paste("LL",round(object$LL,rounding),sep=" = "),"\n")
+  cat(paste("LL", round(object$LL, rounding), sep = " = "), "\n")
   cat("\n")
-  cat(paste("Number of states",object$n_state,sep=": "),"\n")
+  cat(paste("Number of states", object$n_state, sep = ": "), "\n")
   cat("\n")
-  cat(paste("Number of factors: [", paste(object$n_fact, collapse = " "), "]", sep = ""),"\n")
+  cat(paste("Number of factors: [", paste(object$n_fact, collapse = " "), "]", sep = ""), "\n")
   cat("\n")
-  #cat(paste("Obliquely rotated within-state standardized loadings:"),"\n")
-  #cat("\n")
+  # cat(paste("Obliquely rotated within-state standardized loadings:"),"\n")
+  # cat("\n")
   J <- nrow(object$intercepts)
   n_fact <- object$n_fact
   n_state <- object$n_state
-  
+
   steps <- c()
   count <- 0
-  for(i in 1:n_state){
-    count <- count+n_fact[i]
-    steps <- c(steps,count)
+  for (i in 1:n_state) {
+    count <- count + n_fact[i]
+    steps <- c(steps, count)
   }
-  starti <- steps-(n_fact-1)
+  starti <- steps - (n_fact - 1)
 
   # loadings <- as.data.frame(object$loadings_w_obli)
   # for(i in 1:n_state){
@@ -58,55 +58,54 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   # }
 
   round_df <- function(df, digits) {
-  nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
+    nums <- vapply(df, is.numeric, FUN.VALUE = logical(1))
 
-  df[,nums] <- round(df[,nums], digits = digits)
+    df[, nums] <- round(df[, nums], digits = digits)
 
-  (df)
-}
-  
+    (df)
+  }
+
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  #print(round_df(loadings_new_1, digits=rounding))
-  #cat("\n")
-  cat(paste("Obliquely rotated standardized loadings:"),"\n")
+  # print(round_df(loadings_new_1, digits=rounding))
+  # cat("\n")
+  cat(paste("Obliquely rotated standardized loadings:"), "\n")
   cat("\n")
-  #if(object$warning_loadings_stand == c("no warning")){
-  if(object$warning_loadings_stand == c("Warning message: convergence for rotating loadings in at least one state was not obtained")){
-
-    cat(paste("(when rotating the loadings convergence was not achieved in at least one state)"),"\n")
+  # if(object$warning_loadings_stand == c("no warning")){
+  if (object$warning_loadings_stand == c("Warning message: convergence for rotating loadings in at least one state was not obtained")) {
+    cat(paste("(when rotating the loadings convergence was not achieved in at least one state)"), "\n")
     cat("\n")
   }
 
 
   loadings <- as.data.frame(object$loadings_stand_obli)
-  for(i in 1:n_state){
-    loadings_new <- cbind.data.frame(loadings[,starti[i]:steps[i], drop = FALSE],"  " = c(rep("  ",J)))
-    if(i==1){
+  for (i in 1:n_state) {
+    loadings_new <- cbind.data.frame(loadings[, starti[i]:steps[i], drop = FALSE], "  " = c(rep("  ", J)))
+    if (i == 1) {
       loadings_new_1 <- loadings_new
-    }else{
-      loadings_new_1 <- cbind.data.frame(loadings_new_1,loadings_new)
+    } else {
+      loadings_new_1 <- cbind.data.frame(loadings_new_1, loadings_new)
     }
   }
-  
-  print(round_df(loadings_new_1, digits=rounding))
+
+  print(round_df(loadings_new_1, digits = rounding))
   cat("\n")
-  
+
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  cat(paste("Factor correlations after oblique rotation:"),"\n")
+  cat(paste("Factor correlations after oblique rotation:"), "\n")
   cat("\n")
-  
+
   factorcors <- object$factor_correlations_stand_obli_list
 
-  for(i in 1:n_state){
-    if(n_fact[i]>1){
+  for (i in 1:n_state) {
+    if (n_fact[i] > 1) {
       colnames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
       rownames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
-    }else{
+    } else {
       factorcors[[i]] <- as.matrix(factorcors[[i]])
       colnames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
       rownames(factorcors[[i]]) <- paste("F", 1:n_fact[i], sep = "")
@@ -114,27 +113,26 @@ summary.lmfa_step1 <- function(object, rounding = 2,...){
   }
 
 
-  for(i in 1:n_state){
-    cat(paste("S",i,sep=""),"\n")
-    print(lapply(factorcors,round,rounding)[[i]])
+  for (i in 1:n_state) {
+    cat(paste("S", i, sep = ""), "\n")
+    print(lapply(factorcors, round, rounding)[[i]])
     cat("\n")
   }
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  cat(paste("Intercepts:"),"\n")
+  cat(paste("Intercepts:"), "\n")
   cat("\n")
-  print(round(object$intercepts,rounding))
+  print(round(object$intercepts, rounding))
   cat("\n")
 
 
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  cat(paste("Unique variances:"),"\n")
+  cat(paste("Unique variances:"), "\n")
   cat("\n")
-  print(round(object$unique_variances,rounding))
+  print(round(object$unique_variances, rounding))
   cat("\n")
 }
-

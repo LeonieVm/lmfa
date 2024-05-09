@@ -7,11 +7,11 @@
 \format{
 A data frame with 4776 rows and 23 variables:
 \itemize{
-  \item id: 
+  \item id:
   \item deltaT:
-  \item negativeEvent: 
-  \item intervention: 
-  \item interactions: 
+  \item negativeEvent:
+  \item intervention:
+  \item interactions:
   \item Interested:
   \item Joyful:
   \item Determined:
