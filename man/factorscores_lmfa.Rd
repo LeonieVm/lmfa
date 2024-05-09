@@ -20,10 +20,10 @@ factorscores_lmfa(data, model, oblique = TRUE, rounding = 4)
 }
 \examples{
 \dontrun{
-ESM_factorscores <- factorscores_lmfa(data, 
-                     model, 
-                     oblique = TRUE,
-                     rounding = 4
-                     )
+ESM_factorscores <- factorscores_lmfa(data,
+  model,
+  oblique = TRUE,
+  rounding = 4
+)
 }
 }

@@ -1,4 +1,4 @@
-#' Transition plot for a specific subject 
+#' Transition plot for a specific subject
 #'
 #'
 #'
@@ -14,22 +14,19 @@
 #' plot(transitionmodel)
 #' }
 #' @export
-
-
-plot.lmfa_step3 <- function(x, identifier, id, ...){
-        if(missing(x)) stop("argument data is missing, with no default")
-        if(missing(identifier)) stop("argument identifier is missing, with no default")
-        if(missing(id)) stop("argument id is missing, with no default")
+plot.lmfa_step3 <- function(x, identifier, id, ...) {
+        if (missing(x)) stop("argument data is missing, with no default")
+        if (missing(identifier)) stop("argument identifier is missing, with no default")
+        if (missing(id)) stop("argument id is missing, with no default")
         dataPlot <- x$data
-        if(is.element(id,unique(dataPlot[,identifier]))==FALSE) stop("id is not part of the specified identifier column")
+        if (is.element(id, unique(dataPlot[, identifier])) == FALSE) stop("id is not part of the specified identifier column")
 
-  
-     plot(dataPlot[dataPlot[,identifier]==id,"Modal"],
-     type = "b",
-     xlab = "Measurement Occasion",
-     ylab = "State Membership",
-     yaxt = "n",
-     main = paste("Subject",id)
-     )
-axis(side = 2,tick = seq(1,x$n_state,1),at = seq(1,x$n_state,1))
+        plot(dataPlot[dataPlot[, identifier] == id, "Modal"],
+                type = "b",
+                xlab = "Measurement Occasion",
+                ylab = "State Membership",
+                yaxt = "n",
+                main = paste("Subject", id)
+        )
+        axis(side = 2, tick = seq(1, x$n_state, 1), at = seq(1, x$n_state, 1))
 }

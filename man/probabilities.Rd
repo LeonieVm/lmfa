@@ -28,11 +28,11 @@ probabilities(
 }
 \examples{
 \dontrun{
-Probs <- probabilities(model, 
-         deltaT = 1, 
-         initialCovariateScores = NULL,
-         transitionCovariateScores = NULL,
-         rounding = 4
-         )
+Probs <- probabilities(model,
+    deltaT = 1,
+    initialCovariateScores = NULL,
+    transitionCovariateScores = NULL,
+    rounding = 4
+)
 }
 }

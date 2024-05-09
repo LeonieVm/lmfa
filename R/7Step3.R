@@ -1,7 +1,7 @@
 #' Estimating the transition model (with or without covariates)
 #'
 #' \code{step3} conducts step 3 from the three-step estimation of LMFA and thus the estimation of the transition model. To this end, the function uses the classification information from the \code{step2} output. Makes use of \code{msm} from the msm package.
-#' 
+#'
 #'
 #'
 #'
@@ -27,19 +27,19 @@
 #' @examples
 #' \dontrun{
 #' step3_results <- step3(data,
-#'                       identifier,
-#'                       n_state,
-#'                       postprobs,
-#'                       timeintervals = NULL,
-#'                       initialCovariates = NULL,
-#'                       transitionCovariates = NULL,
-#'                       n_starts = 25,
-#'                       n_initial_ite = 10,
-#'                       method = "BFGS",
-#'                       max_iterations = 10000,
-#'                       tolerance = 1e-10,
-#'                       scaling = "proxi"
-#'                       )
+#'   identifier,
+#'   n_state,
+#'   postprobs,
+#'   timeintervals = NULL,
+#'   initialCovariates = NULL,
+#'   transitionCovariates = NULL,
+#'   n_starts = 25,
+#'   n_initial_ite = 10,
+#'   method = "BFGS",
+#'   max_iterations = 10000,
+#'   tolerance = 1e-10,
+#'   scaling = "proxi"
+#' )
 #' }
 #' @export
 
@@ -57,576 +57,618 @@ step3 <- function(data,
                   method = "BFGS",
                   max_iterations = 10000,
                   tolerance = 1e-10,
-                  scaling = "proxi"
-                 ){
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+                  scaling = "proxi") {
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                                   Step 3
   #                  --------------------------------------
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-   #Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
-   previousCov = FALSE #option that might be added in the future
-   rounding = 12
-  
-  if(missing(data)) stop("argument data is missing, with no default")
-  if(missing(identifier)) stop("argument identifier is missing, with no default")
-  if(missing(n_state)) stop("argument n_state is missing, with no default")
-  if(missing(postprobs)) stop("argument postprobs is missing, with no default")
-  
-  if(nrow(postprobs)!=nrow(data)) stop("postprobs must have the same length as data")
-  if(ncol(postprobs)!=n_state) stop("the number of columns of postprobs must be of length n_state")
-  if(!is.data.frame(data)) stop("data must be a dataframe")
-  if(!is.null(transitionCovariates)) if(!is.character(transitionCovariates)) stop("transitionCovariates must be a (vector of) character(s)")
-  if(!is.null(initialCovariates)) if(!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
-  if(sum(transitionCovariates %in% names(data)) != length(transitionCovariates)) stop("all covariates in transitionCovariates must exist in data")
-  if(sum(initialCovariates %in% names(data)) != length(initialCovariates)) stop("all covariates in initialCovariates must exist in data")
-  if(method != "BFGS") if(method != "CG") stop('method must be "BFGS" or "CG"')
-  if(!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
-  if(length(max_iterations)>1) stop("max_iterations must be a single scalar")
-  if(!is.numeric(tolerance)) stop("tolerance must be a single scalar")
-  if(length(tolerance)>1) stop("tolerance must be a single scalar")
-  if(length(scaling)>1) stop("scaling must be a single statement")
-  if(!is.numeric(scaling) & scaling!="proxi") stop("scaling must be a single scalar")
-  if(scaling<1) stop("scaling must be a positive scalar equal to or larger than 1")
-  if(!is.numeric(n_starts)) stop("n_starts must be a single scalar")
-  if(length(n_starts)>1) stop("n_starts must be a single scalar")
-  if(!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
-  if(length(n_initial_ite)>1) stop("n_initial_ite must be a single scalar")
-  if(!is.logical(previousCov)) stop("previousCov must be a single logical statement")
-  if(length(previousCov)>1) stop("previousCov must be a single logical statement")
-  if(!is.numeric(rounding)) stop("rounding must be a single scalar")
-  if(round(n_state)!=n_state) stop("n_state must be an integer")
-  if(round(n_starts)!=n_starts) stop("n_starts must be an integer")
-  if(round(n_initial_ite)!=n_initial_ite) stop("n_initial_ite must be an integer")
-  if(round(max_iterations)!=max_iterations) stop("max_iterations must be an integer")
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # Indicates whether the covariate at t (FALSE) or t-1 (TRUE) should be used (previousCov must be a single logical statement).
+  previousCov <- FALSE # option that might be added in the future
+  rounding <- 12
 
+  if (missing(data)) stop("argument data is missing, with no default")
+  if (missing(identifier)) stop("argument identifier is missing, with no default")
+  if (missing(n_state)) stop("argument n_state is missing, with no default")
+  if (missing(postprobs)) stop("argument postprobs is missing, with no default")
 
-  if(max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
+  if (nrow(postprobs) != nrow(data)) stop("postprobs must have the same length as data")
+  if (ncol(postprobs) != n_state) stop("the number of columns of postprobs must be of length n_state")
+  if (!is.data.frame(data)) stop("data must be a dataframe")
+  if (!is.null(transitionCovariates)) if (!is.character(transitionCovariates)) stop("transitionCovariates must be a (vector of) character(s)")
+  if (!is.null(initialCovariates)) if (!is.character(initialCovariates)) stop("initialCovariates must be a (vector of) character(s)")
+  if (sum(transitionCovariates %in% names(data)) != length(transitionCovariates)) stop("all covariates in transitionCovariates must exist in data")
+  if (sum(initialCovariates %in% names(data)) != length(initialCovariates)) stop("all covariates in initialCovariates must exist in data")
+  if (method != "BFGS") if (method != "CG") stop('method must be "BFGS" or "CG"')
+  if (!is.numeric(max_iterations)) stop("max_iterations must be a single scalar")
+  if (length(max_iterations) > 1) stop("max_iterations must be a single scalar")
+  if (!is.numeric(tolerance)) stop("tolerance must be a single scalar")
+  if (length(tolerance) > 1) stop("tolerance must be a single scalar")
+  if (length(scaling) > 1) stop("scaling must be a single statement")
+  if (!is.numeric(scaling) & scaling != "proxi") stop("scaling must be a single scalar")
+  if (scaling < 1) stop("scaling must be a positive scalar equal to or larger than 1")
+  if (!is.numeric(n_starts)) stop("n_starts must be a single scalar")
+  if (length(n_starts) > 1) stop("n_starts must be a single scalar")
+  if (!is.numeric(n_initial_ite)) stop("n_initial_ite must be a single scalar")
+  if (length(n_initial_ite) > 1) stop("n_initial_ite must be a single scalar")
+  if (!is.logical(previousCov)) stop("previousCov must be a single logical statement")
+  if (length(previousCov) > 1) stop("previousCov must be a single logical statement")
+  if (!is.numeric(rounding)) stop("rounding must be a single scalar")
+  if (round(n_state) != n_state) stop("n_state must be an integer")
+  if (round(n_starts) != n_starts) stop("n_starts must be an integer")
+  if (round(n_initial_ite) != n_initial_ite) stop("n_initial_ite must be an integer")
+  if (round(max_iterations) != max_iterations) stop("max_iterations must be an integer")
+
+  if (max_iterations <= n_initial_ite) stop("max_iterations must be larger than n_initial_ite")
   # just a warning for non-specified interval column
-  if(is.null(timeintervals)) warning("measurement occasions are assumed to be equidistant because no timeintervals has been specified")
+  if (is.null(timeintervals)) warning("measurement occasions are assumed to be equidistant because no timeintervals has been specified")
   ptm <- proc.time()
   # i.center Indicates whether covariates are centered at their means during the maximum likelihood estimation (TRUE) or not (FALSE). Centering usually improves stability of the numerical optimisation.
-   i.center <- TRUE #option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  i.center <- TRUE # option that does not work if not centered: therefore, we always center but report non-centered results. This is not a problem as long as no restictons are made on the intercept (which is not possible in kmfa)
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Obtain all necessary elements (from user input or from step 1 and 2).
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
   # Obtain the time_column from timeintervals
   n_obs <- nrow(data)
-  n_cases <- length(unlist(unique(data[,identifier])))
-  fp_step3 <- (n_state-1)*(1+length(initialCovariates))+(n_state*n_state-n_state)*(1+length(transitionCovariates))
-  
-  if(!is.null(timeintervals)){
-      negativeOrZero1 <- 0
-      negativeOrZero2 <- 0
-      for(i in 1:n_cases){
-        negativeOrZero1 <- negativeOrZero1+ sum(data[data[,identifier]==i,timeintervals][-1]==0)
-        negativeOrZero2 <- negativeOrZero2+ sum(data[data[,identifier]==i,timeintervals][-1]<0)
-       }
-       if(negativeOrZero1>0) stop("timeintervals must not contain zero intervals for observations within subjects")
-       if(negativeOrZero2>0) stop("timeintervals must not contain negative intervals for observations within subjects")
+  n_cases <- length(unlist(unique(data[, identifier])))
+  fp_step3 <- (n_state - 1) * (1 + length(initialCovariates)) + (n_state * n_state - n_state) * (1 + length(transitionCovariates))
+
+  if (!is.null(timeintervals)) {
+    negativeOrZero1 <- 0
+    negativeOrZero2 <- 0
+    for (i in 1:n_cases) {
+      negativeOrZero1 <- negativeOrZero1 + sum(data[data[, identifier] == i, timeintervals][-1] == 0)
+      negativeOrZero2 <- negativeOrZero2 + sum(data[data[, identifier] == i, timeintervals][-1] < 0)
+    }
+    if (negativeOrZero1 > 0) stop("timeintervals must not contain zero intervals for observations within subjects")
+    if (negativeOrZero2 > 0) stop("timeintervals must not contain negative intervals for observations within subjects")
   }
- 
-  
+
+
   newData <- c()
-  if(!is.null(timeintervals)){
-    for(i in 1:n_cases){
-      datai <- subset(data,get(noquote(identifier))==unlist(unique(data[,identifier]))[i])
+  if (!is.null(timeintervals)) {
+    for (i in 1:n_cases) {
+      datai <- subset(data, get(noquote(identifier)) == unlist(unique(data[, identifier]))[i])
       int <- c(0)
-      for(ti in 2:nrow(datai)){
-        int[ti] <- int[ti-1]+unlist(datai[,timeintervals])[ti]
+      for (ti in 2:nrow(datai)) {
+        int[ti] <- int[ti - 1] + unlist(datai[, timeintervals])[ti]
       }
       datai$time <- int
-      newData<-rbind(newData, datai)
+      newData <- rbind(newData, datai)
     }
-  }else{
-    for(i in 1:n_cases){
-      datai <- subset(data,get(noquote(identifier))==unique(data[,identifier])[i])
+  } else {
+    for (i in 1:n_cases) {
+      datai <- subset(data, get(noquote(identifier)) == unique(data[, identifier])[i])
       datai$time <- seq(1:nrow(datai))
-      newData<-rbind(newData, datai)
+      newData <- rbind(newData, datai)
     }
   }
-  
+
   # Define the time_column.
   time_column <- "time"
 
 
-# Obtain the modal state assignments.
+  # Obtain the modal state assignments.
   modal_data <- max.col(postprobs)
 
-  Posteriors <-cbind.data.frame(modal_data,postprobs)
-  colnames(Posteriors) <- c("Modal", paste("State",1:n_state,sep=""))
+  Posteriors <- cbind.data.frame(modal_data, postprobs)
+  colnames(Posteriors) <- c("Modal", paste("State", 1:n_state, sep = ""))
 
-  ModalClassificationTable <- matrix(NA,ncol=n_state,nrow=n_state)
-  for(i in 1:n_state){
-    for(j in 1:n_state){
-      ModalClassificationTable[j,i] <- sum((Posteriors[Posteriors$Modal==i,j+1]))
+  ModalClassificationTable <- matrix(NA, ncol = n_state, nrow = n_state)
+  for (i in 1:n_state) {
+    for (j in 1:n_state) {
+      ModalClassificationTable[j, i] <- sum((Posteriors[Posteriors$Modal == i, j + 1]))
     }
   }
 
   # Calculate probabilities based on counts.
-  W_mod <-ModalClassificationTable/rowSums(ModalClassificationTable)
+  W_mod <- ModalClassificationTable / rowSums(ModalClassificationTable)
 
   # Add the classification from step 1 and 2 to the internally-used dataset.
-  newData$State <- c(Posteriors[,"Modal"])
+  newData$State <- c(Posteriors[, "Modal"])
 
-  
-  if(sum(W_mod<1e-7)>0){
-    W_mod[which(W_mod<1e-7)] <- 1e-7
+
+  if (sum(W_mod < 1e-7) > 0) {
+    W_mod[which(W_mod < 1e-7)] <- 1e-7
   }
-  
-  W_mod <- W_mod/rowSums(W_mod)
-  
-  #add a proxi for the LL in step 3 (for better fnscale start)
-  if(scaling == "proxi"){
-  ll_proxi <- 0
-  for(i in 1:n_state){
-    ll_proxi <- ll_proxi+rowSums(ModalClassificationTable)[i]*
-      log(rowSums(ModalClassificationTable)[i]/sum(ModalClassificationTable))
+
+  W_mod <- W_mod / rowSums(W_mod)
+
+  # add a proxi for the LL in step 3 (for better fnscale start)
+  if (scaling == "proxi") {
+    ll_proxi <- 0
+    for (i in 1:n_state) {
+      ll_proxi <- ll_proxi + rowSums(ModalClassificationTable)[i] *
+        log(rowSums(ModalClassificationTable)[i] / sum(ModalClassificationTable))
+    }
+    ll_proxi <- ll_proxi * -2
+    scaling <- ll_proxi
   }
-  ll_proxi <-ll_proxi*-2
-  scaling <- ll_proxi
-  }
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Fixing the right parameters
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-  # Define the positions that have to be fixed to equal the entries of the 
+  # Define the positions that have to be fixed to equal the entries of the
   # responseprobabilities in W_mod. Because we work with probabilities that
   # sum to 1, not all n_state*n_state probabilities are fixed but only
-  # n_state*n_state-n_state probabilities. Note that the number of covariates 
+  # n_state*n_state-n_state probabilities. Note that the number of covariates
   # still has to be added.This is based on the additionalCounts defined below.
-  n_state_square <- n_state*n_state
-  first_element <- n_state_square-n_state+1
-  last_element <- n_state_square-n_state+n_state_square-n_state
+  n_state_square <- n_state * n_state
+  first_element <- n_state_square - n_state + 1
+  last_element <- n_state_square - n_state + n_state_square - n_state
   fixed_responseprobabilities <- c(first_element:last_element)
-  
-  #include the transition intensity covariates
-  if(length(transitionCovariates)>0){
-    #a way to make an equation for the covariate values
-    defineCovariates <- as.formula(paste("~", 
-                                         paste(transitionCovariates, sep="", 
-                                               collapse=" + ")))
-  }else{
-    #if no covariates were defined
-    defineCovariates <-NULL
+
+  # include the transition intensity covariates
+  if (length(transitionCovariates) > 0) {
+    # a way to make an equation for the covariate values
+    defineCovariates <- as.formula(paste(
+      "~",
+      paste(transitionCovariates,
+        sep = "",
+        collapse = " + "
+      )
+    ))
+  } else {
+    # if no covariates were defined
+    defineCovariates <- NULL
   }
-  additionalCounts <- length(c(fixed_responseprobabilities))*
+  additionalCounts <- length(c(fixed_responseprobabilities)) *
     length(transitionCovariates)
-  
+
   # The initial state probability covariates are included after covariates are
   # possibly shifted.
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Decide if covariates should be shifted (i.e., consider time-point t) or not
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
   # If data is shifted: make sure that the initial state covariate is not affected
   # in case the same variable as for predicting the intensities is used.
-  
-  if(previousCov == FALSE & sum(transitionCovariates%in%initialCovariates)>0){
-    for(i in 1:length(initialCovariates)){
-      newData[,paste(initialCovariates[i],"x",sep="")] <- 
-        newData[,initialCovariates[i]]
-      initialCovariatesIntern <- paste(initialCovariates,"x",sep="")
+
+  if (previousCov == FALSE & sum(transitionCovariates %in% initialCovariates) > 0) {
+    for (i in 1:length(initialCovariates)) {
+      newData[, paste(initialCovariates[i], "x", sep = "")] <-
+        newData[, initialCovariates[i]]
+      initialCovariatesIntern <- paste(initialCovariates, "x", sep = "")
     }
-  }else{
-    initialCovariatesIntern <-initialCovariates
+  } else {
+    initialCovariatesIntern <- initialCovariates
   }
-  
-  
-  #include the initial state probability covariates
-  if(length(initialCovariates)>0){
-    #a way to make an equation for the covariate values
-    defineInitialCovariates <- as.formula(paste("~", 
-                                                paste(initialCovariatesIntern, 
-                                                      sep="", collapse=" + ")))
-  }else{
-    #if no covariates were defined
-    defineInitialCovariates <-NULL
+
+
+  # include the initial state probability covariates
+  if (length(initialCovariates) > 0) {
+    # a way to make an equation for the covariate values
+    defineInitialCovariates <- as.formula(paste(
+      "~",
+      paste(initialCovariatesIntern,
+        sep = "", collapse = " + "
+      )
+    ))
+  } else {
+    # if no covariates were defined
+    defineInitialCovariates <- NULL
   }
-  
+
   # Then shift the data.
-  if(length(transitionCovariates)>0){
-    #if one want to use the previous covariate, then the data is already correct.
-    if(previousCov==FALSE){
-      if(length(transitionCovariates)==1){
-        newData[,transitionCovariates] <- c(unlist(
-          newData[-1,transitionCovariates]),NA)
-      }else{
-        newData[,transitionCovariates] <- 
-          rbind(newData[-1,transitionCovariates],
-            rep(NA,length(transitionCovariates)))
+  if (length(transitionCovariates) > 0) {
+    # if one want to use the previous covariate, then the data is already correct.
+    if (previousCov == FALSE) {
+      if (length(transitionCovariates) == 1) {
+        newData[, transitionCovariates] <- c(unlist(
+          newData[-1, transitionCovariates]
+        ), NA)
+      } else {
+        newData[, transitionCovariates] <-
+          rbind(
+            newData[-1, transitionCovariates],
+            rep(NA, length(transitionCovariates))
+          )
       }
     }
   }
 
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Multistartprocedure
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
   cat("1.Initializing...")
   # Obtain a list of initial values (considering the average time-interval)
   # Caclulate average time-interval.
-  myid.uni <- unlist(unique(newData[,identifier]))
-  myid.uni_length <-length(unlist(myid.uni))
+  myid.uni <- unlist(unique(newData[, identifier]))
+  myid.uni_length <- length(unlist(myid.uni))
   newData2 <- c()
   for (i in 1:myid.uni_length) {
-    temp<-subset(newData, get(noquote(identifier))==myid.uni[i])
-    timeDiff <- unlist(temp[-1,time_column]-temp[-nrow(temp),time_column])
-    temp$deltaT <- c(NA,as.numeric(timeDiff))
-    newData2<-rbind(newData2, temp)
+    temp <- subset(newData, get(noquote(identifier)) == myid.uni[i])
+    timeDiff <- unlist(temp[-1, time_column] - temp[-nrow(temp), time_column])
+    temp$deltaT <- c(NA, as.numeric(timeDiff))
+    newData2 <- rbind(newData2, temp)
   }
   # Obtain good startvalues based on average
   averageInt <- mean(na.omit(newData2$deltaT))
   unitInt <- 1
-  ScalingFactor <- unitInt/averageInt
-  
+  ScalingFactor <- unitInt / averageInt
+
   initialQm <- list()
   initialPm <- list()
-  probabilityVector <- runif(n_starts,min = 0.5,max=1)
-  for(i in 1:n_starts){
-    Pm <-diag(n_state)
-    Pm[Pm==1] <-probabilityVector[i] 
-    Pm[Pm==0] <-(1-probabilityVector[i])/(n_state-1 )
-    initialPm[[i]] <-Pm
+  probabilityVector <- runif(n_starts, min = 0.5, max = 1)
+  for (i in 1:n_starts) {
+    Pm <- diag(n_state)
+    Pm[Pm == 1] <- probabilityVector[i]
+    Pm[Pm == 0] <- (1 - probabilityVector[i]) / (n_state - 1)
+    initialPm[[i]] <- Pm
     Qm <- logm(Pm)
-    Qm <- Qm*ScalingFactor
+    Qm <- Qm * ScalingFactor
     initialQm[[i]] <- Qm
   }
-  
-  
+
+
   # Do n_initial_ite iterations and store the transition intensities
   # We briefly put-off the warnings because there will be one if the
   # model does not converge (and it won't with so few iterations).
-  
-bestloglik <- list()
-q_bestloglik <- list()
-identifier<<-identifier #is it problematic to add something to the global environment if I also remove it from inside the function again?
-for(i in 1:n_starts){
-  step3Results <- NULL
-  try(
-    step3Results <-  suppressWarnings(msm(
-    as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(identifier)),
-    data = as.data.frame(newData),
-    qmatrix = initialQm[[i]],
-    ematrix = W_mod,
-    est.initprobs=TRUE,
-    hessian = TRUE,
-    fixedpars = c(fixed_responseprobabilities)+additionalCounts,
-    method  = method,
-    control = list(maxit = n_initial_ite,reltol = tolerance,fnscale = scaling),
-    center = i.center,
-    covariates = defineCovariates,
-    initcovariates = defineInitialCovariates))
-    , silent = TRUE)
-  
-  #if(!is.null(step3Results)){
-    q_bestloglik[[i]] <-step3Results$Qmatrices$baseline
-    bestloglik[[i]] <-step3Results$minus2loglik*-2
-  #}
-}
 
-if(length(bestloglik)!=0){
-  if(length(which(sapply(q_bestloglik, is.null)))>0){
-    bestloglik <- bestloglik[-which(sapply(q_bestloglik, is.null))]
-    q_bestloglik <- q_bestloglik[-which(sapply(q_bestloglik, is.null))]
+  bestloglik <- list()
+  q_bestloglik <- list()
+  identifier <<- identifier # is it problematic to add something to the global environment if I also remove it from inside the function again?
+  for (i in 1:n_starts) {
+    step3Results <- NULL
+    try(
+      step3Results <- suppressWarnings(msm(
+        as.formula(paste("State", "~", time_column, sep = "")),
+        subject = get(noquote(identifier)),
+        data = as.data.frame(newData),
+        qmatrix = initialQm[[i]],
+        ematrix = W_mod,
+        est.initprobs = TRUE,
+        hessian = TRUE,
+        fixedpars = c(fixed_responseprobabilities) + additionalCounts,
+        method = method,
+        control = list(maxit = n_initial_ite, reltol = tolerance, fnscale = scaling),
+        center = i.center,
+        covariates = defineCovariates,
+        initcovariates = defineInitialCovariates
+      )),
+      silent = TRUE
+    )
+
+    # if(!is.null(step3Results)){
+    q_bestloglik[[i]] <- step3Results$Qmatrices$baseline
+    bestloglik[[i]] <- step3Results$minus2loglik * -2
+    # }
   }
-}else{
-  q_bestloglik <- NULL
-}
 
-# Consider the transition intensities from the best start set.
-if(is.null(q_bestloglik)){
-  stop("numerical overflow; consider changing scale of argument timeintervals and/or using a different value for the argument scaling")
-}else{
-  Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
-}
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  if (length(bestloglik) != 0) {
+    if (length(which(sapply(q_bestloglik, is.null))) > 0) {
+      bestloglik <- bestloglik[-which(sapply(q_bestloglik, is.null))]
+      q_bestloglik <- q_bestloglik[-which(sapply(q_bestloglik, is.null))]
+    }
+  } else {
+    q_bestloglik <- NULL
+  }
+
+  # Consider the transition intensities from the best start set.
+  if (is.null(q_bestloglik)) {
+    stop("numerical overflow; consider changing scale of argument timeintervals and/or using a different value for the argument scaling")
+  } else {
+    Qm <- q_bestloglik[[which.max(sapply(bestloglik, max))]]
+  }
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Final Analysis with best startset.
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   cat("\n")
   cat(paste("2.Analyzing data with the best start set..."))
-  step3Results <-suppressWarnings(msm(
-    as.formula(paste("State", "~",time_column, sep="")), 
-    subject = get(noquote(identifier)), 
+  step3Results <- suppressWarnings(msm(
+    as.formula(paste("State", "~", time_column, sep = "")),
+    subject = get(noquote(identifier)),
     data = as.data.frame(newData),
     qmatrix = Qm,
     ematrix = W_mod,
-    est.initprobs=TRUE,
+    est.initprobs = TRUE,
     hessian = TRUE,
-    fixedpars = c(fixed_responseprobabilities)+additionalCounts,
-    method  = method,
-    control=list(maxit = max_iterations,reltol = tolerance,fnscale= scaling),
+    fixedpars = c(fixed_responseprobabilities) + additionalCounts,
+    method = method,
+    control = list(maxit = max_iterations, reltol = tolerance, fnscale = scaling),
     center = i.center,
     covariates = defineCovariates,
-    initcovariates = defineInitialCovariates))
-                    
-#Is the following problematic ? 
-CleanEnvir <- function(x) {rm(list=deparse(substitute(x)),envir=.GlobalEnv)}
-on.exit(CleanEnvir(identifier))
+    initcovariates = defineInitialCovariates
+  ))
+
+  # Is the following problematic ?
+  CleanEnvir <- function(x) {
+    rm(list = deparse(substitute(x)), envir = .GlobalEnv)
+  }
+  on.exit(CleanEnvir(identifier))
 
 
 
   requiredTime <- as.numeric((proc.time() - ptm)[3])
   eigenvalues <- eigen(step3Results$paramdata$opt$hessian, only.values = TRUE)$values
   n_eig <- nrow(step3Results$paramdata$opt$hessian)
-  for(i in 1: n_eig){
-    if(abs(eigenvalues[i])<1e-8) {
-      eigenvalues[i]<-0
+  for (i in 1:n_eig) {
+    if (abs(eigenvalues[i]) < 1e-8) {
+      eigenvalues[i] <- 0
     }
-  }    
-  if(any(eigenvalues<=0)){
+  }
+  if (any(eigenvalues <= 0)) {
     warning("Optimisation has probably not converged to the maximum likelihood - Hessian is not positive definite.")
   }
- 
-  #Has the model reached convergence? (we use 1 as convergence and 0 as non-convergence; thus, we turn the number around)
-  if(step3Results$opt$convergence==1){
+
+  # Has the model reached convergence? (we use 1 as convergence and 0 as non-convergence; thus, we turn the number around)
+  if (step3Results$opt$convergence == 1) {
     convergence <- 0
-  }else{
+  } else {
     convergence <- 1
   }
-  
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   # Extracting the results
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #--------------------------------------#
   #            Preparation
   #--------------------------------------#
 
   namesTransitions <- NULL
-  for(i in 1:n_state){
-        for(j in 1:n_state){
-                if(i!=j){
-                        namesTransitions <- c(namesTransitions,(paste(i,j,sep = "|")))
-                }
-        }
-  }  
+  for (i in 1:n_state) {
+    for (j in 1:n_state) {
+      if (i != j) {
+        namesTransitions <- c(namesTransitions, (paste(i, j, sep = "|")))
+      }
+    }
+  }
 
   namesInitial <- NULL
-  for(i in 2:n_state){
-   namesInitial <- c(namesInitial,i)
+  for (i in 2:n_state) {
+    namesInitial <- c(namesInitial, i)
   }
 
   # What is the number of estimated parameters?
   # -For the intensities:
-  numberParInt <- additionalCounts+length(c(fixed_responseprobabilities))
+  numberParInt <- additionalCounts + length(c(fixed_responseprobabilities))
   # -For the initial state probabilities
-  numberParIni <-n_state-1 + length(initialCovariates)*(n_state-1)
+  numberParIni <- n_state - 1 + length(initialCovariates) * (n_state - 1)
   # -Total number:
-  n_par_step3 <- numberParInt+numberParIni
-  
+  n_par_step3 <- numberParInt + numberParIni
+
   # Create an empty parameter matrix
-  parameterEstimates <- matrix(NA,nrow=n_par_step3,ncol=4)
-  colnames(parameterEstimates) <- c("coef",
-                                    "s.e.",
-                                    "z-value",
-                                    "p-value")
+  parameterEstimates <- matrix(NA, nrow = n_par_step3, ncol = 4)
+  colnames(parameterEstimates) <- c(
+    "coef",
+    "s.e.",
+    "z-value",
+    "p-value"
+  )
   # covariate names initial (in case covariate is used twice)
-  if(length(initialCovariates)>0){
-    iniName <- paste(initialCovariates,"(initial)")
-  }else{
+  if (length(initialCovariates) > 0) {
+    iniName <- paste(initialCovariates, "(initial)")
+  } else {
     iniName <- NULL
   }
-  
-  rownames(parameterEstimates) <- 
-    #initial state probabilities
-  c(paste("initial state parameters",
-            namesInitial),
-  #cov on initial state probabilities
-  paste(rep(iniName,
-            each=n_state-1),
-        rep(namesInitial,
-            length(iniName))),
-  
-  #intensities
-  paste("transition parameters",
-        namesTransitions),
-  #cov on intensities
-  paste(rep(transitionCovariates,
-            each=length(fixed_responseprobabilities)),
-        rep(namesTransitions,
-            length(transitionCovariates))))
+
+  rownames(parameterEstimates) <-
+    # initial state probabilities
+    c(
+      paste(
+        "initial state parameters",
+        namesInitial
+      ),
+      # cov on initial state probabilities
+      paste(
+        rep(iniName,
+          each = n_state - 1
+        ),
+        rep(
+          namesInitial,
+          length(iniName)
+        )
+      ),
+
+      # intensities
+      paste(
+        "transition parameters",
+        namesTransitions
+      ),
+      # cov on intensities
+      paste(
+        rep(transitionCovariates,
+          each = length(fixed_responseprobabilities)
+        ),
+        rep(
+          namesTransitions,
+          length(transitionCovariates)
+        )
+      )
+    )
   #--------------------------------------#
   #         Parameter estimates
   #--------------------------------------#
   # What are the estimates for the initial state parameters?
-  parameterEstimates[1:numberParIni,1] <- 
-    step3Results$paramdata$opt$par[(1+numberParInt):n_par_step3]  
-  
+  parameterEstimates[1:numberParIni, 1] <-
+    step3Results$paramdata$opt$par[(1 + numberParInt):n_par_step3]
+
   # What are the estimates for the transition intensity parameters?
-  parameterEstimates[(numberParIni+1):(numberParIni+numberParInt),1] <-
-    step3Results$paramdata$opt$par[1:numberParInt]  
-  
+  parameterEstimates[(numberParIni + 1):(numberParIni + numberParInt), 1] <-
+    step3Results$paramdata$opt$par[1:numberParInt]
+
   #--------------------------------------#
   #            Standard errors
   #--------------------------------------#
-  
+
   # We first calculate the estimated variance-covariance matrix
   # based on the hessian. As the optim() function minimizes (-2)*log(likelihood),
   # we do NOT take the negative of the hessian but multiply it by 0.5
   # (or times 2 after taking the inverse).
-  estimatedCovmatrix <- solve(0.5 * 
-                                step3Results$paramdata$opt$hessian,
-                              silent = TRUE)
-  
+  estimatedCovmatrix <- solve(
+    0.5 *
+      step3Results$paramdata$opt$hessian,
+    silent = TRUE
+  )
+
   # What are the standard errors for the initial state parameters?
-  parameterEstimates[1:numberParIni,2] <- 
-    suppressWarnings(sqrt(diag(estimatedCovmatrix)))[(1+numberParInt):n_par_step3]
-  
+  parameterEstimates[1:numberParIni, 2] <-
+    suppressWarnings(sqrt(diag(estimatedCovmatrix)))[(1 + numberParInt):n_par_step3]
+
   # What are the standard errors for the transition intensity parameters?
-  parameterEstimates[(numberParIni+1):(numberParIni+numberParInt),2] <- 
+  parameterEstimates[(numberParIni + 1):(numberParIni + numberParInt), 2] <-
     suppressWarnings(sqrt(diag(estimatedCovmatrix)))[1:numberParInt]
-  
-
-#---------------------------------------------------------------#
-#Recalculating parameter estimates & SEs (based on delta method)
-#---------------------------------------------------------------#
 
 
+  #---------------------------------------------------------------#
+  # Recalculating parameter estimates & SEs (based on delta method)
+  #---------------------------------------------------------------#
 
-#.........................
-#initial state probability
-#.........................
-if(!is.null(initialCovariates)){
-  newSEsIni <- NULL
-  if(length(initialCovariates)==1){
-    meanvectorInitial <- mean(data[[initialCovariates]])
-  }else{
-    meanvectorInitial <- colMeans(data[,initialCovariates])
-  }
-  #``````````
-  #Parameters
-  #``````````
-  ParInitialState <- parameterEstimates[1:((n_state-1+
-                                              length(initialCovariates)
-                                            +(n_state-1)-1)),1]
 
-  ParInitialState <- cbind(ParInitialState,
-                           c(rep(0,n_state-1),
-                             rep(1:length(initialCovariates),
-                                 each=n_state-1)))
 
-  newInterceptInitial <- ParInitialState[ParInitialState[,2]==0,1]
-
-  for(i in 1:length(initialCovariates)){
-    newInterceptInitial <- newInterceptInitial-
-      meanvectorInitial[i]*ParInitialState[ParInitialState[,2]==i,1]
-  }
-
-  #``````````
-  #SEs
-  #``````````
-  #make a matrix with parameters for SE recalculation
-  B_matrix <- NULL
-  for(i in 1:(n_state-1)){
-    B <- ParInitialState[(1:n_state-1),1][i] #take the old intercepts
-    for(j in 1:length(initialCovariates)){
-      B <-c(B,ParInitialState[ParInitialState[,2]==j,1][i])
+  # .........................
+  # initial state probability
+  # .........................
+  if (!is.null(initialCovariates)) {
+    newSEsIni <- NULL
+    if (length(initialCovariates) == 1) {
+      meanvectorInitial <- mean(data[[initialCovariates]])
+    } else {
+      meanvectorInitial <- colMeans(data[, initialCovariates])
     }
-    B_matrix <-rbind(B_matrix,B)
-  }
-  #get the gradients
-  grad <- c(1,meanvectorInitial)
-  #get correct values of estimated cov matrix
+    # ``````````
+    # Parameters
+    # ``````````
+    ParInitialState <- parameterEstimates[1:((n_state - 1 +
+      length(initialCovariates)
+      + (n_state - 1) - 1)), 1]
 
-  #note that SEs are at the end; thus, order is different than in parameters
-  beginInitial <- (n_state*n_state-n_state+
-                     (n_state*n_state-n_state)*
-                     length(transitionCovariates))+1
-  ParCov <- estimatedCovmatrix[beginInitial:(beginInitial+n_state-1+
-                                               (n_state-1)*
-                                               length(initialCovariates)-1),
-                               beginInitial:(beginInitial+n_state-1+
-                                               (n_state-1)*
-                                               length(initialCovariates)-1)]
-  whichPar <- seq(1, ncol(ParCov), (n_state-1))
-  for(i in 1:(n_state-1)){
+    ParInitialState <- cbind(
+      ParInitialState,
+      c(
+        rep(0, n_state - 1),
+        rep(1:length(initialCovariates),
+          each = n_state - 1
+        )
+      )
+    )
 
-    vb <- ParCov[whichPar,whichPar]
-    B <- B_matrix[i,]
-    vG <- grad %*% vb %*% grad
-    newSEsIni <- c(newSEsIni,sqrt(vG))
-    whichPar <-whichPar+1
-  }
+    newInterceptInitial <- ParInitialState[ParInitialState[, 2] == 0, 1]
 
-parameterEstimates[1:(n_state-1),1:2] <- cbind(newInterceptInitial,newSEsIni)
-
-}
-#.........................
-#transition intensities
-#.........................
-
-if(!is.null(transitionCovariates)){
-  newSEs <- NULL
-  if(length(transitionCovariates)==1){
-    meanvectorTransition <- mean(data[[transitionCovariates]])
-  }else{
-    meanvectorTransition <- colMeans(data[,transitionCovariates])
-  }
-  #``````````
-  #Parameters
-  #``````````
-  startTran <- ((n_state-1+
-                   length(initialCovariates)
-                 *(n_state-1)))
-  endTran <- startTran+(n_state*n_state-n_state+(
-    (n_state*n_state-n_state)*
-      length(transitionCovariates)))
-
-  ParTransition <- parameterEstimates[(startTran+1):(endTran),1]
-
-  ParTransition <- cbind(ParTransition,
-                           c(rep(0,n_state*n_state-n_state),
-                             rep(1:length(transitionCovariates),
-                                 each=n_state*n_state-n_state)))
-
-  newTransition <- ParTransition[ParTransition[,2]==0,1]
-
-  for(i in 1:length(transitionCovariates)){
-    newTransition <- newTransition-
-      meanvectorTransition[i]*ParTransition[ParTransition[,2]==i,1]
-  }
-
-  #``````````
-  #SEs
-  #``````````
-  #make a matrix with parameters for SE recalculation
-  B_matrix <- NULL
-  for(i in 1:(n_state*n_state-n_state)){
-    B <- ParTransition[1:(n_state*n_state-n_state),1][i] #take the old intercepts
-    for(j in 1:length(transitionCovariates)){
-      B <-c(B,ParTransition[ParTransition[,2]==j,1][i])
+    for (i in 1:length(initialCovariates)) {
+      newInterceptInitial <- newInterceptInitial -
+        meanvectorInitial[i] * ParInitialState[ParInitialState[, 2] == i, 1]
     }
-    B_matrix <-rbind(B_matrix,B)
+
+    # ``````````
+    # SEs
+    # ``````````
+    # make a matrix with parameters for SE recalculation
+    B_matrix <- NULL
+    for (i in 1:(n_state - 1)) {
+      B <- ParInitialState[(1:n_state - 1), 1][i] # take the old intercepts
+      for (j in 1:length(initialCovariates)) {
+        B <- c(B, ParInitialState[ParInitialState[, 2] == j, 1][i])
+      }
+      B_matrix <- rbind(B_matrix, B)
+    }
+    # get the gradients
+    grad <- c(1, meanvectorInitial)
+    # get correct values of estimated cov matrix
+
+    # note that SEs are at the end; thus, order is different than in parameters
+    beginInitial <- (n_state * n_state - n_state +
+      (n_state * n_state - n_state) *
+        length(transitionCovariates)) + 1
+    ParCov <- estimatedCovmatrix[
+      beginInitial:(beginInitial + n_state - 1 +
+        (n_state - 1) *
+          length(initialCovariates) - 1),
+      beginInitial:(beginInitial + n_state - 1 +
+        (n_state - 1) *
+          length(initialCovariates) - 1)
+    ]
+    whichPar <- seq(1, ncol(ParCov), (n_state - 1))
+    for (i in 1:(n_state - 1)) {
+      vb <- ParCov[whichPar, whichPar]
+      B <- B_matrix[i, ]
+      vG <- grad %*% vb %*% grad
+      newSEsIni <- c(newSEsIni, sqrt(vG))
+      whichPar <- whichPar + 1
+    }
+
+    parameterEstimates[1:(n_state - 1), 1:2] <- cbind(newInterceptInitial, newSEsIni)
   }
-  #get the gradients
-  grad <- c(1,meanvectorTransition)
-  #get correct values of estimated cov matrix
+  # .........................
+  # transition intensities
+  # .........................
+
+  if (!is.null(transitionCovariates)) {
+    newSEs <- NULL
+    if (length(transitionCovariates) == 1) {
+      meanvectorTransition <- mean(data[[transitionCovariates]])
+    } else {
+      meanvectorTransition <- colMeans(data[, transitionCovariates])
+    }
+    # ``````````
+    # Parameters
+    # ``````````
+    startTran <- ((n_state - 1 +
+      length(initialCovariates)
+      * (n_state - 1)))
+    endTran <- startTran + (n_state * n_state - n_state + (
+      (n_state * n_state - n_state) *
+        length(transitionCovariates)))
+
+    ParTransition <- parameterEstimates[(startTran + 1):(endTran), 1]
+
+    ParTransition <- cbind(
+      ParTransition,
+      c(
+        rep(0, n_state * n_state - n_state),
+        rep(1:length(transitionCovariates),
+          each = n_state * n_state - n_state
+        )
+      )
+    )
+
+    newTransition <- ParTransition[ParTransition[, 2] == 0, 1]
+
+    for (i in 1:length(transitionCovariates)) {
+      newTransition <- newTransition -
+        meanvectorTransition[i] * ParTransition[ParTransition[, 2] == i, 1]
+    }
+
+    # ``````````
+    # SEs
+    # ``````````
+    # make a matrix with parameters for SE recalculation
+    B_matrix <- NULL
+    for (i in 1:(n_state * n_state - n_state)) {
+      B <- ParTransition[1:(n_state * n_state - n_state), 1][i] # take the old intercepts
+      for (j in 1:length(transitionCovariates)) {
+        B <- c(B, ParTransition[ParTransition[, 2] == j, 1][i])
+      }
+      B_matrix <- rbind(B_matrix, B)
+    }
+    # get the gradients
+    grad <- c(1, meanvectorTransition)
+    # get correct values of estimated cov matrix
 
 
-  ParCov <- estimatedCovmatrix[1:(n_state*n_state-n_state+
-                                    (n_state*n_state-n_state)*
-                                    length(transitionCovariates)),
-                               1:(n_state*n_state-n_state+
-                                    (n_state*n_state-n_state)*
-                                    length(transitionCovariates))]
-  whichPar <- seq(1, ncol(ParCov), (n_state*n_state-n_state))
-  for(i in 1:(n_state*n_state-n_state)){
-
-    vb <- ParCov[whichPar,whichPar]
-    B <- B_matrix[i,]
-    vG <- grad %*% vb %*% grad
-    newSEs <- c(newSEs,sqrt(vG))
-    whichPar <-whichPar+1
+    ParCov <- estimatedCovmatrix[
+      1:(n_state * n_state - n_state +
+        (n_state * n_state - n_state) *
+          length(transitionCovariates)),
+      1:(n_state * n_state - n_state +
+        (n_state * n_state - n_state) *
+          length(transitionCovariates))
+    ]
+    whichPar <- seq(1, ncol(ParCov), (n_state * n_state - n_state))
+    for (i in 1:(n_state * n_state - n_state)) {
+      vb <- ParCov[whichPar, whichPar]
+      B <- B_matrix[i, ]
+      vG <- grad %*% vb %*% grad
+      newSEs <- c(newSEs, sqrt(vG))
+      whichPar <- whichPar + 1
+    }
+    parameterEstimates[(startTran + 1):(startTran +
+      (n_state * n_state - n_state)), 1:2] <- cbind(newTransition, newSEs)
   }
-parameterEstimates[(startTran+1):(startTran+ 
-                                (n_state*n_state-n_state)),1:2] <-cbind(newTransition,newSEs)
-
-}
 
 
 
@@ -634,232 +676,256 @@ parameterEstimates[(startTran+1):(startTran+
 
 
   parameterEstimates[which(is.nan(parameterEstimates))] <- 1000
-  
+
   #--------------------------------------#
   #            z-values
   #--------------------------------------#
-  
+
   # To obtain the z-values, we divide the coefficients by
   # their standard errors
-  
-  parameterEstimates[,3] <- parameterEstimates[,1]/parameterEstimates[,2]
-  
+
+  parameterEstimates[, 3] <- parameterEstimates[, 1] / parameterEstimates[, 2]
+
   #--------------------------------------#
   #            p-values
   #--------------------------------------#
-  
-  parameterEstimates[,4] <- 2*pnorm(-abs(parameterEstimates[,3]))
-  
-  
+
+  parameterEstimates[, 4] <- 2 * pnorm(-abs(parameterEstimates[, 3]))
+
+
   #--------------------------------------#
   #            Wald Test Statistics
   #--------------------------------------#
-  
+
   # We again use the estimated variance-covariance matrix.
-  
+
   parWald <- 1:length(fixed_responseprobabilities)
   whichParameters <- list()
   count <- 0
-  
-  
+
+
   # transition intensities
   whichParameters[[1]] <- 1:length(fixed_responseprobabilities)
-  
+
   # transition intensity covariates
-  if(length(transitionCovariates)>0){
-    for(i in 1:length(transitionCovariates)){
-      whichParameters[[1+i]] <- whichParameters[[1+i-1]]+
+  if (length(transitionCovariates) > 0) {
+    for (i in 1:length(transitionCovariates)) {
+      whichParameters[[1 + i]] <- whichParameters[[1 + i - 1]] +
         length(fixed_responseprobabilities)
-      count <- count+1
+      count <- count + 1
     }
   }
-  
+
   # initial state probabilities
-  whichParameters[[1+1+ count]] <- (max(
-    whichParameters[[1+1+ count-1]])+1):(max(
-      whichParameters[[1+1+ count-1]])+n_state-1)
-  
+  whichParameters[[1 + 1 + count]] <- (max(
+    whichParameters[[1 + 1 + count - 1]]
+  ) + 1):(max(
+    whichParameters[[1 + 1 + count - 1]]
+  ) + n_state - 1)
+
   # initial state probability covariates
-  if(length(initialCovariates)>0){
-    for(i in 1:length(initialCovariates)){
-      whichParameters[[1+1+count+i]] <- 
-        whichParameters[[1+1+count+i-1]]+n_state-1
+  if (length(initialCovariates) > 0) {
+    for (i in 1:length(initialCovariates)) {
+      whichParameters[[1 + 1 + count + i]] <-
+        whichParameters[[1 + 1 + count + i - 1]] + n_state - 1
     }
   }
-  
+
   allWaldStat <- list()
   allWaldDf <- list()
   # note that there is a 2 because there are always initial state and
   # transition parameters. Then we add possible covariate parameters.
-  for(i in 1:(2+length(transitionCovariates)+
-              length(initialCovariates))){
+  for (i in 1:(2 + length(transitionCovariates) +
+    length(initialCovariates))) {
     parWald <- whichParameters[[i]]
-    ParameterCovarianceMatrix_cov <- 
-      estimatedCovmatrix[parWald,parWald]
+    ParameterCovarianceMatrix_cov <-
+      estimatedCovmatrix[parWald, parWald]
     parametersWald <- c(step3Results$paramdata$opt$par[parWald])
-    #based on the parameters and the values in the variance-covariance matrix
-    #we obtain the Wald test statistics.
-    WStat <- t(parametersWald)%*%
-      solve(ParameterCovarianceMatrix_cov)%*%(parametersWald)
+    # based on the parameters and the values in the variance-covariance matrix
+    # we obtain the Wald test statistics.
+    WStat <- t(parametersWald) %*%
+      solve(ParameterCovarianceMatrix_cov) %*% (parametersWald)
     allWaldStat[[i]] <- WStat
     allWaldDf[[i]] <- length(parWald)
   }
-  
-  waldMatrix <- matrix(NA, nrow=(2+length(transitionCovariates)+
-                                   length(initialCovariates)),ncol=3)
-  for(i in 1:nrow(waldMatrix)){
-    waldMatrix[i,1] <- allWaldStat[[i]]
-    waldMatrix[i,2] <- allWaldDf[[i]]
-    #calculate p-values
-    waldMatrix[i,3] <- pchisq(
-      waldMatrix[i,1],
-      df=waldMatrix[i,2],
-      lower.tail = F)
+
+  waldMatrix <- matrix(NA, nrow = (2 + length(transitionCovariates) +
+    length(initialCovariates)), ncol = 3)
+  for (i in 1:nrow(waldMatrix)) {
+    waldMatrix[i, 1] <- allWaldStat[[i]]
+    waldMatrix[i, 2] <- allWaldDf[[i]]
+    # calculate p-values
+    waldMatrix[i, 3] <- pchisq(
+      waldMatrix[i, 1],
+      df = waldMatrix[i, 2],
+      lower.tail = F
+    )
   }
 
-  rownames(waldMatrix) <- c("transition intercepts",
-                            transitionCovariates,
-                            "initial state",
-                            iniName)
-  colnames(waldMatrix) <- c("Wald",
-                            "df",	
-                            "p-value")
-  
+  rownames(waldMatrix) <- c(
+    "transition intercepts",
+    transitionCovariates,
+    "initial state",
+    iniName
+  )
+  colnames(waldMatrix) <- c(
+    "Wald",
+    "df",
+    "p-value"
+  )
+
   # reorder just to have the same order as LG
-  waldMatrix <- waldMatrix[c("initial state",
-                             iniName,
-                             "transition intercepts",
-                             transitionCovariates),]
-  #we do not show the Wald tests for the intercepts because these are based on the wrong SE values/worng covariance matrix entries
-    WaldMatrixNoIntercepts <-waldMatrix[-c(which(rownames(waldMatrix)=="initial state"),
-                      which(rownames(waldMatrix)=="transition intercepts")),]
+  waldMatrix <- waldMatrix[c(
+    "initial state",
+    iniName,
+    "transition intercepts",
+    transitionCovariates
+  ), ]
+  # we do not show the Wald tests for the intercepts because these are based on the wrong SE values/worng covariance matrix entries
+  WaldMatrixNoIntercepts <- waldMatrix[-c(
+    which(rownames(waldMatrix) == "initial state"),
+    which(rownames(waldMatrix) == "transition intercepts")
+  ), ]
 
   #--------------------------------------#
   #          hessian/covmatrix names
   #--------------------------------------#
-  hessianAndCovNames<-
-    #initial state probabilities
+  hessianAndCovNames <-
+    # initial state probabilities
     c(
-      #intensities
-      paste("transition intercepts",
-            1:length(fixed_responseprobabilities)),
-      #cov on intensities
-      paste(rep(transitionCovariates,
-                each=length(fixed_responseprobabilities)),
-            rep(1:length(fixed_responseprobabilities),
-                length(transitionCovariates))),
-      #initial state          
-      paste("initial state",
-            1:(n_state-1)),
-      #cov on initial state probabilities
-      paste(rep(iniName,
-                each=n_state-1),
-            rep(1:(n_state-1),
-                length(iniName))))
+      # intensities
+      paste(
+        "transition intercepts",
+        1:length(fixed_responseprobabilities)
+      ),
+      # cov on intensities
+      paste(
+        rep(transitionCovariates,
+          each = length(fixed_responseprobabilities)
+        ),
+        rep(
+          1:length(fixed_responseprobabilities),
+          length(transitionCovariates)
+        )
+      ),
+      # initial state
+      paste(
+        "initial state",
+        1:(n_state - 1)
+      ),
+      # cov on initial state probabilities
+      paste(
+        rep(iniName,
+          each = n_state - 1
+        ),
+        rep(
+          1:(n_state - 1),
+          length(iniName)
+        )
+      )
+    )
 
-    printHessian <- step3Results$paramdata$opt$hessian
+  printHessian <- step3Results$paramdata$opt$hessian
 
-    rownames(estimatedCovmatrix) <- hessianAndCovNames
-    rownames(printHessian) <- hessianAndCovNames
-    colnames(estimatedCovmatrix) <- hessianAndCovNames
-    colnames(printHessian) <- hessianAndCovNames
-    
+  rownames(estimatedCovmatrix) <- hessianAndCovNames
+  rownames(printHessian) <- hessianAndCovNames
+  colnames(estimatedCovmatrix) <- hessianAndCovNames
+  colnames(printHessian) <- hessianAndCovNames
+
   #--------------------------------------#
   #     don't use Vitberi but modal
   #--------------------------------------#
-    classification_posteriors <- as.matrix(viterbi.msm(step3Results)[,-c(1:2)])
-    colnames(classification_posteriors) <- c("ModalStep2","Modal",colnames(postprobs))
-    classification_posteriors <- classification_posteriors[,-1] #we do not need the previous assignment anymore
-    classification_posteriors <- classification_posteriors[,-1] #also remove vitberi
+  classification_posteriors <- as.matrix(viterbi.msm(step3Results)[, -c(1:2)])
+  colnames(classification_posteriors) <- c("ModalStep2", "Modal", colnames(postprobs))
+  classification_posteriors <- classification_posteriors[, -1] # we do not need the previous assignment anymore
+  classification_posteriors <- classification_posteriors[, -1] # also remove vitberi
 
-    modal_data <- max.col(classification_posteriors)
+  modal_data <- max.col(classification_posteriors)
 
-    classification_posteriors <-cbind.data.frame(modal_data,classification_posteriors)
-    colnames(classification_posteriors) <- c("Modal", paste("State",1:n_state,sep=""))
+  classification_posteriors <- cbind.data.frame(modal_data, classification_posteriors)
+  colnames(classification_posteriors) <- c("Modal", paste("State", 1:n_state, sep = ""))
 
-    #add updated state proportions
-    pi_k <-list()
-    for(i in 1:n_state){
-      pi_k[[i]] <- as.numeric((table(classification_posteriors[,1])/(nrow(classification_posteriors)))[i])
+  # add updated state proportions
+  pi_k <- list()
+  for (i in 1:n_state) {
+    pi_k[[i]] <- as.numeric((table(classification_posteriors[, 1]) / (nrow(classification_posteriors)))[i])
+  }
+  #--------------------------------------#
+  # calculate mean scores for covariates
+  #--------------------------------------#
+  if (!is.null(transitionCovariates)) {
+    if (length(transitionCovariates) > 1) {
+      transition_covariate_means <- colMeans(data[, c(transitionCovariates)])
+    } else {
+      transition_covariate_means <- mean(data[[transitionCovariates]])
     }
-    #--------------------------------------#
-    # calculate mean scores for covariates
-    #--------------------------------------#
-    if(!is.null(transitionCovariates)){
-      if(length(transitionCovariates) > 1){
-        transition_covariate_means <- colMeans(data[,c(transitionCovariates)])
-      }else{
-        transition_covariate_means <- mean(data[[transitionCovariates]])
-      }
-    }else{
-      transition_covariate_means <- NULL
-    }
-    
-    if(!is.null(initialCovariates)){
-      if(length(initialCovariates) > 1){
-        initial_covariate_means <- colMeans(data[,c(initialCovariates)])
-      }else{
-        initial_covariate_means <- mean(data[[initialCovariates]])
-      }
-    }else{
-      initial_covariate_means <- NULL
-    }
+  } else {
+    transition_covariate_means <- NULL
+  }
 
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  if (!is.null(initialCovariates)) {
+    if (length(initialCovariates) > 1) {
+      initial_covariate_means <- colMeans(data[, c(initialCovariates)])
+    } else {
+      initial_covariate_means <- mean(data[[initialCovariates]])
+    }
+  } else {
+    initial_covariate_means <- NULL
+  }
+
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                             get nice output
   #                  --------------------------------------
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   state_proportions <- c()
-  for(i in 1:length(pi_k)){
-    state_proportions <- cbind(state_proportions,pi_k[[i]])
+  for (i in 1:length(pi_k)) {
+    state_proportions <- cbind(state_proportions, pi_k[[i]])
   }
   state_proportions <- as.data.frame(state_proportions)
-  colnames(state_proportions) <- c(paste("S",rep(1:n_state),sep=""))
+  colnames(state_proportions) <- c(paste("S", rep(1:n_state), sep = ""))
   state_proportions <- as.matrix(state_proportions)
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
   #                  --------------------------------------
   #                         Return Step 3 Results
   #                  --------------------------------------
-  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-  
+  # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-  output <-list(
-              seconds=round(requiredTime, rounding),
-              convergence = convergence,
-              LL=round(step3Results$minus2loglik/-2, rounding),
-              Wald_tests=round(WaldMatrixNoIntercepts, rounding),
-              BIC = round(step3Results$minus2loglik + fp_step3 *log(n_obs), rounding),
-              estimates=round(parameterEstimates, rounding), 
-              classification_posteriors=as.data.frame(classification_posteriors),
-              state_proportions = round(state_proportions, rounding),
-              #state_proportions_list = lapply(pi_k,round, rounding),
-              n_initial_covariates = length(initialCovariates),
-              n_transition_covariates = length(transitionCovariates),
-              initial_covariate_means = initial_covariate_means,
-              transition_covariate_means = transition_covariate_means,
-              n_obs = n_obs,
-              n_par = fp_step3,
-              n_state = n_state,
-              data = cbind(data, classification_posteriors)
-              #hessian=printHessian,
-              #cov.matrix = estimatedCovmatrix
-              )
+  output <- list(
+    seconds = round(requiredTime, rounding),
+    convergence = convergence,
+    LL = round(step3Results$minus2loglik / -2, rounding),
+    Wald_tests = round(WaldMatrixNoIntercepts, rounding),
+    BIC = round(step3Results$minus2loglik + fp_step3 * log(n_obs), rounding),
+    estimates = round(parameterEstimates, rounding),
+    classification_posteriors = as.data.frame(classification_posteriors),
+    state_proportions = round(state_proportions, rounding),
+    # state_proportions_list = lapply(pi_k,round, rounding),
+    n_initial_covariates = length(initialCovariates),
+    n_transition_covariates = length(transitionCovariates),
+    initial_covariate_means = initial_covariate_means,
+    transition_covariate_means = transition_covariate_means,
+    n_obs = n_obs,
+    n_par = fp_step3,
+    n_state = n_state,
+    data = cbind(data, classification_posteriors)
+    # hessian=printHessian,
+    # cov.matrix = estimatedCovmatrix
+  )
 
-  class(output) = "lmfa_step3"
+  class(output) <- "lmfa_step3"
 
-
-  if(output$convergence==1){
+  if (output$convergence == 1) {
     cat("\n")
-    cat(paste("Estimation converged.","\n"))
-  }else{
+    cat(paste("Estimation converged.", "\n"))
+  } else {
     cat("\n")
-    cat(paste("Maximum number of iterations reached without convergence.","\n"))
-    cat(paste("Increase the number of max_iterations and repeat the estimation","\n"))
+    cat(paste("Maximum number of iterations reached without convergence.", "\n"))
+    cat(paste("Increase the number of max_iterations and repeat the estimation", "\n"))
     cat("\n")
   }
   cat("\n")
-  cat(paste("LL",round(output$LL,2),sep=" = "),"\n")
+  cat(paste("LL", round(output$LL, 2), sep = " = "), "\n")
   cat("\n")
 
   output

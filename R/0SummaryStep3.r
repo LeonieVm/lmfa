@@ -13,74 +13,71 @@
 #' summary(transitionmodel)
 #' }
 #' @export
-
-summary.lmfa_step3 <- function(object, rounding = 4, ...){
-  if(!is.numeric(rounding)) stop("rounding must be a single scalar")
-  if(length(rounding)>1) stop("rounding must be a single scalar")
-  if(round(rounding)!=rounding) stop("rounding must be an integer")
+summary.lmfa_step3 <- function(object, rounding = 4, ...) {
+  if (!is.numeric(rounding)) stop("rounding must be a single scalar")
+  if (length(rounding) > 1) stop("rounding must be a single scalar")
+  if (round(rounding) != rounding) stop("rounding must be an integer")
   n_state <- object$n_state
   cat("\n")
-  cat(paste("Model estimation:"),"\n")
-  if(object$convergence==1){
+  cat(paste("Model estimation:"), "\n")
+  if (object$convergence == 1) {
     cat("\n")
-    cat(paste("Estimation converged after",round(object$seconds,rounding),"seconds.","\n"))
-  }else{
+    cat(paste("Estimation converged after", round(object$seconds, rounding), "seconds.", "\n"))
+  } else {
     cat("\n")
-    cat(paste("Maximum number of iterations reached without convergence.","\n"))
+    cat(paste("Maximum number of iterations reached without convergence.", "\n"))
     cat("\n")
   }
   cat("\n")
-  cat(paste("LL",round(object$LL,rounding),sep=" = "),"\n")
-  cat(paste("BIC",round(object$BIC,rounding),sep=" = "),"\n")
-  cat(paste("n_par",round(object$n_par,rounding),sep=" = "),"\n")
+  cat(paste("LL", round(object$LL, rounding), sep = " = "), "\n")
+  cat(paste("BIC", round(object$BIC, rounding), sep = " = "), "\n")
+  cat(paste("n_par", round(object$n_par, rounding), sep = " = "), "\n")
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  cat(paste("Wald tests:"),"\n")
+  cat(paste("Wald tests:"), "\n")
   cat("\n")
-  print(round(object$Wald_tests,rounding))
+  print(round(object$Wald_tests, rounding))
 
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  
-  cat(paste("Parameter estimates:"),"\n")
+
+  cat(paste("Parameter estimates:"), "\n")
   cat("\n")
-  print(round(object$estimates,rounding))
+  print(round(object$estimates, rounding))
   cat("\n")
-  cat(paste("Note: For the initial state parameters, state 1 is the"),"\n")
-  cat(paste("reference category. The transition intensity parameters"),"\n")
-  cat(paste("are sorted by rows of the transition matrix and the"),"\n")
-  cat(paste("staying rates serve as references."),"\n")
-  
+  cat(paste("Note: For the initial state parameters, state 1 is the"), "\n")
+  cat(paste("reference category. The transition intensity parameters"), "\n")
+  cat(paste("are sorted by rows of the transition matrix and the"), "\n")
+  cat(paste("staying rates serve as references."), "\n")
+
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  cat(paste("Probabilities:"),"\n")
+  cat(paste("Probabilities:"), "\n")
   cat("\n")
- 
+
   probabilities(object, rounding = rounding)
 
   cat("\n")
-  cat(paste("Note: The probabilities are calculated for covariate scores"),"\n")
-  cat(paste("equal to the sample means (and a unit time interval). Use"),"\n")
-  cat(paste("the function probabilities() to calculate the initial state"),"\n")
-  cat(paste("and transition probabilities for any covariate score (and "),"\n")
-  cat(paste("interval) of interest."),"\n")
+  cat(paste("Note: The probabilities are calculated for covariate scores"), "\n")
+  cat(paste("equal to the sample means (and a unit time interval). Use"), "\n")
+  cat(paste("the function probabilities() to calculate the initial state"), "\n")
+  cat(paste("and transition probabilities for any covariate score (and "), "\n")
+  cat(paste("interval) of interest."), "\n")
 
   cat("\n")
   cat("-------------------------------------------------------------")
   cat("\n")
   cat("\n")
-  cat(paste("State proportions:"),"\n")
+  cat(paste("State proportions:"), "\n")
   cat("\n")
-  state_proportions <- c(round(object$state_proportions,rounding))
-  names(state_proportions) <- paste("S",1:n_state,sep="")
+  state_proportions <- c(round(object$state_proportions, rounding))
+  names(state_proportions) <- paste("S", 1:n_state, sep = "")
   print(state_proportions)
   cat("\n")
-
-
 }

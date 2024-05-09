@@ -59,19 +59,19 @@ Returns the state-specific measurement model parameters and model fit informatio
 \examples{
 \dontrun{
 step1_results <- step1(data,
-                 indicators,
-                 n_state = NULL,
-                 n_fact = NULL, 
-                 modelselection = FALSE, 
-                 n_state_range = NULL, 
-                 n_fact_range = NULL,
-                 n_starts = 25,
-                 n_initial_ite = 15,
-                 n_m_step = 10,
-                 em_tolerance = 1e-8, 
-                 m_step_tolerance = 1e-3, 
-                 max_iterations = 1000,
-                 n_mclust = 5
-                 )
+  indicators,
+  n_state = NULL,
+  n_fact = NULL,
+  modelselection = FALSE,
+  n_state_range = NULL,
+  n_fact_range = NULL,
+  n_starts = 25,
+  n_initial_ite = 15,
+  n_m_step = 10,
+  em_tolerance = 1e-8,
+  m_step_tolerance = 1e-3,
+  max_iterations = 1000,
+  n_mclust = 5
+)
 }
 }

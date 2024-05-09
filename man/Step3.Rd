@@ -56,18 +56,18 @@ Returns the transition model parameters.
 \examples{
 \dontrun{
 step3_results <- step3(data,
-                      identifier,
-                      n_state,
-                      postprobs,
-                      timeintervals = NULL,
-                      initialCovariates = NULL,
-                      transitionCovariates = NULL,
-                      n_starts = 25,
-                      n_initial_ite = 10,
-                      method = "BFGS",
-                      max_iterations = 10000,
-                      tolerance = 1e-10,
-                      scaling = "proxi"
-                      )
+  identifier,
+  n_state,
+  postprobs,
+  timeintervals = NULL,
+  initialCovariates = NULL,
+  transitionCovariates = NULL,
+  n_starts = 25,
+  n_initial_ite = 10,
+  method = "BFGS",
+  max_iterations = 10000,
+  tolerance = 1e-10,
+  scaling = "proxi"
+)
 }
 }
